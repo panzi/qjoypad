@@ -16,6 +16,7 @@
 #define RIGHT			3
 #define DIRECTIONS	4
 
+#define NAME "QJoyPad 2.1"
 
 //Converts a button index into a button name (ie 0 -> "Up", 4 -> "Button 1")
 QString Name( int index );

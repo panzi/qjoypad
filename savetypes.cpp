@@ -1,5 +1,6 @@
 #include "savetypes.h"
 
+
 QString Name( int index )
 {
 	QString fullname;
@@ -321,7 +322,7 @@ void OneSave::save()
 
 	QTextStream stream( File );
 
-	stream << "# QJoyPad 1.5 layout file\n\n";
+	stream << "# " << NAME << " layout file\n\n";
 		
 	stream << "Name = \"" << Name << "\"\n\n";
 	

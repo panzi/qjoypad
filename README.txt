@@ -1,4 +1,4 @@
-QJoyPad 2.0
+QJoyPad 2.1
 -----------
 
 Table of Contents:

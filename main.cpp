@@ -56,7 +56,7 @@ int main( int argc, char **argv )
 		 }
 		 else if (QRegExp("-{1,2}h(elp)?").exactMatch(argv[i]))
 		 {
-		 	qWarning("QJoyPad 2.0\nUsage: qjoypad [--nogui] [--device \"/device/path\"] [\"layout name\"]\n\nOptions:\n  --nogui           Don't use any graphical interface\n  --device path     Look for joystick devices in \"path\". This should\n                    be something like \"/dev/input/js\" if your game\n                    devices are in /dev/input/js0, /dev/input/js1, etc.\n  \"layout name\"     Loads the given layout in an already running\n                    instance of QJoyPad, or starts QJoyPad using the\n                    given layout.\n");
+		 	qWarning("QJoyPad 2.1\nUsage: qjoypad [--nogui] [--device \"/device/path\"] [\"layout name\"]\n\nOptions:\n  --nogui           Don't use any graphical interface\n  --device path     Look for joystick devices in \"path\". This should\n                    be something like \"/dev/input/js\" if your game\n                    devices are in /dev/input/js0, /dev/input/js1, etc.\n  \"layout name\"     Loads the given layout in an already running\n                    instance of QJoyPad, or starts QJoyPad using the\n                    given layout.\n");
 			return 0;
 		 }
 		 else layout = argv[i];
@@ -100,7 +100,6 @@ int main( int argc, char **argv )
 	signal( SIGTERM, catchEND );
 	signal( SIGQUIT, catchEND );
 	signal( SIGINT, catchEND );
-
 
 	QApplication a( argc, argv );
 	form = new DMain( usegui );

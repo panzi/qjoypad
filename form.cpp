@@ -216,12 +216,37 @@ DMain::DMain( bool usegui )
 
 	int i;
 	JoyCount = 0;
+        int joynum;
+
+/*
+Code added to speed up testing joystick devices on certain systems,
+especially those that use devfs. Although opening a device file
+shouldn't take any time, it does on some systems in the case that
+the device doesn't exist. This code alleviates that problem by
+checking only files that exist, limiting the checks to the system
+maximum and in the case of devfs users checking only the devices
+which are currently plugged in. Thanks to Patrik Johansson for the
+idea and this code snippet ;)
+ */
+ 	glob_t globbuf;
+	glob(QString(DEVICE) + "*", GLOB_NOSORT, NULL, &globbuf);
+   	for(i = 0; i < globbuf.gl_pathc; i++)
+	{
+	  char *number = strpbrk(globbuf.gl_pathv[i],"0123456789");
+	  if (number != NULL)
+          {
+	    joynum = atol(number);
+	    if (JoyCount < joynum)
+	      JoyCount = joynum;
+	  }
+	}
+//--- Thanks again Patrik ;)
 
 	//find the highest-numbered joystick (in most cases, the number of joysticks available)
-	for (i = 64; i >= 0; i--)
+	for (i = JoyCount; i >= 0; i--)
 	{
 		QString filename = Device + QString::number( i );
-  		int file = open( filename, O_RDONLY );
+  		int file = open( filename, O_RDONLY | O_NONBLOCK );
 
 		if (file > 0)
 		{
@@ -520,10 +545,11 @@ void DMain::ReadLoop()
 	Finished = false;
 	while (!Finished)
 	{
-		qApp->processEvents();
 		i = stick + 1; //skip the stick we last did. (if no stick, ie -1, then go to 0)
 		stick = -1;
 		//For every joystick device we're watching...
+                //Note that select won't work here since we need to capture
+                //XWindows events...
 		for (; i < JoyCount; i++)
 		{
 			if (JoyDev[i] == -1) continue;
@@ -537,9 +563,9 @@ void DMain::ReadLoop()
 		if (stick == -1) //if there's no input for us to get,
 		{
 			usleep(1); //sleep so we don't use up all those cycles!
+	        	qApp->processEvents();
 			continue;
 		}
-		if (Finished) break;
 		if (msg.type == JS_EVENT_AXIS) //directional pad / stick
 		{
 			if (UseGui)
@@ -620,7 +646,7 @@ void DMain::ReadLoop()
 	}
 	for (i = 0; i < JoyCount; i++)
 	{
-		if (JoyDev[i]!=-1) close( JoyDev[i] );
+		//if (JoyDev[i]!=-1) close( JoyDev[i] ); segfaults after I close the first file! I can't imagine why  >.<
 	}
 }
 

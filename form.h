@@ -34,6 +34,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <linux/joystick.h>
+#include <glob.h>
+#include <stdlib.h>
 
 //Used for the types used for layouts, the function Name(int),
 //and the direction constants UP, DOWN, etc.
@@ -52,8 +54,6 @@
 // Joystick device constants
 #define JS_VERTICAL     1
 #define JS_HORIZONTAL   0
-
-#define NAME			"QJoyPad 2.0"		//The title on the title bar
 
 
 
