@@ -12,7 +12,7 @@ const char* keynames[] =
 0,
 0,
 0,
-0, //(Escape)
+"Escape",
 "1",
 "2",
 "3",
@@ -116,12 +116,21 @@ const char* keynames[] =
 0, //(Pause)
 0, //(Print Screen)
 "KP /",
-"R Alt"
+"R Alt",
+0, //(Break)
+"L Win",
+"R Win",
+"Menu",
+"F13",
+"F14",
+"F15",
+"F16",
+"F17"
 };
 
 const char* ktos( int keycode )
 {
-	if (keycode > 113 || keycode < 0) keycode = 0;
+	if (keycode > 122 || keycode < 0) keycode = 0;
 	return keynames[keycode];
 }
 

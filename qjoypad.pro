@@ -9,8 +9,8 @@ TEMPLATE = app
 INCLUDEPATH += .
 
 # Input
-HEADERS = form.h keycode.h sendevent.h flash.h
-SOURCES = form.cpp keycode.cpp main.cpp sendevent.cpp flash.cpp
-CONFIG += qt thread
+HEADERS = form.h keycode.h savetypes.h sendevent.h flash.h
+SOURCES = form.cpp keycode.cpp main.cpp savetypes.cpp sendevent.cpp flash.cpp
+CONFIG += qt
 
 INSTALLS += target

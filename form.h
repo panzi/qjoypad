@@ -5,8 +5,6 @@
 
 //Constants for you to edit!
 #define DEVICE			"/dev/input/js"	//Where your joysticks are
-#define BUTTONS		10						//Maximum number of buttons on a joystick
-#define JOYSTICKS		4						//Maximum number of joysticks
 
 //Also, if you don't like the default color for the flashing buttons,
 //you can go into flash.h and change HIGHLIGHT to any color you wish.
@@ -26,20 +24,20 @@
 #include <qcombobox.h>
 #include <qptrlist.h>
 #include <qinputdialog.h>
-#include <qfile.h>
 #include <qwidgetstack.h>
-#include <qthread.h>
-#include <qmessagebox.h>
 #include <qslider.h>
-
-//Used to grab the user's home directory
-#include <stdlib.h>
+#include <qapplication.h>
+#include <qmessagebox.h>
 
 //used for the joystick interface
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <linux/joystick.h>
+
+//Used for the types used for layouts, the function Name(int),
+//and the direction constants UP, DOWN, etc.
+#include "savetypes.h"
 
 //Used to get an input key from the user
 #include "keycode.h"
@@ -50,33 +48,16 @@
 //Used to have those nifty flashing buttons
 #include "flash.h"
 
-//Don't edit these constants ;)
-#define UP				0
-#define DOWN			1
-#define LEFT			2
-#define RIGHT			3
-#define DIRECTIONS	4
-#define ALLBUTTONS	BUTTONS + DIRECTIONS
-
-
 
 // Joystick device constants
 #define JS_VERTICAL     1
 #define JS_HORIZONTAL   0
 
+#define NAME			"QJoyPad 2.0"		//The title on the title bar
 
-#define NAME			"QJoyPad 1.4"		//The title on the title bar!
 
 
-//One keycode layout to represent one joystick.
-struct JoyKeys
-{
-	int Buttons[ALLBUTTONS];
-	int Sensitivity;
-};
 
-//One save state consisting of one layout for each joystick
-typedef JoyKeys OneSave[JOYSTICKS];
 
 //One set of buttons representing all the keys on a joystick
 //This representation also holds all the keycodes and actually
@@ -85,43 +66,29 @@ class JoyKeyPad : public QWidget
 {
 	Q_OBJECT
 	public:
-		JoyKeyPad( QWidget* parent );
-		JoyKeys getState();
+		JoyKeyPad( int buttons, QWidget* parent );
+		void getState( JoyKeys* key );
 		void flash( int index );
-		void dark( int count );
 		void sendKey( int type, int index );
 		int sensitivity();
 	public slots:	
 		void clear();
-		void setState( JoyKeys keys );
+		void setState( JoyKeys* keys );
 	private slots:
 		void getKey();
 		void all();
 	private:
-		QString Name( int index );
-		void getkey( int index );
+		int AllButtons;
 		
+		void getkey( int index );
 		GetKey* KeyDialog;
+		
 		QGridLayout* LMain;
 		QSlider* Sense;
-		FlashButton* Buttons[ALLBUTTONS];
-		int KeyCodes[ALLBUTTONS];
+		FlashButton** Buttons;
+		int* KeyCodes;
 		QPushButton* BClear;
 		QPushButton* BAll;
-};
-
-//A thread used to monitor a joystick device and produce proper results.
-class JoyThread : public QThread
-{
-	public:
-		JoyThread( int index, FlashRadioArray* sticks, JoyKeyPad* pad );
-		virtual void run();
-		void clean();
-	private:
-		int Index;
-		int JoyDev;
-		FlashRadioArray* Sticks;
-		JoyKeyPad* Pad;
 };
 
 
@@ -140,20 +107,31 @@ class DMain : public QDialog
 {
 	Q_OBJECT
 	public:
-		DMain();
+		DMain( bool usegui );
+		void LoadLayout();
+		void ReadLoop();
+		void clean();
 	private slots:
 		void CAdd();
 		void CRem();
 		void CUpdate();
 		void CRevert();
-	public slots:
+	protected slots:
 		void done( int );
 	private:	
+		void sendKey( int type, int joystick, int index );
 		void Clear();
+		
+		int* JoyDev;
+		int* AllButtons;
+
 		QVBoxLayout* LMain;
 		
-		JoyThread* Thread[JOYSTICKS];
+		int JoyCount;
+		int Layout;
+		bool UseGui; 
 	
+		bool Finished;
 		QFrame* CFrame;
 		QGridLayout* CLayout;
 		ModCombo* CCombo;
