@@ -6,6 +6,7 @@
 
 #include <linux/joystick.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 #include "button.h"
 #include "axis.h"
@@ -31,6 +32,8 @@ class JoyPad : public QObject{
 		//true iff this is currently at default settings
 		virtual bool isDefault();
 		//generates a name ("Joystick 1")
+		void unsetDev() {close(joydev); joydev = -1;};
+		void resetToDev( int dev );
 		QString getName();
 		
 		int joydev;

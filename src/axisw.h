@@ -6,7 +6,6 @@
 #include "flash.h"
 
 class AxisWidget : public FlashButton {
-	Q_OBJECT
 	public:
 		AxisWidget( Axis* a, QWidget* parent );
 		void jsevent( int val );

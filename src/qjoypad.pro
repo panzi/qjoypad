@@ -3,29 +3,35 @@
 #    QMake project file for QJoyPad    #
 #                                      #
 ########################################
-#                                      #
-#   Edit these values if you need to:  #
-#                                      #
-########################################
-
-	# Where QJoyPad will look for joystick devices:
-	DEFINES += DEVDIR='"/dev/input"'
-	
-	# Where QJoyPad will be installed:
-	target.path = /usr/local/bin
-	
-########################################
-#                                      #
-#    Leave everything else unchanged.  #
-#                                      #
-########################################
 
 
 
 
 
 
+#####   Setup Targets   #####
 
+target.path = $$PREFIX/bin
+
+icons.path = $$PREFIX/share/pixmaps/qjoypad
+icons.files = icons/*
+
+doc.path = $$PREFIX/doc/qjoypad3
+doc.files = README.txt
+
+postinstall.path = $${icons.path}
+postinstall.extra = cd $${icons.path}; ln -sf gamepad1-24x24.png icon24.png; ln -sf gamepad1-64x64.png icon64.png
+
+
+
+
+
+
+#####   Setup Compile   #####
+
+DEFINES += DEVDIR='"$$DEVDIR"'
+DEFINES += ICON24='"$${icons.path}/icon24.png"'
+DEFINES += ICON64='"$${icons.path}/icon64.png"'
 
 TEMPLATE = app
 DEPENDPATH += trayicon
@@ -44,7 +50,7 @@ HEADERS += axis.h \
            error.h \
            event.h \
            flash.h \
-           icon.h \
+		   icon.h \
            joypad.h \
            joypadw.h \
 		   joyslider.h \
@@ -62,6 +68,7 @@ SOURCES += axis.cpp \
            buttonw.cpp \
            event.cpp \
            flash.cpp \
+		   icon.cpp \
            joypad.cpp \
            joypadw.cpp \
 		   joyslider.cpp \
@@ -74,4 +81,10 @@ SOURCES += axis.cpp \
            trayicon/trayicon.cpp \
            trayicon/trayicon_x11.cpp
 
-INSTALLS += target
+
+
+
+
+#####      Install      #####
+
+INSTALLS += target icons doc postinstall

@@ -65,7 +65,7 @@ void Button::write( QTextStream* stream ) {
 	*stream << "\t" << getName() << ": ";
 	if (rapidfire) *stream << "rapidfire, ";
 	if (sticky) *stream << "sticky, ";
-	*stream << (useMouse?"mouse ":"key ") << keycode << "\n";
+	*stream << (useMouse?"mouse ":"key ") << (useMouse?mousecode:keycode) << "\n";
 }
 
 void Button::click( bool press ) {

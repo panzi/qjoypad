@@ -1,8 +1,15 @@
 
 #include "joypad.h"
 JoyPad::JoyPad( int i, int dev ) {
-	joydev = dev;
 	index = i;
+	
+	resetToDev(dev);
+	
+	jpw = NULL;
+}
+
+void JoyPad::resetToDev(int dev ) {
+	joydev = dev;
 
 	axes = 0;
 	ioctl (joydev, JSIOCGAXES, &axes);
@@ -10,13 +17,12 @@ JoyPad::JoyPad( int i, int dev ) {
 	ioctl (joydev, JSIOCGBUTTONS, &buttons);
 	
 	for (int i = 0; i < axes; i++) {
-		Axes.insert(i, new Axis(  i ));
+		if (Axes[i] == 0) Axes.insert(i, new Axis(  i ));
 	}
 	for (int i = 0; i < buttons; i++) {
-		Buttons.insert(i, new Button( i ));
+		if (Buttons[i] == 0) Buttons.insert(i, new Button( i ));
 	}
 	
-	jpw = NULL;
 }
 
 
@@ -91,24 +97,37 @@ bool JoyPad::read( QTextStream* stream ) {
 	return true;
 }
 
+//only actually writes something if this JoyPad is NON DEFAULT.
 void JoyPad::write( QTextStream* stream ) {
-	*stream << getName() << " {\n";
-    for ( QIntDictIterator<Axis> it( Axes ); it.current(); ++it )
-		if (!it.current()->isDefault()) it.current()->write( stream );
-    for ( QIntDictIterator<Button> it( Buttons ); it.current(); ++it )
-		if (!it.current()->isDefault()) it.current()->write( stream );
-	*stream << "}\n\n";
+	int i = 0; //use to test if this is default or not.
+	QString result;
+	QTextStream* s = new QTextStream(&result, IO_WriteOnly);
+	*s << getName() << " {\n";
+    for ( QIntDictIterator<Axis> it( Axes ); it.current(); ++it ) {
+		if (!it.current()->isDefault()) {
+			it.current()->write( s );
+			++i;
+		}
+	}
+    for ( QIntDictIterator<Button> it( Buttons ); it.current(); ++it ) {
+		if (!it.current()->isDefault()) {
+			it.current()->write( s );
+			++i;
+		}
+	}
+	
+	if (i > 0) {
+		*stream << result << "}\n\n";
+	}
 }
 
 void JoyPad::jsevent( js_event msg ) {
 	if (jpw != NULL) {
 		jpw->jsevent(msg);
-		return;
 	}
+	if (qApp->activeWindow() != 0 && qApp->activeModalWidget() != 0) return;
 
-	if (qApp->activeWindow() != 0 && qApp->activeModalWidget != 0) return;
-
-	if (msg.type == JS_EVENT_AXIS) {
+	if (msg.type & JS_EVENT_AXIS) {
 		Axes[msg.number]->jsevent(msg.value);
 	}
 	else {

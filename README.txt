@@ -1,6 +1,7 @@
 QJoyPad 3 Documentation
 
-Distributed with QJoyPad 3.1
+Distributed with QJoyPad 3.3; available online at
+http://qjoypad.sourceforge.net/doc/doc_index.html
 
 Nathan Gaylinn
 
@@ -23,34 +24,35 @@ Nathan Gaylinn
    3. Using QJoyPad
 
         3.1. The Tray Icon
-        3.2. The Setup Dialog
+        3.2. The Popup Menu
+        3.3. The Setup Dialog
 
-              3.2.1. The Layout Selection combo box
-              3.2.2. The Add button
-              3.2.3. The Remove button
-              3.2.4. The Update button
-              3.2.5. The Revert button
-              3.2.6. The Joystick buttons
-              3.2.7. The Joystick Component buttons
-              3.2.8. The Clear button
-              3.2.9. Quick Set
+              3.3.1. The Layout Selection combo box
+              3.3.2. The Add button
+              3.3.3. The Remove button
+              3.3.4. The Update button
+              3.3.5. The Revert button
+              3.3.6. The Joystick buttons
+              3.3.7. The Joystick Component buttons
+              3.3.8. The Clear button
+              3.3.9. Quick Set
 
-        3.3. Configuring axes
+        3.4. Configuring axes
 
-              3.3.1. The Axis Position Indicator
-              3.3.2. Making an axis "Gradient"
-              3.3.3. Switching between keyboard and mouse control
-              3.3.4. Adjusting mouse speed
-              3.3.5. Setting keys
-              3.3.6. Throttle Settings
+              3.4.1. The Axis Position Indicator
+              3.4.2. Making an axis "Gradient"
+              3.4.3. Switching between keyboard and mouse control
+              3.4.4. Adjusting mouse speed
+              3.4.5. Setting keys
+              3.4.6. Throttle Settings
 
-        3.4. Configuring buttons
+        3.5. Configuring buttons
 
-              3.4.1. Choosing a key / mouse button
-              3.4.2. Making a button "Sticky"
-              3.4.3. Using Rapid Fire
+              3.5.1. Choosing a key / mouse button
+              3.5.2. Making a button "Sticky"
+              3.5.3. Using Rapid Fire
 
-        3.5. Command-line use and scripting
+        3.6. Command-line use and scripting
 
    4. Layout Files
    5. Problems
@@ -78,17 +80,23 @@ Nathan Gaylinn
 
         5.6. This program only works in XWindows?
         5.7. But my window manager doesn't HAVE a system tray!
-        5.8. Can I plug in another joystick while QJoyPad is running?
-        5.9. Why are both Up and Down treated as the same axis?
-        5.10. All of this is too complicated. Why isn't there a button
+        5.8. I hate the QJoyPad icon. Is there any way to change it?
+        5.9. Why do I have to tell QJoyPad to "update joystick devices"?
+                Why can't it do that on its own?
+
+        5.10. When QJoyPad checks for new joysticks, it doesn't find
+                mine!
+
+        5.11. Why are both Up and Down treated as the same axis?
+        5.12. All of this is too complicated. Why isn't there a button
                 for Up?
 
-        5.11. Features and suggestions
+        5.13. Features and suggestions
 
-              5.11.1. Why can't I click with an axis, or move the mouse
+              5.13.1. Why can't I click with an axis, or move the mouse
                       with a button?
 
-              5.11.2. Why doesn't QJoyPad do _____?
+              5.13.2. Why doesn't QJoyPad do _____?
 
    6. Credits
    7. This software is GPL!
@@ -115,8 +123,8 @@ Chapter 1. Introduction
    QJoyPad can quickly swap between layouts whenever you change games, so
    you'll always have the controls right where you want them instead of
    compromising for the game's defaults or the settings you find most
-   useful in OTHER games. Now with version 3, QJoyPad also supports
-   features like rapid fire and sticky buttons (see Section 3.4.2) that
+   useful in other games. Now with version 3, QJoyPad also supports
+   features like rapid fire and sticky buttons (see Section 3.5.2) that
    can improve your gaming experience.
 
    Not a gamer? Then QJoyPad can still be pretty useful if you would find
@@ -127,13 +135,14 @@ Chapter 1. Introduction
 
 1.3. Features
 
-   * = new or improved in QJoyPad 3.1!
+   * = new or improved in QJoyPad 3.3!
 
      - Incorporates your gaming devices into any XWindows program
-     - * Move and click the mouse with your joystick
-     - * Auto-detects how many joysticks you have and how many buttons
-       and axes each supports
-     - * Support for devices with more than two axes
+     - Move and click the mouse with your joystick
+     - Auto-detects how many joysticks you have and how many buttons and
+       axes each supports
+     - * Can detect joystick devices on the fly without restarting
+     - Support for devices with more than two axes
      - Save as many layouts as you want and switch between them quickly
      - Swap layouts on the fly from the command line or from a script
      - Share layout files with your friends or even edit them by hand for
@@ -141,15 +150,17 @@ Chapter 1. Introduction
      - Color cues quickly show you which buttons you're pressing and
        which joystick you're using
      - Set or reset all the keys at once in a flash
-     - * Adjust the sensitivity of every axis independently
-     - * Quietly hides in your system tray, running in the background
+     - Adjust the sensitivity of every axis independently
+     - Quietly hides in your system tray, running in the background
        without taking up space
-     - * Make an axis "Gradient" so that a light push does a little and a
+     - * For window managers without a system tray, QJoyPad can run
+       without the tray icon.
+     - Make an axis "Gradient" so that a light push does a little and a
        harder push does more
-     - * Support for throttle controls
-     - * Make a button "Sticky" if you don't feel like holding it down
-       all the time
-     - * Turn on Rapid Fire so you don't wear out your gamepad!
+     - Support for throttle controls
+     - Make a button "Sticky" if you don't feel like holding it down all
+       the time
+     - Turn on Rapid Fire so you don't wear out your gamepad!
      _________________________________________________________________
 
 Chapter 2. Getting Started
@@ -167,38 +178,34 @@ Chapter 2. Getting Started
 
 2.2. Installation
 
-   Installing QJoyPad should be a quick and painless process. However,
-   there are two quick settings that you might need to change before
-   compiling:
+   Installing QJoyPad should be a quick and painless process. The basic
+   procedure is:
+./config
+   make
+
+   make install
+
+   however, there are two settings that might need to be changed.
 
     1. Device directory: By default, QJoyPad will look for joystick
        devices in /dev/input, but if your system puts them somewhere
-       else, you'll need to open qjoypad.pro and change the line:
-
-       DEFINES = DEVDIR='"/dev/input"'
-
-       so that instead of /dev/input it has the path where your joystick
-       devices reside. For instance, if your joystick devices are
-       /dev/js0, /dev/js1, etc., change "/dev/input" to just "/dev"
+       else, you'll need to run ./config with the argument --devdir=DIR,
+       where DIR is where your joystick devices reside. For instance, if
+       your joystick devices are /dev/js0, /dev/js1, etc., instead of
+       running ./config, run ./config --devdir="/dev"
     2. Install directory: By default, QJoyPad will try to put a copy of
-       itself in /usr/local/bin so that it will be accessible to all
-       users. If you want it to install in a different directory, open
-       qjoypad.pro and edit the line:
+       itself in /usr/local/bin, some icons in /usr/local/share/pixmaps,
+       and this readme in /usr/local/doc/qjoypad3 so that they will be
+       accessible to all users. If you want these files to go somewhere
+       other than /usr/local (or if you don't have permission to write to
+       /usr/local), you'll need to pass the argument --prefix=DIR to
+       ./config. For example, if you wanted to install QJoyPad just for
+       yourself in your home directory, you could run ./config
+       --prefix="/home/user" instead of ./config.
 
-       target.path = /usr/local/bin
-
-       so that instead of /usr/local/bin you have the directory where you
-       would like QJoyPad to install.
-
-   Now that that's taken care of, the actual installation should be a
-   cinch! Just open a console and run the following lines:
-
-   ./configure
-   make
-
-   and then if you have root privileges:
-
-   make install
+   Of course, these two options can both be used at the same time. For
+   instance ./config --devdir="/dev" --prefix="/home/user" is completely
+   valid.
      _________________________________________________________________
 
 Chapter 3. Using QJoyPad
@@ -209,7 +216,11 @@ Chapter 3. Using QJoyPad
    that usually sits on your taskbar, out of the way; when you first run
    QJoyPad, this is how it will be, just an icon. If your window manager
    doesn't support system tray icons, then you'll see QJoyPad as a tiny
-   16x16 window floating around like any other window (see Section 5.7 ).
+   24x24 window floating around like any other window (see Section 5.7 ).
+   since this might be hard to work with, QJoyPad (starting with version
+   3.3) gives you the option of having a larger icon to work with; just
+   run qjoypad --notray and QJoyPad will use a larger floating icon
+   instead of a system tray icon.
 
    By right clicking on the QJoyPad icon (it should look like an old
    gamepad), you will get a pop-up menu that lets you switch layouts
@@ -218,20 +229,31 @@ Chapter 3. Using QJoyPad
    click the icon to open the Setup Dialog.
      _________________________________________________________________
 
-3.2. The Setup Dialog
+3.2. The Popup Menu
+
+   When you right click the QJoyPad icon, a menu should pop up. The top
+   of this menu shows you which joystick devices are currently available
+   (see Section 5.2 if not all your devices are listed). Below that are
+   the options to update the layout list or the joystick devices; use
+   these if you have just put a new layout in ~/.qjoypad3 by hand or if
+   you've plugged in a new joystick device. Below even farther is a list
+   of the available layouts and the option to quit.
+     _________________________________________________________________
+
+3.3. The Setup Dialog
 
    The following sections describe the parts of the Setup Dialog going
    from the top down and from left to right.
      _________________________________________________________________
 
-3.2.1. The Layout Selection combo box
+3.3.1. The Layout Selection combo box
 
    At the top of the Setup Dialog is a combo box that says [NO LAYOUT] to
    begin with, but as you add new layouts it will serve as a drop-down
    list of all the layouts available to you.
      _________________________________________________________________
 
-3.2.2. The Add button
+3.3.2. The Add button
 
    The Add button adds a new layout to the list, asking you for a
    meaningful name. Make the name short, simple, and easy to remember,
@@ -240,13 +262,13 @@ Chapter 3. Using QJoyPad
    your computer (see Chapter 4 for details.).
      _________________________________________________________________
 
-3.2.3. The Remove button
+3.3.3. The Remove button
 
    The Remove button deletes the layout currently selected in the combo
    box, losing it forever.
      _________________________________________________________________
 
-3.2.4. The Update button
+3.3.4. The Update button
 
    The Update button saves how the keys are currently set to the current
    layout. Use this to make changes to an already-defined layout. Don't
@@ -254,14 +276,14 @@ Chapter 3. Using QJoyPad
    switching to another layout, or all the changes will be forgotten!
      _________________________________________________________________
 
-3.2.5. The Revert button
+3.3.5. The Revert button
 
    The Revert button does about the opposite of Update. If you've gone
    and changed the keys around, pressing Revert will return them to how
    they are saved in the current layout.
      _________________________________________________________________
 
-3.2.6. The Joystick buttons
+3.3.6. The Joystick buttons
 
    Immediately below the Add, Remove, Update, and Revert buttons, there
    are several buttons labeled Joystick 1, Joystick 2, etc. that serve as
@@ -272,7 +294,7 @@ Chapter 3. Using QJoyPad
    which it is.
      _________________________________________________________________
 
-3.2.7. The Joystick Component buttons
+3.3.7. The Joystick Component buttons
 
    Beneath the Joystick Buttons is a large pile of buttons representing
    every axis and button on your controller. Whenever you move the axis
@@ -282,14 +304,14 @@ Chapter 3. Using QJoyPad
    your settings.
      _________________________________________________________________
 
-3.2.8. The Clear button
+3.3.8. The Clear button
 
    The Clear button resets all the axes and buttons to nothing,
    essentially rendering the joystick disabled. From here it's easy
    enough to set the buttons you need, starting from a clean slate.
      _________________________________________________________________
 
-3.2.9. Quick Set
+3.3.9. Quick Set
 
    The Quick Set button does exactly what you'd expect, it lets you set
    all the buttons and axes quickly! When you click it, it brings up a
@@ -300,7 +322,7 @@ Chapter 3. Using QJoyPad
    than going through all the dialogs!
      _________________________________________________________________
 
-3.3. Configuring axes
+3.4. Configuring axes
 
    In QJoyPad 2, you were allowed one key to be assigned to each of four
    directions, Up, Down, Left, and Right. In version 3, there is support
@@ -319,7 +341,7 @@ Chapter 3. Using QJoyPad
    dialog.
      _________________________________________________________________
 
-3.3.1. The Axis Position Indicator
+3.4.1. The Axis Position Indicator
 
    In the middle of this dialog, you will see a white bar, divided in
    two, that represents the current position of the axis you're editing.
@@ -346,7 +368,7 @@ Chapter 3. Using QJoyPad
    it to (see Section 5.3).
      _________________________________________________________________
 
-3.3.2. Making an axis "Gradient"
+3.4.2. Making an axis "Gradient"
 
    On the upper half of this dialog, you will see a checkbox marked
    Gradient. Checking this box means that instead of just generating one
@@ -363,7 +385,7 @@ Chapter 3. Using QJoyPad
    still let you move quickly when you push it all the way.
      _________________________________________________________________
 
-3.3.3. Switching between keyboard and mouse control
+3.4.3. Switching between keyboard and mouse control
 
    On the upper half of the dialog, there is a combo box that lets you
    choose between keyboard control and mouse control. There are four
@@ -378,13 +400,13 @@ Chapter 3. Using QJoyPad
    mouse.
      _________________________________________________________________
 
-3.3.4. Adjusting mouse speed
+3.4.4. Adjusting mouse speed
 
    When using one of the mouse modes, you can set the speed of the mouse
    by adjusting the number in the upper right corner.
      _________________________________________________________________
 
-3.3.5. Setting keys
+3.4.5. Setting keys
 
    When using keyboard mode, you can set which key corresponds to which
    direction of the axis by clicking the buttons immediately below the
@@ -394,7 +416,7 @@ Chapter 3. Using QJoyPad
    direction (when the colored bar is on the right side).
      _________________________________________________________________
 
-3.3.6. Throttle Settings
+3.4.6. Throttle Settings
 
    Between these two buttons is another combo box that changes the
    throttle settings. This is meant for gamepads which have a specific
@@ -405,7 +427,7 @@ Chapter 3. Using QJoyPad
    direction or the other.
      _________________________________________________________________
 
-3.4. Configuring buttons
+3.5. Configuring buttons
 
    Similarly to the buttons corresponding to axes in the Setup Dialog,
    the ones corresponding to the buttons on your controller also light up
@@ -414,14 +436,14 @@ Chapter 3. Using QJoyPad
    that flashed. A small settings dialog will pop up.
      _________________________________________________________________
 
-3.4.1. Choosing a key / mouse button
+3.5.1. Choosing a key / mouse button
 
    At the top of this dialog is a button that you can click to set which
    key or mouse button you want to associate with this button on your
    controller. Just click on it, and the rest should be self-explanatory.
      _________________________________________________________________
 
-3.4.2. Making a button "Sticky"
+3.5.2. Making a button "Sticky"
 
    Below this and to the left is a little checkbox marked Sticky. When a
    button is set as Sticky, that means that pressing the button once will
@@ -434,7 +456,7 @@ Chapter 3. Using QJoyPad
    just press it a second time.
      _________________________________________________________________
 
-3.4.3. Using Rapid Fire
+3.5.3. Using Rapid Fire
 
    Just next to the Sticky checkbox is another one marked Rapid Fire.
    When this is enabled for a button, holding that button down means that
@@ -450,7 +472,7 @@ Chapter 3. Using QJoyPad
    you will be shooting Rapid Fire.
      _________________________________________________________________
 
-3.5. Command-line use and scripting
+3.6. Command-line use and scripting
 
    Although QJoyPad only works in XWindows, it supports changing axes on
    the fly from the command line. If you want to load up the layout named
@@ -553,11 +575,12 @@ Chapter 5. Problems
    the wrong directory.
 
    First, double check that your joysticks are plugged in. If they
-   aren't, plug them, load any modules you might need, and restart
-   QJoyPad.
+   aren't, plug them, load any modules you might need, and tell QJoyPad
+   to Update joystick devices with the popup menu (remember, this menu is
+   only accessible when the Setup Dialog is closed).
 
    If you're still having trouble, QJoyPad might have been compiled with
-   the DEVDIR setting pointing to the wrong place. That option had to be
+   the devdir setting pointing to the wrong place. That option had to be
    set at compile time, and to change it you must recompile (see Section
    2.2); however, if you don't want to bother with that, you can specify
    the location of your devices as an argument. Using the command
@@ -605,21 +628,16 @@ Chapter 5. Problems
 
 5.4. QJoyPad won't start!
 
-   There are a few reasons why QJoyPad won't start. For one, it won't
-   start unless it finds joystick devices available on your system. If
-   you're having trouble getting it to find your joysticks, check out
-   Section 5.2.
+   There are two reasons why QJoyPad won't start. For one, QJoyPad won't
+   start is if it's already running! To make sure QJoyPad doesn't
+   interfere with itself, only one version of QJoyPad is allowed to run
+   at a time. If you can't see an already open version, look for the icon
+   in the system tray. If you really can't find it anywhere, try running
+   "killall qjoypad" and then "rm -f /var/run/qjoypad.pid" and then try
+   starting QJoyPad again. It should work this time.
 
-   Another reason QJoyPad might not start is if it's already running! To
-   make sure QJoyPad doesn't interfere with itself, only one version of
-   QJoyPad is allowed to run at a time. If you can't see an already open
-   version, look for the icon in the system tray. If you really can't
-   find it anywhere, try running "killall qjoypad" and then "rm -f
-   /var/run/qjoypad.pid" and then try starting QJoyPad again. It should
-   work this time.
-
-   Finally, QJoyPad won't actually run if one of its arguments is -h or
-   -help. When it sees one of those arguments, it outputs usage
+   Finally, QJoyPad won't actually run if one of its arguments is --h or
+   --help. When it sees one of those arguments, it outputs usage
    information to the console and then quits. If you're running QJoyPad
    away from a console or want it to run like normal, don't give one of
    these arguments.
@@ -661,29 +679,55 @@ Chapter 5. Problems
    conceptually, and to make a version that doesn't use it would be a lot
    of work, so for now I plan to keep things as they are.
 
-   However, if I get enough people who want the icon gone, I'll consider
-   making it optional. One possible way around it I've thought of is to
-   just make a small window (small, but bigger than that tiny icon!) that
-   would serve the same purpose as the tray icon and would still be out
-   of the way. Let me know if you'd be interested in this feature or if
-   you have any better ideas!
+   However, to accommodate those of you who don't have a system tray and
+   can't stand that little icon, using the argument --notray makes a
+   floating icon that is much bigger instead of the little tray icon. It
+   still behaves exactly as the smaller icon would, except it is larger
+   and cannot be captured by the system tray.
      _________________________________________________________________
 
-5.8. Can I plug in another joystick while QJoyPad is running?
+5.8. I hate the QJoyPad icon. Is there any way to change it?
 
-   Yes, but QJoyPad won't see it. It also won't notice if you pull a
-   joystick out while it's running. In order to change joysticks in any
-   way, you must close QJoyPad, make the adjustments, and then restart
-   QJoyPad.
-
-   However, I am very much planning to change this in newer versions.
-   With the way things work in version 3, it shouldn't be THAT
-   particularly hard to add a menu item like Update joystick devices to
-   go along with Update layout list, so keep an eye out for this in
-   future releases.
+   Absolutely! Starting with version 3.3, QJoyPad stores its icons in
+   $PATH/share/pixmaps/qjoypad (where $PATH is the install path used by
+   ./config, /usr/local> by default) and actually comes with a few
+   different icons to choose from. In that directory, there are two
+   files, icon24.png and icon64.png which correspond to the small and
+   large icons that qjoypad will use. These files are just links, and can
+   be relinked to any png image of the appropriate size. Feel free to
+   switch between the provided icons, change them, or make your own!
+   QJoyPad should look how you want it to.
      _________________________________________________________________
 
-5.9. Why are both Up and Down treated as the same axis?
+5.9. Why do I have to tell QJoyPad to "update joystick devices"? Why can't
+it do that on its own?
+
+   It can! With the hotplug options of the more recent Linux kernels, not
+   only is it easy to automatically load the right modules for a joystick
+   when it is plugged in, but also to notify QJoyPad and have it update
+   its list. Unfortunately, this is a little complex, still not available
+   on everyone's computer, and still in development. If you'd like to get
+   this setup, I'd love to help you figure things out and perhaps I'll
+   make it a standard feature of QJoyPad once I have a better idea of
+   what needs to be done on various systems. Please, either contact me
+   for help getting started, or send me an email after you get it working
+   explaining how you did it ;) To make QJoyPad search for new devices,
+   use the command qjoypad --update.
+     _________________________________________________________________
+
+5.10. When QJoyPad checks for new joysticks, it doesn't find mine!
+
+   When you plug in a joystick, there are certain things that have to
+   happen for the joystick to become available to programs like QJoyPad.
+   Mainly, the joystick has to be recognized and drivers have to be
+   loaded. Even if this process is automatic on your computer it could
+   take a few seconds, so if QJoyPad can't find your device right away,
+   try again a few moments later. If driver modules aren't loaded
+   automatically, don't forget to load them before you ask QJoyPad to
+   look for new devices. If you keep having troubles, see Section 5.2.
+     _________________________________________________________________
+
+5.11. Why are both Up and Down treated as the same axis?
 
    That's because they are the same axis. An "axis" on a joystick (or
    gamepad) isn't actually a direction, but a dimension. A standard
@@ -700,10 +744,10 @@ Chapter 5. Problems
    corresponds to changes from controller to controller and there's no
    way for me to know which is which. If you don't know which axis to set
    for which direction, move in the direction you want and see which
-   button lights up, or try using QuickSet instead.
+   button lights up, or try using Quick Set instead.
      _________________________________________________________________
 
-5.10. All of this is too complicated. Why isn't there a button for Up?
+5.12. All of this is too complicated. Why isn't there a button for Up?
 
    Unfortunately, adding new features means increasing complexity and
    making things more confusing. That's just how things go. If you just
@@ -720,11 +764,11 @@ Chapter 5. Problems
    so they aren't both called "qjoypad"), just not at the same time.
      _________________________________________________________________
 
-5.11. Features and suggestions
+5.13. Features and suggestions
 
-5.11.1. Why can't I click with an axis, or move the mouse with a button?
+5.13.1. Why can't I click with an axis, or move the mouse with a button?
 
-5.11.2. Why doesn't QJoyPad do _____?
+5.13.2. Why doesn't QJoyPad do _____?
 
    For the sake of my sanity, I didn't program every possible thing I
    could imagine someone wanting to do into QJoyPad. I added in the

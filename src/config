@@ -1,0 +1,40 @@
+#!/bin/bash
+
+devdir="/dev/input"
+prefix="/usr/local"
+
+for arg in $*
+do
+	case $arg in
+		--help)	echo
+'Usage: ./config [--devdir="dir"] [--prefix="prefix"] [--help]
+
+Options:
+     --devdir=DIR   Set the path where QJoyPad will look for your joystick
+                    devices to be DIR. If your devices are /dev/js0, /dev/js1,
+                    etc., this should be just "/dev".
+ 
+     --prefix=DIR   Set the path where QJoyPad and its components will be
+                    installed. By default, this is /usr/local.
+ 
+     --help         Show this message.'; exit 0;;
+        --devdir=*) devdir=${arg##*=}
+        	if [[ ! -d $devdir ]]
+            then
+            	echo "Invalid device directory given: $devdir"
+                exit 1
+            fi ;;
+        --prefix=*) prefix=${arg##*=}
+        	if [[ ! -d $prefix ]]
+            then
+            	echo "Invalid prefix directory given: $prefix"
+                exit 1
+            fi ;;
+        *)  echo "Unrecognized argument: \"$arg\". Try ./config --help for help."
+	esac
+done
+
+arg1="DEVDIR=$devdir"
+arg2="PREFIX=$prefix"
+
+qmake -makefile "$arg1" "$arg2" qjoypad.pro

@@ -18,6 +18,6 @@
 //fastest the mouse can go. Completely arbitrary.
 #define MAXMOUSESPEED 5000
 
-#define NAME "QJoyPad 3.1"
+#define NAME "QJoyPad 3.3"
 
 #endif

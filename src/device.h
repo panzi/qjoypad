@@ -5,6 +5,6 @@
 #include "joypad.h"
 
 extern QIntDict<JoyPad> available;
-
+extern QIntDict<JoyPad> joypads;
 
 #endif

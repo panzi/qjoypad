@@ -14,7 +14,6 @@
 class LayoutManager;
 
 class LayoutEdit : public QDialog {
-	Q_OBJECT
 	public:
 		LayoutEdit( LayoutManager* l );
 		void setLayout(QString layout);

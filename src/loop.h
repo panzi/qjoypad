@@ -14,7 +14,6 @@
 
 
 class JoyLoop : public QEventLoop {
-	Q_OBJECT
 	public:
 		bool processEvents( ProcessEventsFlags );
 };

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** TrayIcon meta object code from reading C++ file 'trayicon.h'
 **
-** Created: Mon May 31 10:09:03 2004
+** Created: Sat Jun 19 23:11:46 2004
 **      by: The Qt MOC ($Id: qt/moc_yacc.cpp   3.1.2   edited Feb 24 09:29 $)
 **
 ** WARNING! All changes made in this file will be lost!

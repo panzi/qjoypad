@@ -2,8 +2,9 @@
 
 LayoutEdit::LayoutEdit( LayoutManager* l ) {
 	lm = l;
-	
+
 	LMain = new QVBoxLayout( this,5,5 );
+
 	QFrame* frame = new QFrame(this);
 	frame->setFrameStyle(QFrame::Box | QFrame::Sunken );
 	QGridLayout* g = new QGridLayout(frame,2,1,5,5);
@@ -50,8 +51,8 @@ LayoutEdit::LayoutEdit( LayoutManager* l ) {
 	connect( JoyButtons, SIGNAL( changed( int ) ), PadStack, SLOT( raiseWidget( int )));
 	
 	updateLayoutList();
-	
-	QHBoxLayout* h = new QHBoxLayout(this,0,5);		
+
+	QHBoxLayout* h = new QHBoxLayout(0,0,5);		
 		QPushButton* close = new QPushButton( "-- Close Dialog --", this );
 		connect(close, SIGNAL(clicked()), this, SLOT(close()));
 		h->addWidget(close);

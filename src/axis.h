@@ -17,7 +17,6 @@ enum AxisMode {keybd, mousepv, mousenv, mouseph, mousenh};
 //represents one joystick axis
 class Axis : public QObject {
 	friend class AxisEdit;
-	Q_OBJECT
 	public:
 		Axis( int i );
 		~Axis();

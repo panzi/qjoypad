@@ -2,14 +2,26 @@
 
 const char* NL = "[NO LAYOUT]";
 
-LayoutManager::LayoutManager() {
+LayoutManager::LayoutManager( bool useTrayIcon ) {
 	le = NULL;
-	Popup = new QPopupMenu();
-	fillPopup();
-	connect(Popup,SIGNAL(activated(int)),this, SLOT(trayMenu(int)));
-	Tray = new TrayIcon(Icon(),NAME,Popup,0,"tray");
-	connect(Tray, SIGNAL( clicked(const QPoint&, int)), this, SLOT( trayClick()));
-    Tray->show();
+
+   	Popup = new QPopupMenu();
+   	fillPopup();
+   	connect(Popup,SIGNAL(activated(int)),this, SLOT(trayMenu(int)));
+
+	if (useTrayIcon) {
+    	TrayIcon* Tray = new TrayIcon(QPixmap(ICON24),NAME,Popup,0,"tray");
+    	connect(Tray, SIGNAL( clicked(const QPoint&, int)), this, SLOT( trayClick()));
+		Tray->show();
+	}
+	else {
+		FloatingIcon* Icon = new FloatingIcon(QPixmap(ICON64),Popup,0,"tray");
+		connect(Icon, SIGNAL( clicked()), this, SLOT( trayClick()));
+		connect(Icon, SIGNAL( closed()), qApp, SLOT( quit()));
+    	Icon->show();
+	}
+	
+	setLayoutName(NL);
 }
 
 
@@ -36,9 +48,7 @@ bool LayoutManager::load(const QString& name) {
 	
     QIntDictIterator<JoyPad> it( joypads );
     for ( ; it.current(); ++it ) {
-		if (available[it.currentKey()] == 0) {
-			joypads.remove(it.currentKey());
-		}
+		it.current()->toDefault();
 	}
 	
 	QTextStream stream( &file );
@@ -80,6 +90,9 @@ bool LayoutManager::load() {
 		QTextStream stream(&file);
 		name = stream.readLine();
 		file.close();
+		if (name == "") {
+			return false;
+		}
 		return load(name);
 	}
 	return false;
@@ -163,11 +176,13 @@ void LayoutManager::remove() {
 	clear();
 }
 
+/*
 void LayoutManager::addJoyPad(int index, JoyPad* pad ) {
 	joypads.insert(index, pad);
 	int id = Popup->idAt(0);
 	Popup->changeItem(id,Popup->text(id) + "  " + QString::number(index + 1));
 }
+*/
 
 QStringList LayoutManager::getLayoutNames() {
 	QStringList result = QDir(settingsDir).entryList("*.lyt");
@@ -182,8 +197,8 @@ QStringList LayoutManager::getLayoutNames() {
 
 void LayoutManager::setLayoutName(QString name) {
 	CurrentLayout = name;
-	int id = Popup->idAt(1);
-	Popup->changeItem(id,"Layout:  " + name);
+//	int id = Popup->idAt(1);
+	fillPopup();
 	
 	if (le != 0) {
 		le->setLayout(name);
@@ -196,11 +211,15 @@ void LayoutManager::setLayoutName(QString name) {
 
 
 void LayoutManager::trayClick() {
+	if (available.count() == 0) {
+		error("No joystick devices available","No joystick devices are currently available to configure.\nPlease plug in a gaming device and select\n\"Update Joystick Devices\" from the popup menu.");
+		return;
+	}
 	le = new LayoutEdit(this);
 	le->setLayout(CurrentLayout);
 	le->exec();
 	delete le;
-	le = NULL;
+	le = 0;
 }
 
 void LayoutManager::trayMenu(int id) {
@@ -210,17 +229,26 @@ void LayoutManager::trayMenu(int id) {
 }
 
 void LayoutManager::fillPopup() {
-  Popup->clear();
-  Popup->insertItem("Joysticks:");
-  Popup->insertItem("Layout:  ");
-  Popup->insertSeparator();
-  Popup->insertItem("Update layout list", this, SLOT(fillPopup()));
-//  Popup->insertItem("Update joystick devices", this, SLOT(fillPopup()));
-  Popup->insertSeparator();
-  QStringList names = getLayoutNames();
-  for ( QStringList::Iterator it = names.begin(); it != names.end(); ++it ) {
-	  Popup->insertItem(*it);
-  }
-  Popup->insertSeparator();
-  Popup->insertItem("Quit",qApp,SLOT(quit()));
+	Popup->clear();
+	QString devs = "Joysticks: ";
+	QIntDictIterator<JoyPad> it( available );
+	for ( ; it.current(); ++it ) {
+		devs += QString::number(it.currentKey() + 1) + " ";
+	}
+	Popup->insertItem(devs);
+	Popup->insertSeparator();
+	Popup->insertItem("Update layout list", this, SLOT(fillPopup()));
+	Popup->insertItem("Update joystick devices", this, SLOT(updateJoyDevs()));
+	Popup->insertSeparator();
+	QStringList names = getLayoutNames();
+	for ( QStringList::Iterator it = names.begin(); it != names.end(); ++it ) {
+		int id = Popup->insertItem(*it);
+		if (CurrentLayout == (*it)) Popup->setItemChecked(id,true);
+	}
+	Popup->insertSeparator();
+	Popup->insertItem("Quit",qApp,SLOT(quit()));
+}
+
+void LayoutManager::updateJoyDevs() {
+	raise(SIGUSR1);
 }
