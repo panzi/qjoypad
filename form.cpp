@@ -12,43 +12,30 @@ JoyKeyPad::JoyKeyPad( QWidget* parent )
 	Sense->setTickInterval( 4096 );
 	LMain->addMultiCellWidget( Sense, 0,0,0,1);
 	
-	Buttons[UP] = new FlashButton( "Up", this, QString::number(UP) );
-	LMain->addWidget( Buttons[UP], 1, 0 );
-	connect( Buttons[UP], SIGNAL( clicked() ), this, SLOT( getKey() ));
-	Buttons[DOWN] = new FlashButton( "Down", this, QString::number(DOWN) );
-	LMain->addWidget( Buttons[DOWN], 1, 1 );
-	connect( Buttons[DOWN], SIGNAL( clicked() ), this, SLOT( getKey() ));
-	Buttons[LEFT] = new FlashButton( "Left", this, QString::number(LEFT) );
-	LMain->addWidget( Buttons[LEFT], 2, 0 );
-	connect( Buttons[LEFT], SIGNAL( clicked() ), this, SLOT( getKey() ));
-	Buttons[RIGHT] = new FlashButton( "Right", this, QString::number(RIGHT) );
-	LMain->addWidget( Buttons[RIGHT], 2, 1 );
-	connect( Buttons[RIGHT], SIGNAL( clicked() ), this, SLOT( getKey() ));
-	
-	for (int i = 0; i < BUTTONS; i++)
+	for (int i = 0; i < ALLBUTTONS; i++)
 	{
-		Buttons[i] = new FlashButton( "Buttons " + QString::number( i + 1 ), this, QString::number(i) );
-		LMain->addWidget( Buttons[i], 3 + i / 2, i % 2);
+		Buttons[i] = new FlashButton( Name( i ), this, QString::number(i) );
+		LMain->addWidget( Buttons[i], 1 + i / 2, i % 2);
 		connect( Buttons[i], SIGNAL( clicked() ), this, SLOT( getKey() ));
 	}
 	
 	BClear = new QPushButton( "Clear", this );
 	BClear->setAutoDefault( false );
-	LMain->addWidget( BClear, 3 + BUTTONS / 2, 0 );
+	LMain->addWidget( BClear, 1 + ALLBUTTONS / 2, 0 );
 	connect( BClear, SIGNAL( clicked() ), this, SLOT( clear() ));
 	
 	BAll = new QPushButton( "Set all keys", this );
 	BAll->setAutoDefault( false );
-	LMain->addWidget( BAll, 3 + BUTTONS / 2, 1 );
+	LMain->addWidget( BAll, 1 + ALLBUTTONS / 2, 1 );
 	connect( BAll, SIGNAL( clicked() ), this, SLOT( all() ));
 	
-	Key = 0;
+	KeyDialog = 0;
 }
 
 JoyKeys JoyKeyPad::getState()
 {
 	JoyKeys result;
-	for (int i = 0; i < BUTTONS + 4; i++)
+	for (int i = 0; i < ALLBUTTONS; i++)
 	{
 		result.Buttons[i] = KeyCodes[i];
 	}
@@ -61,7 +48,20 @@ void JoyKeyPad::flash( int index )
 	Buttons[index]->flash();
 }
 
-void JoyKeyPad::key( int type, int index )
+void JoyKeyPad::dark( int count )
+{
+	if (count == -1)
+		count = ALLBUTTONS;
+	else
+		count += DIRECTIONS;
+		
+	for (int i = 0; i < count; i++)
+	{
+		Buttons[i]->dark();
+	}
+}
+
+void JoyKeyPad::sendKey( int type, int index )
 {
 	//if the main dialog isn't the active window,
 	//and either the getkey dialog is not running
@@ -69,13 +69,69 @@ void JoyKeyPad::key( int type, int index )
 	//This is to keep the user from causing interesting
 	//effects by triggering QJoyPad with the events
 	//produced BY QJoyPad.
-	if (!isActiveWindow() && (!Key || !Key->isActiveWindow())) sendevent(type, KeyCodes[index]); 
+	//!KeyDialog is needed because accessing isActiveWindow()
+	//of an undefined KeyDialog is a surefire segfault.
+	if (!isActiveWindow() && (!KeyDialog || !KeyDialog->isActiveWindow())) sendevent(type, KeyCodes[index]); 
 	flash( index );
 }
 
 int JoyKeyPad::sensitivity()
 {
 	return Sense->value();
+}
+
+//This is the signal that calls the real function
+void JoyKeyPad::getKey()
+{
+	getkey( QString(sender()->name()).toInt() );
+}
+
+void JoyKeyPad::setState( JoyKeys keys )
+{
+	for (int i = 0; i < ALLBUTTONS; i++)
+	{
+		KeyCodes[i] = keys.Buttons[i];
+		Buttons[i]->setText( Name(i) + " : " + ktos( KeyCodes[i] ) );
+		Sense->setValue( keys.Sensitivity );
+	}
+}
+
+void JoyKeyPad::clear()
+{
+	for (int i = 0; i < ALLBUTTONS; i++)
+	{
+		KeyCodes[i] = 0;
+		Buttons[i]->setText( Name(i) + " : " + ktos( 0 ));
+	}
+}
+
+void JoyKeyPad::getkey( int index )
+{
+	QString fullname = Name(index);
+	KeyDialog = new GetKey( fullname );
+	KeyDialog->exec();
+	
+	int keycode = KeyDialog->result();
+	if (keycode == 9) keycode = 0; //Capture escape as NoKey
+	QString keyname = ktos( keycode );
+
+	delete KeyDialog;
+	KeyDialog = 0; //So I know that it's no longer active in sendKey
+	
+	if (keyname) //If they gave an acceptible key...
+	{            //I check this to disallow things like CapsLock
+					 //which have interesting side effects
+		KeyCodes[index] = keycode;
+		Buttons[index]->setText( fullname + " : " + keyname );
+	}
+}
+
+void JoyKeyPad::all()
+{
+	for (int index = 0; index < ALLBUTTONS; index++)
+	{
+		getkey( index );
+	}
 }
 
 QString JoyKeyPad::Name( int index )
@@ -93,64 +149,9 @@ QString JoyKeyPad::Name( int index )
 		case RIGHT:	fullname = "Right";
 						break;
 		default:
-						fullname = "Button " + QString::number( index + 1);
+						fullname = "Button " + QString::number( index - DIRECTIONS + 1);
 	}
 	return fullname;
-}
-
-void JoyKeyPad::getKey()
-{
-	getkey( QString(sender()->name()).toInt() );
-}
-
-void JoyKeyPad::setState( JoyKeys keys )
-{
-	for (int i = 0; i < BUTTONS + 4; i++)
-	{
-		KeyCodes[i] = keys.Buttons[i];
-		Buttons[i]->setText( Name(i) + " : " + ktos( KeyCodes[i] ) );
-		Sense->setValue( keys.Sensitivity );
-	}
-}
-
-void JoyKeyPad::clear()
-{
-	for (int i = 0; i < BUTTONS + 4; i++)
-	{
-		KeyCodes[i] = 0;
-		Buttons[i]->setText( Name(i) + " : " + ktos( 0 ));
-	}
-}
-
-void JoyKeyPad::getkey( int index )
-{
-	QString fullname = Name(index);
-	Key = new GetKey( fullname );
-	Key->exec();
-	
-	int keycode = Key->result();
-	QString keyname = ktos( keycode );
-
-	delete Key;
-	Key = 0;
-	
-	if (keyname)
-	{
-		KeyCodes[index] = keycode;
-		Buttons[index]->setText( fullname + " : " + keyname );
-	}
-}
-
-void JoyKeyPad::all()
-{
-	for (int index = BUTTONS; index < BUTTONS + 4; index++)
-	{
-		getkey( index );
-	}
-	for (int index = 0; index < BUTTONS; index++)
-	{
-		getkey( index );
-	}
 }
 
 
@@ -173,83 +174,87 @@ JoyThread::JoyThread( int index, FlashRadioArray* sticks, JoyKeyPad* pad )
 void JoyThread::run()
 {
 	//can't use qfile here as it doesn't allow reading of arbitrary data types.
-	file = open(QString( DEVICE ) + QString::number(Index), O_RDONLY);
-	if (file==-1) return;
+	JoyDev = open(QString( DEVICE ) + QString::number(Index), O_RDONLY);
+	if (JoyDev==-1) return; //if can't access the device, give up that device.
 	
-	Sticks->setEnabled( Index, true );
-	Pad->setEnabled( true );
+	Sticks->dark( Index );//show that the joystick is active
+
+	//show which buttons the joystick api thinks are available.
+	char buttons;
+	ioctl(JoyDev, JSIOCGBUTTONS, &buttons);
+	Pad->dark( buttons );
 	
 	unsigned int len;
-	int value;
 	js_event msg;
 
-	bool finished = false;
-	bool Pressed[BUTTONS + 4];
-	bool oldjoy = false;
-	bool joy = false;
-	
-	int minzero, maxzero;
-	
-	for (int i = 0; i < BUTTONS + 4; i++)
+	bool Pressed[ALLBUTTONS];
+	for (int i = 0; i < ALLBUTTONS; i++)
 	{
 		Pressed[i] = false;
 	}
 
 
-	while (!finished)
+	//used to decide whether or not to flash the joystick button
+	bool oldjoy = false;
+	bool joy = false;
+	
+	int minzero, maxzero;
+
+
+	while (true)
 	{
-		len = read( file, &msg, sizeof(js_event));
-		if (len < sizeof(js_event))
+		//read in one event
+		len = read( JoyDev, &msg, sizeof(js_event));
+		if (len < sizeof(js_event)) //if it's... not right
 		{
-			finished = true;
-			continue;
+			close(JoyDev);
+			break; //quit.
 		}
+		
 		if (msg.type == JS_EVENT_AXIS) //directional pad / stick
 		{
-			value = msg.value;
-
 			maxzero = Pad->sensitivity();
 			minzero = - maxzero;
 			if (msg.number == JS_VERTICAL) //Vertical axis
 			{
-				if (value > maxzero) //Down
+				if (msg.value > maxzero) //Down
 				{
-					if (Pressed[UP]) Pad->key(KeyRelease, UP);
-					if (!Pressed[DOWN]) Pad->key(KeyPress, DOWN);
+					if (Pressed[UP]) Pad->sendKey(KeyRelease, UP);
+					if (!Pressed[DOWN]) Pad->sendKey(KeyPress, DOWN);
 					Pressed[DOWN]=true; Pressed[UP]=false;
 				}
-				else if (value < minzero) //Up
+				else if (msg.value < minzero) //Up
 				{
-					if (Pressed[DOWN]) Pad->key(KeyRelease, DOWN);
-					if (!Pressed[UP]) Pad->key(KeyPress, UP);
+					if (Pressed[DOWN]) Pad->sendKey(KeyRelease, DOWN);
+					if (!Pressed[UP]) Pad->sendKey(KeyPress, UP);
 					Pressed[DOWN]=false; Pressed[UP]=true;
 				}
 				else //Neutral
 				{
-					if (Pressed[UP]) Pad->key(KeyRelease, UP);
-					if (Pressed[DOWN]) Pad->key(KeyRelease, DOWN);
+					if (Pressed[UP]) Pad->sendKey(KeyRelease, UP);
+					if (Pressed[DOWN]) Pad->sendKey(KeyRelease, DOWN);
 					Pressed[DOWN]=false; Pressed[UP]=false;
 				}
 			}
 			
 			if (msg.number==JS_HORIZONTAL) //Horizontal axis
 			{
-				if (value > maxzero) //Right
+				if (msg.value > maxzero) //Right
 				{
-					if (Pressed[LEFT]) Pad->key(KeyRelease, LEFT);
-					if (!Pressed[RIGHT]) Pad->key(KeyPress, RIGHT);
+					if (Pressed[LEFT]) Pad->sendKey(KeyRelease, LEFT);
+					if (!Pressed[RIGHT]) Pad->sendKey(KeyPress, RIGHT);
 					Pressed[RIGHT]=true; Pressed[LEFT]=false;
 				}
-				else if (value < minzero) //Left
+				else if (msg.value < minzero) //Left
 				{
-					if (Pressed[RIGHT]) Pad->key(KeyRelease, RIGHT);
-					if (!Pressed[LEFT]) Pad->key(KeyPress, LEFT);
+					if (Pressed[RIGHT]) Pad->sendKey(KeyRelease, RIGHT);
+					if (!Pressed[LEFT]) Pad->sendKey(KeyPress, LEFT);
 					Pressed[RIGHT]=false; Pressed[LEFT]=true;
 				}
 				else //Neutral
 				{
-					if (Pressed[RIGHT]) Pad->key(KeyRelease, RIGHT);
-					if (Pressed[LEFT]) Pad->key(KeyRelease, LEFT);
+					if (Pressed[RIGHT]) Pad->sendKey(KeyRelease, RIGHT);
+					if (Pressed[LEFT]) Pad->sendKey(KeyRelease, LEFT);
 					Pressed[RIGHT]=false; Pressed[LEFT]=false;
 				}
 			}
@@ -257,17 +262,16 @@ void JoyThread::run()
 		
 		if (msg.type==JS_EVENT_BUTTON) //Buttons
 		{
-			if (Pressed[msg.number] != msg.value )
+			if (Pressed[DIRECTIONS + msg.number] != msg.value )
 			{
-				Pad->key( msg.value?KeyPress:KeyRelease, msg.number);
-				Pressed[msg.number] = msg.value;
+				Pad->sendKey( msg.value?KeyPress:KeyRelease, DIRECTIONS + msg.number);
+				Pressed[DIRECTIONS + msg.number] = msg.value;
 			}
 		}
 		
 		
-		
 		joy = false;
-		for (int i = 0; i < BUTTONS + 4; i++)
+		for (int i = 0; i < ALLBUTTONS; i++)
 		{
 			if (Pressed[i])
 			{
@@ -278,16 +282,29 @@ void JoyThread::run()
 		if (joy != oldjoy) Sticks->flash(Index);
 		oldjoy = joy;
 	}
-	Sticks->setEnabled( Index, false );
-	Pad->setEnabled( false );
 }
 
 void JoyThread::clean()
 {
-	//file->close();
-	close(file);
+	//JoyDev->close();
+	close(JoyDev);
 }
 
+
+
+
+
+
+
+
+ModCombo::ModCombo( QWidget* parent )
+			:QComboBox( parent )
+{
+}
+
+void ModCombo::keyPressEvent( QKeyEvent* )
+{
+}
 
 
 
@@ -308,7 +325,7 @@ DMain::DMain()
 	CFrame->setFrameStyle( QFrame::Box | QFrame::Raised );
 	CLayout = new QGridLayout( CFrame, 2, 4, 5, 5 );
 
-	CCombo = new QComboBox( CFrame );
+	CCombo = new ModCombo( CFrame );
 	CLayout->addMultiCellWidget( CCombo, 0,0,0,3);
 	connect( CCombo, SIGNAL( activated( int ) ), this, SLOT( CRevert() ));
 
@@ -346,10 +363,9 @@ DMain::DMain()
 	
 	for (i = 0; i < JOYSTICKS; i++)
 	{
-		JoyStick->setEnabled( i, false );
-	
+		JoyStick->dark( i );
 		Stack->addWidget( new JoyKeyPad( Stack ));
-		Stack->widget( i )->setEnabled( false );
+		((JoyKeyPad*)Stack->widget( i ))->dark( -1 );
 		
 		Thread[i] = new JoyThread( i, JoyStick, ((JoyKeyPad*)Stack->widget( i )));
 		Thread[i]->start();
@@ -431,11 +447,7 @@ void DMain::CSave()
 		stream << CCombo->text( index );
 		for (joy = 0; joy < JOYSTICKS; joy++)
 		{
-			for (button = BUTTONS; button < BUTTONS + 4; button++)
-			{
-				stream << (*Items.at(index))[joy].Buttons[button];
-			}
-			for (button = 0; button < BUTTONS; button++)
+			for (button = 0; button < ALLBUTTONS; button++)
 			{
 				stream << (*Items.at(index))[joy].Buttons[button];
 			}
@@ -476,15 +488,9 @@ void DMain::CLoad()
 		stream >> newname;
 		for (joy = 0; joy < JOYSTICKS; joy++)
 		{
-			for (button = BUTTONS; button < BUTTONS + 4; button++)
+			for (button = 0; button < ALLBUTTONS; button++)
 			{
-				if (joy < joysticks)
-					stream >> (*newitem)[joy].Buttons[button];
-				else (*newitem)[joy].Buttons[button] = 0;
-			}
-			for (button = 0; button < BUTTONS; button++ )
-			{
-				if (button < buttons + 4 && joy < joysticks)
+				if (button < buttons + DIRECTIONS && joy < joysticks)
 					stream >> (*newitem)[joy].Buttons[button];
 				else (*newitem)[joy].Buttons[button] = 0;
 			}
@@ -514,8 +520,11 @@ void DMain::done( int r )
 {
 	for (int i = 0; i < JOYSTICKS; i++)
 	{
-		Thread[i]->terminate();
-		Thread[i]->clean();
+		if (Thread[i]->running())
+		{
+			Thread[i]->terminate();
+			Thread[i]->clean();
+		}
 	}
 	XCloseDisplay( display );
 	CSave();

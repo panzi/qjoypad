@@ -1,12 +1,13 @@
-#ifndef KEY_H
-#define KEY_H
+#ifndef KEYCODE_H
+#define KEYCODE_H
 
 #include <qdialog.h>
-#include <qlabel.h>
-#include <qlayout.h>
 #include <qpainter.h>
+
+//Defines constants needed for x11Event
 #include <X11/Xlib.h>
 
+//Produce a string for any keycode
 const char* ktos( int keycode );
 
 class GetKey : public QDialog

@@ -17,20 +17,27 @@
 
 #include <qpushbutton.h>
 #include <qlayout.h>
-#include <qcolor.h>
 
 
 //A QPushButton that can flash a color
 //The color it flashes is defined by HIGHLIGHT
+//A FlashButton can now also be set dark
+//in the same way that it can flash, but
+//a FlashButton can not be dark and flash at the same time.
 class FlashButton : public QPushButton
 {
 	Q_OBJECT
 	public:
-		FlashButton( QString text, QWidget* parent = 0, QString name = "" );
+		FlashButton( QString text, QWidget* parent, QString name );
 	public slots:
 		void flash();
+		void dark();
 	private:
-		QPalette LastPalette;
+		bool isdark;
+		bool isflash;
+		QPalette Normal;
+		QPalette Dark;
+		QPalette Flash;
 };
 
 //An array of flashing toggle buttons which can be toggled in a mutually exclusive fashion
@@ -40,8 +47,8 @@ class FlashRadioArray : public QWidget
 	public:
 		FlashRadioArray( int count, QString names[], bool horizontal, QWidget* parent);
 		int getState();
-		void setEnabled( int index, bool enabled);
 	public slots: 
+		void dark( int );
 		void flash( int );
 	private slots:
 		void clicked();

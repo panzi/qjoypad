@@ -133,28 +133,32 @@ GetKey::GetKey( QString button )
 {
 	setCaption( "Choose a key" );
 
+	//I'd use a QLabel, but that steals x11Events!
+	//So, I'll draw the text directly. That means
+	//I need to resolve the size of the dialog by hand:
 	Text = "Choose a new key for " + button;
-	QRect rect = QFontMetrics( font() ).boundingRect( Text );
+	QRect rect = fontMetrics().boundingRect( Text );
 	Text += "\n(Escape for no key)";
-	QSize size( rect.width() + 20, rect.height()*2 + 20 );
-	setMinimumSize( size );
-	setMaximumSize( size );
+	setFixedSize( QSize( rect.width() + 20, rect.height()*2 + 20 ) );
 }
 
 bool GetKey::x11Event( XEvent* e )
 {
+	//On a key press, return the key and quit
 	if (e->type == KeyRelease) finish( e->xkey.keycode );
+
+	//On a redraw, display the label
 	if (e->type == Expose)
 	{
 		QPainter paint( this );
 		paint.drawText( rect(), AlignCenter, Text );
 	}
-	return false;
+	
+	return true;
 }
 
 
 void GetKey::finish( int key )
 {
-	setResult( key );
 	done( key );
 }

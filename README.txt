@@ -1,4 +1,4 @@
-QJoyPad 1.3
+QJoyPad 1.4
 -----------
 
 Table of Contents:
@@ -30,17 +30,19 @@ Table of Contents:
    5) History
  
    6) Problems
-      6.1) How come my joystick is disabled?
-      6.1) How come all of the buttons are grayed out?
-      6.2) I'm getting this strange error about different versions, 
+		6.1) I can't get my game controller to work in Linux; will QJoyPad help?
+      6.2) How come all of the buttons are darker than the rest of the window?
+      6.3) I'm getting this strange error about different versions, 
            save files, and data loss, what's wrong?
-      6.3) How does this program handle old analog devices?
-		6.4) Why does it say I'm pushing up if I'm not?
-		     I keep going in two directions at once instead of just one!
-			  I'm pushing up, but nothing's happening!
-		6.5) What about my Ueber Thrushter Meister Advanced Gaming Joystick (TM)?
-      6.6) This program only works in XWindows?
-      6.7) Why write QJoyPad in QT?
+      6.4) How does this program handle old analog devices?
+		6.5) Why does it say I'm pushing up if I'm not?
+		6.5) I keep going in two directions at once instead of just one!
+		6.5) I'm pushing up, but nothing's happening!
+		6.6) What about my Ueber Thrushter Meister Advanced Gaming Joystick (TM)?
+		6.7) This program only works for Linux?
+      6.7) Does this program work on older versions of Linux?
+      6.8) This program only works in XWindows?
+      6.9) Why write QJoyPad in QT?
  
    7) GNU General Public Licence
  
@@ -133,7 +135,7 @@ Table of Contents:
 	The bottom half is where you actually set all the keys in a given layout. 
 
 4.7)
-	First there are several buttons labled "Joystick 1", "Joystick 2", etc. that serve sort of as tabs so you can switch between different controllers to set keys. Whichever of these buttons is pressed is the controller you are currently editing. If one or more of these joystick buttons is disabled, that means the program is having a problem connection with that joystick; chances are, it's not plugged in. If you want to plug in another joystick, you'll have to restart the program after you do. (See 6.1 if you still have trouble)
+	First there are several buttons labled "Joystick 1", "Joystick 2", etc. that serve sort of as tabs so you can switch between different controllers to set keys. Whichever of these buttons is pressed is the controller you are currently editing. If one or more of these joystick buttons is darkened, that means the program is having a problem connection with that joystick; chances are, it's not plugged in. If you want to plug in another joystick, you'll have to restart the program after you do (See 6.1 if you still have trouble). If a joystick button is darkened, you can still set up that joystick, but QJoyPad can't make any use of it.
 
 
 4.8)
@@ -170,29 +172,37 @@ Table of Contents:
 6)     Problems
 
 6.1)
-	How come my joystick is disabled?
-	How come all of the buttons are grayed out?
+	I can't get my game controller to work in Linux; will QJoyPad help?
 	
-	When one of the joystick buttons is disabled and you can't click on it, that means that QJoyPad had a problem connecting to that joystick. Chances are, that means that your joystick(s) are not pluged in or are not properly detected by your operating system, or it means that QJoyPad was compiled with the wrong settings, looking for your joysticks in the wrong place.
+	Well, that depends why you can't get it to work. For the most part, the answer is "No." QJoyPad can only use joysticks and gamepads that are recognized by your kernel and that have the proper drivers loaded. If you can't get your joysticks to work at all in Linux, then, no, QJoyPad can't help. (you might want to check out the joystick.txt file included with your kernel source; if you don't know anything about working with the kernel, check out the kernel HOWTO: http://www.linux.org/docs/ldp/howto/Kernel-HOWTO.html)
+	If your joystick is detected and somewhat working, but you can't get it to work in specific programs, then QJoyPad just might be what you're looking for. One of the main reasons I wrote QJoyPad was because my gamepads simply wouldn't work with the input plugins for Linux Playstation emulators, so I know for a fact that sometimes QJoyPad can work around specific software issues.
+	The next section, 6.2, has some tips for checking if your joystick is working.
+
+
+
+6.2)
+	How come all of the buttons are darker than the rest of the window?
+	
+	When one of the joystick buttons is darkened, that means that QJoyPad had a problem connecting to that joystick. You can still set up this joystick like normal, but, for now, QJoyPad can't use it. Chances are, that means that your joystick(s) are not pluged in or are not properly detected by Linux, or it means that QJoyPad was compiled with the wrong settings, looking for your joysticks in the wrong place.
 	First, double check that your joysticks are plugged in. If they aren't, plug them in and restart the program.
 	If you're still having trouble, double check that the DEVICE setting in "form.h" is pointing at your joystick devices. If not, change DEVICE, recompile, and try again.
 	If that doesn't work, then you might want to make sure your joysticks are working properly. One way to test this is to do a "cat /dev/input/js0" (or wherever your joystick device is) and pressing a few keys on the controller. If you get a bunch of crazy characters, it's working. If not, you'll have to fiddle around with kernel drivers, and should probably look elsewhere for guidance.
 	If your joysticks are working, plugged in, and my program IS looking in the right place, then I'm not sure what to tell you. Unfortunately, I don't have a wealth of different devices and software setups to test on. If you're really stuck, drop me a line and I'll see what I can do. (wren42@users.sourceforge.net)
 	
 	
-6.2)
+6.3)
 	I'm getting this strange error about different versions, save files, and data loss; what's wrong?
 	
 	This means that the last time QJoyPad was run, it was configured differntly to support a different number of joysticks or buttons. This isn't a big problem, but I can't guarantee that the layouts will be preserved. I would suggest either deleting .qjoypadrc from your home directory and starting over with no layouts at all, or going through all the layouts and double checking that there's nothing wrong with them; they might be just fine. You won't have to deal with this issue unless you recompiled QJoyPad.
 	
 
-6.3)
+6.4)
 	How does this program handle old analog devices?
 	
 	Well, I haven't put it through extensive testing, but QJoyPad seems to do just fine with old devices on a game port as well as USB. Some devices might need some manual adjustment on the sensitivity, but that's why the slider switch is there.
 	
 	
-6.4)
+6.5)
 	Why does it say I'm pushing "Up" if I'm not?
 	I keep going in two directions at once instead of just one!
 	I'm pushing up, but nothing's happening!
@@ -200,19 +210,25 @@ Table of Contents:
 	Chances are, this means you're using an overly sensitive or poorly calibrated joystick, that you're using an old analog device, or your sensativity settings are all wrong. Try adjusting the sensativity slider, more to the right if it thinks you're pressing a button when you aren't, more to the left if it thinks you aren't pressing a button but you are. If that doesn't work, try manually adjusting your joystick (if it has adjustment nobbs/sliders), or try calibrating it with jscal.
 	
 
-6.5)
+6.6)
 	What about my Ueber Thrushter Meister Advanced Gaming Joystick (TM)?
 
 	I'm not a wealthy man. I write OpenSource, for crying out loud ;)  I only have access to a few joystick devices. This means that I can't guarantee that your controller will work, all I can say is that linux supports it, it SHOULD work. Also, I'm aware that there are some pretty amazing joysticks out there. Some have eight directions instead of four, some have multiple directional controls, throttle devices, and a whole set of other complicated add ons. My gaming devices are simple and small, so I have no familiarity with these features and I'm unlikely ever to add support for them. If you wish to discuss something important to add in or help me in doing so, let me know.
 	
 	
-6.6)
+6.7)
+	This program only works for Linux?
+	
+	That is the case. Sorry, if you use Windows, there is no version of this program for you and there never will be; that's just the way it is. QJoyPad is based on the current Linux joystick api, which means it will only work on Linux and only on versions of Linux that have the same basic joystick support. I'm not sure how long the current joystick framework has been around, but it's probably been quite a while; still, I won't guarantee that if you have an ancient version of Linux this program will work. If you have a really old system and are having problems, let me know and I might be able to help. Also, I know there are several Linux-like operating systems; if you run a system that is very much similar to linux but not quite the same, porting might be pretty easy. If you have a non-Linux system that can run XWindows and QT, then perhaps I can help you out, too. Just ask and I'll see what I can do.
+	
+
+6.8)
 	This program only works in XWindows?
 	
 	Yep, I'm afraid so. For all of you out there with old Linux console games, you'll have to try something else. Unfortunately, the old xjoypad also only works with XWindows, but joy2key is a similar program that doesn't have that limitation. Check it out at: http://interreality.org/~tetron/technology/joy2key.
 	
 	
-6.7)
+6.9)
 	Why write QJoyPad in QT?
 	
 	Well, I'm familiar with QT and it's nearly universal :)  I understand that it's not as fast or as compact as some other tool kits, but it's found almost everywhere, it works well, and I haven't yet gotten into the depths of Motif, GTK, FLTK, or any of the miriad others. Give me time, and I will learn more ;)
@@ -231,4 +247,5 @@ Table of Contents:
 
 
 
-Nathan Gaylinn (wren42@users.sourceforge.net)
+QJoyPad         (qjoypad.sourceforge.net)
+Nathan Gaylinn  (wren42@users.sourceforge.net)
