@@ -14,13 +14,10 @@
 target.path = $$PREFIX/bin
 
 icons.path = $$PREFIX/share/pixmaps/qjoypad
-icons.files = icons/*
+icons.extra = cp ../icons/* $${icons.path}; cd $${icons.path}; ln -sf gamepad4-24x24.png icon24.png; ln -sf gamepad3-64x64.png icon64.png
 
 doc.path = $$PREFIX/doc/qjoypad3
-doc.files = README.txt
-
-postinstall.path = $${icons.path}
-postinstall.extra = cd $${icons.path}; ln -sf gamepad1-24x24.png icon24.png; ln -sf gamepad1-64x64.png icon64.png
+doc.extra = cp ../README.txt ../LICENSE.txt $${doc.path}
 
 
 
@@ -45,6 +42,7 @@ HEADERS += axis.h \
            button.h \
 		   button_edit.h \
            buttonw.h \
+		   component.h \
            constant.h \
            device.h \
            error.h \
@@ -59,6 +57,7 @@ HEADERS += axis.h \
            layout_edit.h \
            loop.h \
 		   quickset.h \
+		   timer.h \
            trayicon/trayicon.h
 SOURCES += axis.cpp \
            axis_edit.cpp \
@@ -66,7 +65,7 @@ SOURCES += axis.cpp \
            button.cpp \
 		   button_edit.cpp \
            buttonw.cpp \
-           event.cpp \
+		   event.cpp \
            flash.cpp \
 		   icon.cpp \
            joypad.cpp \
@@ -87,4 +86,4 @@ SOURCES += axis.cpp \
 
 #####      Install      #####
 
-INSTALLS += target icons doc postinstall
+INSTALLS += target icons doc

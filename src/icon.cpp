@@ -12,11 +12,14 @@ FloatingIcon::FloatingIcon( const QPixmap &icon, QPopupMenu *popup, QWidget *par
 }
 
 void FloatingIcon::mousePressEvent( QMouseEvent* e ) {
+	//if it was the right mouse button,
 	if (e->button() == RightButton) {
+		//bring up the popup menu.
 		pop->popup( e->globalPos() );
 		e->accept();
 	}
 	else {
+		//otherwise, treat it as a regular click.
 		emit clicked();
 	}
 }

@@ -1,47 +1,51 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 
-#include <qstringlist.h>
-#include <qtextstream.h>
-#include <qregexp.h>
-#include <qobject.h>
+//parent of Button
+#include "component.h"
 
-#include "event.h"
-#include "constant.h"
+//to request a periodic tap on the shoulder for rapidfire
+#include "timer.h"
+
+//for getting a key name in status()
 #include "keycode.h"
 
-class Button : public QObject {
+//note that the Button class, unlike the axis class, does not need a release
+//function because it releases the key as soon as it is pressed.
+class Button : public Component {
 	friend class ButtonEdit;
 	public:
 		Button( int i );
-		virtual ~Button() {};
+		~Button();
 		//read from stream
-		virtual bool read( QTextStream* stream );
+		bool read( QTextStream* stream );
 		//write to stream
-		virtual void write( QTextStream* stream );
-		//release any keys that have been pressed through events
-		virtual void release();
+		void write( QTextStream* stream );
+		//releases any pushed buttons and returns to a neutral state
+		void release();
 		//process an event from the actual joystick device
-		virtual void jsevent( int value );
+		void jsevent( int value );
 		//reset default settings
-		virtual void toDefault();
+		void toDefault();
 		//True iff is currently using default settings
-		virtual bool isDefault();
+		bool isDefault();
 		//returns a string representation of this button.
 		QString getName() { return "Button " + QString::number(index+1);};
+		//a descriptive string used as a label for the button representing this axis
 		QString status();
+		//set the key code for this axis. Used by quickset.
 		void setKey(bool mouse, int value);
+		//happens every MSEC (constant.h) milliseconds
+		void timer( int tick );
 	protected:
 		//true iff this button is physically depressed.
 		bool isOn;
-		//counter used in making rapidfire work
-		int tick;
 		//the index of this button on the joystick
 		int index;
-		//happens every MSEC (constant.h) milliseconds
-		virtual void timerEvent( QTimerEvent* );
 		//actually sends a key press/release
 		virtual void click( bool press );
+		//is a simulated key currently depressed?
+		bool isDown;
 
 		//button settings
 		bool rapidfire;

@@ -2,8 +2,16 @@
 
 AxisEdit::AxisEdit( Axis* ax )
 	:QDialog() {
+	//build the dialog, display current axis settings  :)
 	axis = ax;
 	setCaption("Set " + axis->getName());
+	setIcon(QPixmap(ICON24));
+	
+	//h, v, and v2 are all references to layouts. They are used to refer to
+	//various layouts as the dialog is built and are not pointing to the same
+	//thing throughout. This is just because I don't care about the layouts
+	//after I have placed the widgets within them and there's no reasno to
+	//keep track of them.
 	
 	QVBoxLayout* v = new QVBoxLayout(this, 5, 5);
 	
@@ -102,13 +110,14 @@ void AxisEdit::CThrottleChanged( int index ) {
 }
 
 void AxisEdit::accept() {
-	if (CGradient->isChecked()) {
-		axis->gradient = true;
-		axis->startTimer(MSEC);
+//if the gradient status has changed, either request a timer or turn it down.
+	if (axis->gradient) {
+		if (!CGradient->isChecked()) tossTimer(axis);
 	}
 	else {
-		axis->gradient = false;
+		if (CGradient->isChecked()) takeTimer(axis);
 	}
+	axis->gradient = CGradient->isChecked();
 	axis->maxSpeed = SSpeed->value();
 	axis->throttle = CThrottle->currentItem() - 1;
 	axis->dZone = Slider->dZone();
@@ -116,6 +125,7 @@ void AxisEdit::accept() {
 	axis->mode = (AxisMode) CMode->currentItem();
 	axis->pkeycode = BPos->getValue();
 	axis->nkeycode = BNeg->getValue();
+	axis->adjustGradient();
 
 	QDialog::accept();
 }

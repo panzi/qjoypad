@@ -22,10 +22,16 @@ void AxisWidget::update() {
 }
 
 void AxisWidget::mouseReleaseEvent( QMouseEvent* e ) {
+	//create the edit dialog,
 	ae = new AxisEdit(axis);
+	//get its input
 	ae->exec();
+	//now that it's done, destroy it!
 	delete ae;
+	//and remember that it's gone.
 	ae = NULL;
 	update();
+	//release the button. Waiting to do this until the very end has the nice
+	//effect of keeping the button depressed while the dialog is shown.
 	FlashButton::mouseReleaseEvent( e );
 }

@@ -30,32 +30,46 @@ class FlashButton : public QPushButton
 	public:
 		FlashButton( QString text, QWidget* parent, QString name = "" );
 	public slots:
+		//make the button turn blue if it was gray, or visa versa.
 		void flash();
 	signals:
+		//let the world know when flash() happens!
 		void flashed( bool on );
 	private:
+		//is this currently "flashed" (ie, colored blue)?
 		bool isflash;
+		//the normal, unflashed palette
 		QPalette Normal;
+		//the colorful flashed palette
 		QPalette Flash;
 };
 
-//An array of flashing toggle buttons which can be toggled in a mutually exclusive fashion
+//An array of flashing mutually-exclusive toggle buttons.
 class FlashRadioArray : public QWidget
 {
 	Q_OBJECT
 	public:
 		FlashRadioArray( int count, QString names[], bool horizontal, QWidget* parent);
+		//returns an integer returning the currently selected button.
+		//First button is 0.
 		int getState();
 	public slots: 
+		//flash the button at the given index
 		void flash( int );
 	private slots:
+		//this is what happens when one of the buttons in the array is clicked.
 		void clicked();
 	signals:
+		//happens when the state changes. The int is the new state.
 		void changed( int );
 	private:
+		//how many buttons
 		int Count;
+		//which is currently down
 		int State;
+		//the array of buttons
 		FlashButton** Buttons;
+		//the main layout.
 		QBoxLayout* LMain;
 };
 

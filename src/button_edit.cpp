@@ -2,8 +2,10 @@
 
 ButtonEdit::ButtonEdit(Button* butt)
 	:QDialog(0,0,true) {
+	//build the dialog!
 	button = butt;
 	setCaption("Set " + button->getName());
+	setIcon(QPixmap(ICON24));
 	
 	QVBoxLayout* v = new QVBoxLayout(this, 5, 5);
 
@@ -35,32 +37,24 @@ void ButtonEdit::show() {
 }
 
 void ButtonEdit::accept() {
-	if (CRapid->isChecked()) {
-		button->rapidfire = true;
-		button->startTimer(MSEC);
+//if the rapidfire status has changed, either request a timer or turn it down.
+	if (button->rapidfire) {
+		if (!CRapid->isChecked()) tossTimer(button);
 	}
 	else {
-		button->rapidfire = false;
+		if (CRapid->isChecked()) takeTimer(button);
 	}
+	button->rapidfire = CRapid->isChecked();
 	button->sticky = (CSticky->isChecked());
-//	if (BMouse->isOn()) {
-//		button->useMouse = true;
-//		for (int i = 0; i < MAXBUTTON; i++) {
-//			if (BMKey[i]->isOn()) {
-//				button->mousecode = i+1;
-//			}
-//		}
-//	}
-//	else {
-		if (BKKey->getMouse()) {
-			button->useMouse = true;
-			button->mousecode = BKKey->getValue();
-		}
-		else {
-			button->useMouse = false;
-			button->keycode = BKKey->getValue();
-		}
-//	}
+	//if the user chose a mouse button...
+	if (BKKey->choseMouse()) {
+		button->useMouse = true;
+		button->mousecode = BKKey->getValue();
+	}
+	else {
+		button->useMouse = false;
+		button->keycode = BKKey->getValue();
+	}
 
 	QDialog::accept();
 }

@@ -1,0 +1,27 @@
+3	open	/dev/tty	#success
+3	open	/dev/tty	#success
+4	open	/usr/bin/qjoypad	#success
+3	open	/dev/tty	#success
+134758912	fopen	/usr/bin/stBPgu3c	#success
+0	chmod	/usr/bin/stBPgu3c	00755	#success
+0	rename	/usr/bin/stBPgu3c	/usr/bin/qjoypad	#success
+0	chmod	/usr/bin/qjoypad	00755	#success
+0	chown	/usr/bin/qjoypad	0	0	#success
+0	chmod	/usr/bin/qjoypad	00755	#success
+3	open	/dev/tty	#success
+3	open	/dev/tty	#success
+4	open	/usr/share/pixmaps/qjoypad/gamepad1-24x24.png	#success
+4	open	/usr/share/pixmaps/qjoypad/gamepad1-64x64.png	#success
+4	open	/usr/share/pixmaps/qjoypad/gamepad2-24x24.png	#success
+4	open	/usr/share/pixmaps/qjoypad/gamepad2-64x64.png	#success
+4	open	/usr/share/pixmaps/qjoypad/gamepad3-24x24.png	#success
+4	open	/usr/share/pixmaps/qjoypad/gamepad3-64x64.png	#success
+4	open	/usr/share/pixmaps/qjoypad/gamepad4-24x24.png	#success
+4	open	/usr/share/pixmaps/qjoypad/gamepad4-64x64.png	#success
+0	unlink	/usr/share/pixmaps/qjoypad/gamepad1-24x24.png	#success
+0	symlink	/usr/share/pixmaps/qjoypad/gamepad1-24x24.png	/usr/share/pixmaps/qjoypad/icon24.png	#success
+0	unlink	/usr/share/pixmaps/qjoypad/gamepad1-64x64.png	#success
+0	symlink	/usr/share/pixmaps/qjoypad/gamepad1-64x64.png	/usr/share/pixmaps/qjoypad/icon64.png	#success
+3	open	/dev/tty	#success
+4	open	/usr/doc/qjoypad3/README.txt	#success
+4	open	/usr/doc/qjoypad3/LICENSE.txt	#success

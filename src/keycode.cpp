@@ -1,140 +1,80 @@
 #include "keycode.h"
 
 
-const char* keynames[] =
-{
-"[NO KEY]",
-0,
-0,
-0,
-0,
-0,
-0,
-0,
-0,
-"Escape",
-"1",
-"2",
-"3",
-"4",
-"5",
-"6",
-"7",
-"8",
-"9",
-"0",
-"-",
-"=",
-"Backspace",
-"Tab",
-"Q",
-"W",
-"E",
-"R",
-"T",
-"Y",
-"U",
-"I",
-"O",
-"P",
-"[",
-"]",
-"Return",
-"L Ctrl",
-"A",
-"S",
-"D",
-"F",
-"G",
-"H",
-"J",
-"K",
-"L",
-";",
-"'",
-"`",
-"L Shift",
-"\\",
-"Z",
-"X",
-"C",
-"V",
-"B",
-"N",
-"M",
-",",
-".",
-"/",
-"R Shift",
-"KP *",
-"L Alt",
-"Space",
-0, //(Caps Lock)
-"F1",
-"F2",
-"F3",
-"F4",
-"F5",
-"F6",
-"F7",
-"F8",
-"F9",
-"F10,",
-0, //(Num Lock)
-0, //(Scroll Lock)
-"KP 7",
-"KP 8",
-"KP 9",
-"KP -",
-"KP 4",
-"KP 5",
-"KP 6",
-"KP +",
-"KP 1",
-"KP 2",
-"KP 3",
-"KP 0,",
-"KP .",
-0,
-0,
-0,
-"F11",
-"F12",
-"Home",
-"Up",
-"PageUp",
-"Left",
-0,
-"Right",
-"End",
-"Down",
-"PageDown",
-"Insert",
-"Delete",
-"KP Enter",
-"R Ctrl",
-0, //(Pause)
-0, //(Print Screen)
-"KP /",
-"R Alt",
-0, //(Break)
-"L Win",
-"R Win",
-"Menu",
-"F13",
-"F14",
-"F15",
-"F16",
-"F17"
-};
-
-const char* ktos( int keycode )
+const QString ktos( int keycode )
 {
 	if (keycode > MAXKEY || keycode < 0) keycode = 0;
-	return keynames[keycode];
 
-//	if (keycode == 0) return "[NO KEY]";
-//	return XKeysymToString(XKeycodeToKeysym(display, keycode,0));
+	if (keycode == 0) return "[NO KEY]";
+	
+	QString xname = XKeysymToString(XKeycodeToKeysym(display, keycode,0));
+
+//this section of code converts standard X11 keynames into much nicer names
+//which are prettier, fit the dialogs better, and are more readily understandable.
+//This is really ugly and I wish I didn't have to do this... that's why there
+//is a config option to define PLAIN_KEYS and drop this whole section of code,
+//instead using the default names for keys.
+#ifndef PLAIN_KEYS
+	//the following code assumes xname is system independent and always
+	//in the same exact format.
+	
+	QRegExp rx;
+	rx.setPattern("^\\w$");
+	//"a-z" -> "A-Z"
+	if (rx.exactMatch(xname)) return xname.upper();
+	
+	rx.setPattern("(.*)_(.*)");
+	if (rx.exactMatch(xname)) {
+		QString first = rx.cap(1);
+		QString second = rx.cap(2);
+		
+		rx.setPattern("^[RL]$");
+		//"Control_R" -> "R Control"
+		if (rx.exactMatch(second)) return second + " " + first;
+		
+		rx.setPattern("^(Lock|Enter)$");
+		//"Caps_Lock" -> "Caps Lock"
+		//"KP_Enter" -> "KP Enter"
+		if (rx.exactMatch(second)) return first + " " + second;
+		
+		//the following assumes all number pads are laid out alike.
+		if (xname == "KP_Home")		return "KP 7";
+		if (xname == "KP_Up")		return "KP 8";
+		if (xname == "KP_Prior")	return "KP 9";
+		if (xname == "KP_Subtract")	return "KP -";
+		if (xname == "KP_Left")		return "KP 4";
+		if (xname == "KP_Begin")	return "KP 5";
+		if (xname == "KP_Right")	return "KP 6";
+		if (xname == "KP_Add")		return "KP +";
+		if (xname == "KP_End")		return "KP 1";
+		if (xname == "KP_Down")		return "KP 2";
+		if (xname == "KP_Next")		return "KP 3";
+		if (xname == "KP_Insert")	return "KP 0";
+		if (xname == "KP_Delete")	return "KP .";
+		if (xname == "KP_Multiply")	return "KP *";
+		if (xname == "KP_Divide")	return "KP /";
+		
+		return xname;
+	}
+	
+	if (xname == "minus")			return "-";
+	if (xname == "equal")			return "=";
+	if (xname == "bracketleft")		return "[";
+	if (xname == "bracketright")	return "]";
+	if (xname == "semicolon")		return ";";
+	if (xname == "apostrophe")		return "'";
+	if (xname == "grave")			return "`";
+	if (xname == "backslash")		return "\\";
+	if (xname == "comma")			return ",";
+	if (xname == "period")			return ".";
+	if (xname == "slash")			return "/";
+	if (xname == "space")			return "Space";
+	if (xname == "Prior")			return "PageUp";
+	if (xname == "Next")			return "PageDown";
+#endif
+	
+	//if none of that succeeded,
+	return xname;
 }
 
 
@@ -143,8 +83,10 @@ const char* ktos( int keycode )
 GetKey::GetKey( QString button, bool m )
 		 :QDialog( )
 {
+	//prepare the dialog
 	mouse = m;
 	setCaption( "Choose a key" );
+	setIcon(QPixmap(ICON24));
 
 	//I'd use a QLabel, but that steals x11Events!
 	//So, I'll draw the text directly. That means
@@ -153,35 +95,46 @@ GetKey::GetKey( QString button, bool m )
 	if (mouse) Text += "or mouse button ";
 	Text += "for " + button;
 	QRect rect = fontMetrics().boundingRect( Text );
-	Text += "\n(Escape for no key)";
+	//I calculate the size based on the first line of text, which is longer.
+	//The fontMetrics function is dumb and would treat the string with a
+	//newline in it as a continues flow of characters if I did the whole string
+	//at once.
+	Text += "\n(Ctrl-X for no key)";
+	//now I add 20 pixels of padding and double the height to make room for
+	//two lines.
 	setFixedSize( QSize( rect.width() + 20, rect.height()*2 + 20 ) );
-	setFocus();
 }
 
 bool GetKey::x11Event( XEvent* e )
 {
+	//keep Qt from closing the dialog upon seeing Esc pressed.
+	if (e->type == KeyPress) return true;
+	
 	//On a key press, return the key and quit
-	//escape == cancel
+	//Ctrl+X == [No Key]
 	if (e->type == KeyRelease) {
-		finish( (e->xkey.keycode == 9)?0:e->xkey.keycode );
+		if (XKeycodeToKeysym(display,e->xkey.keycode,0) == XK_x ) {
+			if (e->xkey.state & ControlMask) done( 0 );
+			else done( e->xkey.keycode );
+		}
+		else done( e->xkey.keycode );
 		return true;
 	}
+	//if we're accepting mouse clicks and a mouse button was clicked...
 	if (mouse && e->type == ButtonRelease) {
-		finish ( e->xbutton.button + 200);
+		done ( e->xbutton.button + MOUSE_OFFSET);
 		return true;
 	}
 
+	//any other events we will pass on to the dialog. This allows for closing
+	//the window and easy redrawing  :)
 	return false;
 }
 
 void GetKey::paintEvent ( QPaintEvent * ) {
+	//whenever we need to repaint, draw in our text.
 	QPainter paint( this );
 	paint.drawText( rect(), AlignCenter, Text );
-}
-
-void GetKey::finish( int key )
-{
-	done( key );
 }
 
 
@@ -193,18 +146,22 @@ void GetKey::finish( int key )
 KeyButton::KeyButton( QString name, int val, QWidget* parent, bool m, bool nowMouse)
 	:QPushButton(nowMouse?"Mouse " + QString::number(val):QString(ktos(val)), parent) {
 	mouse = m;
+	mouseClicked = nowMouse;
 	buttonname = name;
 	value = val;
 	connect( this, SIGNAL( clicked() ), SLOT( onClick() ));
 }
 
 void KeyButton::onClick() {
+	//when clicked, ask for a key!
 	value = GetKey( buttonname, mouse ).exec();
-	if (value > 200) {
+	//if the return value was a mouse click...
+	if (value > MOUSE_OFFSET) {
 		mouseClicked = true;
-		value -= 200;
+		value -= MOUSE_OFFSET;
 		setText( "Mouse " + QString::number(value));
 	}
+	//otherwise, it was a key press!
 	else {
 		mouseClicked = false;
 		setText( ktos(value));

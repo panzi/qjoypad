@@ -1,11 +1,11 @@
 #ifndef JEVENT_H
 #define JEVENT_H
 
-#include <qapplication.h>
-
+//for the functions we need to generate keypresses / mouse actions
 #include <X11/extensions/XTest.h>
-#include <sys/timeb.h>
 
+//types of events QJoyPad can create.
+//KeyRelease, KeyPress, ButtonRelease, ButtonPress, and MouseMove
 enum eventType {KREL, KPRESS, BREL, BPRESS, WARP};
 
 

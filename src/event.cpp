@@ -1,7 +1,9 @@
 #include "event.h"
 
+//this should be initialized by main.cpp as soon as the program starts.
 Display* display;
 
+//actually creates an XWindows event  :)
 void sendevent( xevent e ) {
 	if (e.value1 == 0 && e.value2 == 0) return;
 	if (e.type == WARP) {
