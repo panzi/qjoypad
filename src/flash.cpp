@@ -17,20 +17,13 @@ FlashButton::FlashButton( QString text, QWidget* parent, QString name )
 	Flash = QPalette(cg,cg,cg);
 	isflash=false;
 
-	cg.setColor( QColorGroup::Button,   Normal.color( QPalette::Normal, QColorGroup::Button).dark(125));
-	cg.setColor( QColorGroup::Light,    Normal.color( QPalette::Normal, QColorGroup::Light).dark(125));
-	cg.setColor( QColorGroup::Midlight, Normal.color( QPalette::Normal, QColorGroup::Midlight).dark(125));
-	cg.setColor( QColorGroup::Dark,     Normal.color( QPalette::Normal, QColorGroup::Dark).dark(125));
-	cg.setColor( QColorGroup::Mid,      Normal.color( QPalette::Normal, QColorGroup::Mid).dark(125));
-	Dark = QPalette(cg,cg,cg);
-	isdark=false;
-
 	setAutoDefault( false );
+	setFocusPolicy(QWidget::NoFocus);
 }
 
 void FlashButton::flash()
 {
-	if (isdark) return;
+	emit( flashed( !isflash ) );
 	if (isflash)
 	{
 		setPalette( Normal );
@@ -40,21 +33,6 @@ void FlashButton::flash()
 	{
 		setPalette( Flash );
 		isflash = true;
-	}
-}
-
-void FlashButton::dark()
-{
-	if (isdark)
-	{
-		setPalette( Normal );
-		isdark = false;
-	}
-	else
-	{
-		setPalette( Dark );
-		isdark = true;
-		isflash = false;
 	}
 }
 
@@ -95,11 +73,6 @@ int FlashRadioArray::getState()
 void FlashRadioArray::flash( int index )
 {
 	Buttons[index]->flash();
-}
-
-void FlashRadioArray::dark( int index )
-{
-	Buttons[index]->dark();
 }
 
 void FlashRadioArray::clicked()

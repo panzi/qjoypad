@@ -130,44 +130,83 @@ const char* keynames[] =
 
 const char* ktos( int keycode )
 {
-	if (keycode > 122 || keycode < 0) keycode = 0;
+	if (keycode > MAXKEY || keycode < 0) keycode = 0;
 	return keynames[keycode];
+
+//	if (keycode == 0) return "[NO KEY]";
+//	return XKeysymToString(XKeycodeToKeysym(display, keycode,0));
 }
 
 
 
 
-GetKey::GetKey( QString button )
-		 :QDialog( 0 )
+GetKey::GetKey( QString button, bool m )
+		 :QDialog( )
 {
+	mouse = m;
 	setCaption( "Choose a key" );
 
 	//I'd use a QLabel, but that steals x11Events!
 	//So, I'll draw the text directly. That means
 	//I need to resolve the size of the dialog by hand:
-	Text = "Choose a new key for " + button;
+	Text = "Choose a new key ";
+	if (mouse) Text += "or mouse button ";
+	Text += "for " + button;
 	QRect rect = fontMetrics().boundingRect( Text );
 	Text += "\n(Escape for no key)";
 	setFixedSize( QSize( rect.width() + 20, rect.height()*2 + 20 ) );
+	setFocus();
 }
 
 bool GetKey::x11Event( XEvent* e )
 {
 	//On a key press, return the key and quit
-	if (e->type == KeyRelease) finish( e->xkey.keycode );
-
-	//On a redraw, display the label
-	if (e->type == Expose)
-	{
-		QPainter paint( this );
-		paint.drawText( rect(), AlignCenter, Text );
+	//escape == cancel
+	if (e->type == KeyRelease) {
+		finish( (e->xkey.keycode == 9)?0:e->xkey.keycode );
+		return true;
 	}
-	
-	return true;
+	if (mouse && e->type == ButtonRelease) {
+		finish ( e->xbutton.button + 200);
+		return true;
+	}
+
+	return false;
 }
 
+void GetKey::paintEvent ( QPaintEvent * ) {
+	QPainter paint( this );
+	paint.drawText( rect(), AlignCenter, Text );
+}
 
 void GetKey::finish( int key )
 {
 	done( key );
+}
+
+
+
+
+
+
+
+KeyButton::KeyButton( QString name, int val, QWidget* parent, bool m, bool nowMouse)
+	:QPushButton(nowMouse?"Mouse " + QString::number(val):QString(ktos(val)), parent) {
+	mouse = m;
+	buttonname = name;
+	value = val;
+	connect( this, SIGNAL( clicked() ), SLOT( onClick() ));
+}
+
+void KeyButton::onClick() {
+	value = GetKey( buttonname, mouse ).exec();
+	if (value > 200) {
+		mouseClicked = true;
+		value -= 200;
+		setText( "Mouse " + QString::number(value));
+	}
+	else {
+		mouseClicked = false;
+		setText( ktos(value));
+	}
 }

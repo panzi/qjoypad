@@ -28,15 +28,14 @@ class FlashButton : public QPushButton
 {
 	Q_OBJECT
 	public:
-		FlashButton( QString text, QWidget* parent, QString name );
+		FlashButton( QString text, QWidget* parent, QString name = "" );
 	public slots:
 		void flash();
-		void dark();
+	signals:
+		void flashed( bool on );
 	private:
-		bool isdark;
 		bool isflash;
 		QPalette Normal;
-		QPalette Dark;
 		QPalette Flash;
 };
 
@@ -48,7 +47,6 @@ class FlashRadioArray : public QWidget
 		FlashRadioArray( int count, QString names[], bool horizontal, QWidget* parent);
 		int getState();
 	public slots: 
-		void dark( int );
 		void flash( int );
 	private slots:
 		void clicked();

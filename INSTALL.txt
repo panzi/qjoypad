@@ -1,0 +1,9 @@
+For a quick install, just follow these steps:
+
+tar -xzvf qjoypad-3.?.tgz
+cd qjoypad-3.?/src
+./configure
+make
+make install
+
+If those steps don't work for you, give the README a look!
