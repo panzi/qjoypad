@@ -14,7 +14,7 @@
 target.path = $$PREFIX/bin
 
 icons.path = $$PREFIX/share/pixmaps/qjoypad
-icons.extra = cp ../icons/* $${icons.path}; cd $${icons.path}; ln -sf gamepad4-24x24.png icon24.png; ln -sf gamepad3-64x64.png icon64.png
+icons.extra = cp ../icons/* $${icons.path}; cd $${icons.path}; ln -sf gamepad4-24x24.png icon24.png; ln -sf gamepad3-64x64.png icon64.png; chmod -R a+r $${icons.path}
 
 doc.path = $$PREFIX/doc/qjoypad3
 doc.extra = cp ../README.txt ../LICENSE.txt $${doc.path}

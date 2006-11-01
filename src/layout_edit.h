@@ -10,6 +10,7 @@
 //for the tab list of joypads
 #include "flash.h"
 //this is a front end for the non-GUI LayoutManager
+class LayoutEdit;
 #include "layout.h"
 //so we can see the available devices
 #include "device.h"
