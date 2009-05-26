@@ -27,8 +27,8 @@ doc.extra = cp ../README.txt ../LICENSE.txt $${doc.path}
 #####   Setup Compile   #####
 
 DEFINES += DEVDIR='"$$DEVDIR"'
-DEFINES += ICON24='\"$${icons.path}/icon24.png\"'
-DEFINES += ICON64='\"$${icons.path}/icon64.png\"'
+DEFINES += ICON24='"$${icons.path}/icon24.png"'
+DEFINES += ICON64='"$${icons.path}/icon64.png"'
 
 TEMPLATE = app
 DEPENDPATH += trayicon
@@ -42,6 +42,7 @@ HEADERS += axis.h \
            button.h \
 		   button_edit.h \
            buttonw.h \
+		   component.h \
            constant.h \
            device.h \
            error.h \
@@ -53,9 +54,10 @@ HEADERS += axis.h \
 		   joyslider.h \
            keycode.h \
            layout.h \
-           getkey.h \
            layout_edit.h \
+           loop.h \
 		   quickset.h \
+		   timer.h \
            trayicon/trayicon.h
 SOURCES += axis.cpp \
            axis_edit.cpp \
@@ -72,9 +74,9 @@ SOURCES += axis.cpp \
            keycode.cpp \
            layout.cpp \
            layout_edit.cpp \
+           loop.cpp \
            main.cpp \
 		   quickset.cpp \
-		   getkey.cpp \
            trayicon/trayicon.cpp \
            trayicon/trayicon_x11.cpp
 

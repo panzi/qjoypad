@@ -24,6 +24,4 @@
 
 #define NAME "QJoyPad 3.4"
 
-#define MOUSE_OFFSET 400
-
 #endif

@@ -2,17 +2,12 @@
 #define Q_JOYSLIDER_H
 
 //the parent of this
-
+#include <qwidget.h>
+//for drawing the widget  :)
+#include <qpainter.h>
+//for abs()
 #include <stdlib.h>
-#include <QResizeEvent>
-#include <QPaintEvent>
-#include <QMouseEvent>
-#include <QPainter>
-#include <QFrame>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QComboBox>
-#include <QSpinBox>
+
 #include "constant.h"
 
 //dragging constants.

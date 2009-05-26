@@ -1,7 +1,11 @@
 #ifndef LAYOUT_EDIT_H
 #define LAYOUT_EDIT_H
 
-#include <QStackedWidget>
+//needed to build the dialog
+#include <qdialog.h>
+#include <qlayout.h>
+#include <qcombobox.h>
+#include <qwidgetstack.h>
 
 //for the tab list of joypads
 #include "flash.h"
@@ -28,13 +32,15 @@ class LayoutEdit : public QDialog {
 		
 		//find out when the window is activated.
 		virtual void windowActivationChange( bool oldActive );
-		bool blockEvents;
+		
 		//parts of the dialog:
 		QVBoxLayout *LMain;
-		QStackedWidget *PadStack;
+		QWidgetStack *PadStack;
 		FlashRadioArray *JoyButtons;
+		
 		QComboBox* CLayouts;
 		QPushButton	*BAdd, *BRem, *BUpd, *BRev;
 };
+
 
 #endif

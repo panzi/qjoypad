@@ -15,9 +15,8 @@
 
 
 
-#include <QPushButton>
-#include <QPalette>
-#include <QBoxLayout>
+#include <qpushbutton.h>
+#include <qlayout.h>
 
 
 //A QPushButton that can flash a color

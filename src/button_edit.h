@@ -1,13 +1,14 @@
 #ifndef BUTTON_EDIT_H
 #define BUTTON_EDIT_H
 
-#include <QPushButton>
-#include <QCheckBox>
+//used to build the dialog:
+#include <qdialog.h>
+#include <qpushbutton.h>
+#include <qcheckbox.h>
+#include <qlayout.h>
 
 //we need to edit a Button
 #include "button.h"
-
-
 //to get a new key for the button.
 #include "keycode.h"
 

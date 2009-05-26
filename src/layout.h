@@ -1,20 +1,28 @@
 #ifndef JOY_LAYOUT_H
 #define JOY_LAYOUT_H
 
+//for file i/o
+#include <qdir.h>
+#include <qfile.h>
+#include <qtextstream.h>
+#include <qstringlist.h>
+
+//to get a name for a new layout
+#include <qinputdialog.h>
+
+//qpopup is a REAL pain to include  ;)  This is because of some
+//odd complications and reciprocalities in QT... unfortunately, this is the
+//best way I've found to get around it.
+#ifndef MAIN
+	//the layout manager is responsible for the tray icon and its popup
+	#include <qpopupmenu.h>
+#endif
 
 //to allow for interprocess communications (ie, signaling a running instance of
 //qjoypad by running "qjoypad layout-name", etc.) QJoyPad uses signals to
 //triger certain events. This is for signaling the main program to update
 //the joystick device list.
 #include <signal.h>
-
-#include <QAction>
-#include <QDir>
-#include <QMenu>
-#include <QApplication>
-#include <QDialog>
-#include <QInputDialog>
-#include <poll.h>
 
 //a layout handles several joypads
 #include "joypad.h"
@@ -33,7 +41,7 @@
 #define NL "[NO LAYOUT]"
 
 //where QJoyPad saves its settings!
-const QString settingsDir(QDir::homePath() + "/.qjoypad3/");
+const QString settingsDir(QDir::homeDirPath() + "/.qjoypad3/");
 
 //handles loading, saving, and changing of layouts
 class LayoutManager : public QObject {
@@ -66,7 +74,7 @@ class LayoutManager : public QObject {
 		//when the tray icon is clicked
 		void trayClick();
 		//when the user selects an item on the tray's popup menu
-		void trayMenu(QAction* menuItemAction);
+		void trayMenu(int id);
 		//rebuild the popup menu with the current information
 		void fillPopup();
 		//update the list of available joystick devices
@@ -79,7 +87,7 @@ class LayoutManager : public QObject {
 		//the layout that is currently in use
 		QString CurrentLayout;
 		//the popup menu from the tray/floating icon
-		QMenu* Popup;
+		QPopupMenu* Popup;
 
 		//if there is a LayoutEdit open, this points to it. Otherwise, NULL.	
 		LayoutEdit* le;

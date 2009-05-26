@@ -2,14 +2,12 @@
 #define QUICKSET_H
 
 //for building the dialog
-#include <QLayout>
-#include <QLabel>
-#include <QPushButton>
-
-#include <linux/joystick.h>
+#include <qlayout.h>
+#include <qlabel.h>
+#include <qpushbutton.h>
 
 //to request new keycodes
-//#include "keycode.h"
+#include "keycode.h"
 //to actually set the joypad
 #include "joypad.h"
 

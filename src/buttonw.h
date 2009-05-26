@@ -7,11 +7,6 @@
 #include "button_edit.h"
 //this IS a FlashButton
 #include "flash.h"
-#ifdef Bool
-#undef Bool
-#endif
-
-#include <QMouseEvent>
 
 class ButtonWidget : public FlashButton {
 	public:

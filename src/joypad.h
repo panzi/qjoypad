@@ -1,6 +1,19 @@
 #ifndef JOYPAD_H
 #define JOYPAD_H
 
+//to have dictionaries of buttons and axes
+#include <qintdict.h>
+//the parent of JoyPadWidget
+#include <qobject.h>
+
+//for access to qApp so I can check if the application has active windows  :)
+#include <qapplication.h>
+
+//for actually interacting with the joystick devices
+#include <linux/joystick.h>
+#include <fcntl.h>
+#include <unistd.h>
+
 //parts of the joypad
 #include "button.h"
 #include "axis.h"
@@ -11,27 +24,16 @@
 //for raising errors
 #include "error.h"
 
-//for actually interacting with the joystick devices
-#include <linux/joystick.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <QTextStream>
-#include <QHash>
-#include <QSocketNotifier>
-
-
 class JoyPadWidget;
 
 //represents an actual joystick device
 class JoyPad : public QObject{
-	Q_OBJECT
-    friend class JoyPadWidget;
+	friend class JoyPadWidget;
 	friend class QuickSet;
 	public:
-		void setupJoyDeviceListener(int dev);
-        JoyPad( int i, int dev );
-        //read from a stream
-		bool readConfig( QTextStream* stream );
+		JoyPad( int i, int dev );
+		//read from a stream
+		bool read( QTextStream* stream );
 		//write to a stream
 		void write( QTextStream* stream );
 		//release any pushed buttons and return to a neutral state
@@ -43,7 +45,7 @@ class JoyPad : public QObject{
 		//true iff this is currently at default settings
 		bool isDefault();
 		//release the connection to the real joystick
-		void unsetDev();
+		void unsetDev() {close(joydev); joydev = -1;};
 		//read the dimensions on the real joystick and use them
 		void resetToDev( int dev );
 		//generates a name ("Joystick 1")
@@ -64,17 +66,14 @@ class JoyPad : public QObject{
 		//layouts with different numbers of axes/buttons than the current
 		//devices. Note that with the current layout settings, the defined
 		//buttons that don't actually exist on the device may not be contiguous.
-		QHash<int, Axis*> Axes;
-		QHash<int, Button*> Buttons;
+		QIntDict<Axis> Axes;
+		QIntDict<Button> Buttons;
 		//the index of this device (devicenum)
 		int index;
 		
 		//the widget that edits this. Mainly I keep track of this to know if
 		//the joypad is currently being edited.
 		JoyPadWidget* jpw;
-        QSocketNotifier *joydevFileHandle;
-    public slots:    
-        void handleJoyEvents(int fd);
 };
 
 #endif
