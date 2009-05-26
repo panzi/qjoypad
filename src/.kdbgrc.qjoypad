@@ -1,0 +1,30 @@
+[Breakpoint 0]
+Enabled=true
+File=layout.cpp
+Line=263
+Temporary=false
+
+[Breakpoint 1]
+Enabled=true
+File=moc_layout_edit.cpp
+Line=58
+Temporary=false
+
+[Breakpoint 2]
+Enabled=true
+File=layout_edit.cpp
+Line=107
+Temporary=false
+
+[General]
+DebuggerCmdStr=
+DriverName=GDB
+FileVersion=1
+OptionsSelected=
+ProgramArgs=
+TTYLevel=7
+WorkingDirectory=
+
+[Memory]
+ColumnWidths=80,0
+NumExprs=0

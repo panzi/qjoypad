@@ -1,0 +1,80 @@
+#!/bin/bash
+
+
+devdir="/dev/input"
+prefix="/usr/local"
+plain_keys=""
+
+for arg in $*
+do
+	case $arg in
+		--help)	echo "
+Usage: ./config [--devdir=\"dir\"] [--prefix=\"prefix\"] [--help]
+
+Options:
+     --devdir=DIR   Set the path where QJoyPad will look for your joystick
+                    devices to be DIR. If your devices are /dev/js0, /dev/js1,
+                    etc., this should be just \"/dev\". By default, this is
+                    /dev/input.
+ 
+     --prefix=DIR   Set the path where QJoyPad and its components will be
+                    installed. By default, this is /usr/local.
+ 
+     --plain_keys   Force QJoyPad to use standard XWindows keynames without
+                    filtering them for appearance. This will make displays
+                    less attractive and readable, but will save processor power
+                    and ensure that you see the right names for keys you press.
+ 
+     --help         Show this message.
+"; exit 0;;
+        --devdir=*) devdir=${arg##*=}
+        	if [[ ! -d $devdir ]]
+            then
+            	echo "Invalid device directory given: $devdir"
+                exit 1
+            fi ;;
+        --prefix=*) prefix=${arg##*=}
+        	if [[ ! -d $prefix ]]
+            then
+            	echo "Invalid prefix directory given: $prefix"
+                exit 1
+            fi ;;
+		--plain_keys) plain_keys="PLAIN_KEYS";;
+        *)  echo "Unrecognized argument: \"$arg\". Try ./config --help for help."
+	esac
+done
+
+arg1="DEVDIR=$devdir"
+arg2="PREFIX=$prefix"
+arg3="DEFINES += $plain_keys"
+
+qmake -makefile "$arg1" "$arg2" "$arg3" qjoypad.pro
+
+echo "
+Configuring QJoyPad installation...
+------------------------------------------------------------
+
+Device directory: $devdir
+-- Devices will be looked for in:
+     $devdir/js0
+     $devdir/js1
+     etc.
+
+Prefix directory: $prefix
+-- Files to be installed in:
+     $prefix/bin
+     $prefix/doc
+     $prefix/share/pixmaps"
+
+if [[ -n $plain_keys ]]; then
+	echo "
+-- Using regular XWindows key names.";
+fi
+
+echo "	 
+---------------------------------------------------------
+If these settings are okay, go ahead and run 'make' and
+then 'make install'.
+
+To make changes, run ./config --help for details.
+"
