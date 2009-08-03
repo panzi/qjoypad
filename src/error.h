@@ -7,7 +7,7 @@
 
 static void error(QString type, QString message ) {
 	QMessageBox::warning(0,NAME" - " + type,
-		message, QMessageBox::Ok, QMessageBox::NoButton);
+		message, QMessageBox::Ok, Qt::NoButton);
 }
 
 #endif

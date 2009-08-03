@@ -1,21 +1,15 @@
 #ifndef AXIS_EDIT_H
 #define AXIS_EDIT_H
-
+//to refer to the axis we're editing
 //for building up the dialog we need
-#include <qdialog.h>
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qframe.h>
-#include <qspinbox.h>
-#include <qlayout.h>
-#include <qlabel.h>
-
+#include "axis.h"
+#include <QComboBox>
+#include <QSpinBox>
+#include <QCheckBox>
+#include <QLabel>
 //for my home-brewed widgets
 #include "joyslider.h"
 #include "keycode.h"
-
-//to refer to the axis we're editing
-#include "axis.h"
 
 class AxisEdit : public QDialog {
 	Q_OBJECT
