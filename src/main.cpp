@@ -4,7 +4,7 @@
 #include <QFile>
 //for ouput when there is no GUI going
 #include <stdio.h>
-
+#include <unistd.h>
 //to create and handle signals for various events
 #include <signal.h>
 
@@ -17,6 +17,7 @@
 //to produce errors!
 #include "error.h"
 #include <QX11Info>
+#include <QSystemTrayIcon>
 #include <poll.h>
 #include <cstdlib>
 
@@ -83,7 +84,7 @@ int main( int argc, char **argv )
     bool useTrayIcon = true;
     //this execution wasn't made to update the joystick device list.
     bool update = false;
-
+    bool forceTrayIcon = false;
 
     //parse command-line options
     for (int i = 1; i < a.argc(); i++) {
@@ -112,6 +113,9 @@ int main( int argc, char **argv )
         else if (QRegExp("-{1,2}h(elp)?").exactMatch(a.argv()[i])) {
             printf(NAME"\nUsage: qjoypad [--device \"/device/path\"] [--notray] [\"layout name\"]\n\nOptions:\n  --device path     Look for joystick devices in \"path\". This should\n                    be something like \"/dev/input\" if your game\n                    devices are in /dev/input/js0, /dev/input/js1, etc.\n  --notray          Do not use a system tray icon. This is useful for\n                    window managers that don't support this feature.\n  --update          Force a running instance of QJoyPad to update its\n                    list of devices and layouts.\n  \"layout name\"     Load the given layout in an already running\n                    instance of QJoyPad, or start QJoyPad using the\n                    given layout.\n");
             return 1;
+        } else if(QRegExp("--force-tray").exactMatch(a.argv()[i])) {
+            useTrayIcon = true;
+            forceTrayIcon = true;
         }
         //in all other cases, an argument is assumed to be a layout name.
         //note: only the last layout name given will be used.
@@ -182,8 +186,17 @@ int main( int argc, char **argv )
 //	signal( SIGUSR2, catchSIGUSR2 );
 
 
-
-
+    if(forceTrayIcon) {
+        int sleepCounter = 0;
+        while(!QSystemTrayIcon::isSystemTrayAvailable()) {
+            sleep(1);
+            sleepCounter++;
+            if(sleepCounter > 20) {
+                printf("Error, we've waited more than 20 seconds, your sys tray probably isn't loading\n");
+                exit(1);
+            }
+        }
+    }
     //capture the current display for event.h
     display = QX11Info::display();
 
