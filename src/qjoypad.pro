@@ -11,12 +11,11 @@
 
 #####   Setup Targets   #####
 
-target.path = $$PREFIX/bin
-
-icons.path = $$PREFIX/share/pixmaps/qjoypad
+icons.path = $$INSTALL/$$PREFIX/share/pixmaps/qjoypad
+icons.conf_path = $$PREFIX/share/pixmaps/qjoypad
 icons.extra = cp ../icons/* $${icons.path}; cd $${icons.path}; ln -sf gamepad4-24x24.png icon24.png; ln -sf gamepad3-64x64.png icon64.png; chmod -R a+r $${icons.path}
 
-doc.path = $$PREFIX/doc/qjoypad3
+doc.path = $$INSTALL/$$PREFIX/share/doc/qjoypad3
 doc.extra = cp ../README.txt ../LICENSE.txt $${doc.path}
 
 
@@ -26,9 +25,9 @@ doc.extra = cp ../README.txt ../LICENSE.txt $${doc.path}
 
 #####   Setup Compile   #####
 
-DEFINES += DEVDIR='"$$DEVDIR"'
-DEFINES += ICON24='\"$${icons.path}/icon24.png\"'
-DEFINES += ICON64='\"$${icons.path}/icon64.png\"'
+DEFINES += DEVDIR='\\\"$$DEVDIR\\\"'
+DEFINES += ICON24='\\\"$${icons.conf_path}/icon24.png\\\"'
+DEFINES += ICON64='\\\"$${icons.conf_path}/icon64.png\\\"'
 
 TEMPLATE = app
 DEPENDPATH += trayicon
