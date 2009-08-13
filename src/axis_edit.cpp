@@ -27,11 +27,11 @@ AxisEdit::AxisEdit( Axis* ax )
     v2->addWidget(CGradient);
 
     CMode = new QComboBox(this);
-    CMode->insertItem((int)keybd, QString("Keyboard"), QVariant(NULL));
-    CMode->insertItem((int) mousepv,QString("Mouse (Vert.)"),QVariant(NULL));
-    CMode->insertItem((int) mousenv, QString("Mouse (Vert. Rev.)"), QVariant(NULL));
-    CMode->insertItem((int) mouseph, "Mouse (Hor.)", QVariant(NULL));
-    CMode->insertItem((int)mousenh, QString("Mouse (Hor. Rev.)"), NULL);
+    CMode->insertItem((int)keybd, QString("Keyboard"), Qt::DisplayRole);
+    CMode->insertItem((int) mousepv,QString("Mouse (Vert.)"),Qt::DisplayRole);
+    CMode->insertItem((int) mousenv, QString("Mouse (Vert. Rev.)"), Qt::DisplayRole);
+    CMode->insertItem((int) mouseph, "Mouse (Hor.)", Qt::DisplayRole);
+    CMode->insertItem((int)mousenh, QString("Mouse (Hor. Rev.)"), Qt::DisplayRole);
     CMode->setCurrentIndex( axis->mode );
     connect(CMode, SIGNAL(activated(int)), this, SLOT( CModeChanged( int )));
     v2->addWidget(CMode);
@@ -65,9 +65,9 @@ AxisEdit::AxisEdit( Axis* ax )
     BNeg = new KeyButton(axis->getName(),axis->nkeycode,KeyBox);
 
     CThrottle = new QComboBox(KeyBox);
-    CThrottle->insertItem(0,"Neg. Throttle",QVariant(NULL));
-    CThrottle->insertItem(1,"No Throttle",QVariant(NULL));
-    CThrottle->insertItem(2,"Pos. Throttle",QVariant(NULL));
+    CThrottle->insertItem(0,"Neg. Throttle",Qt::DisplayRole);
+    CThrottle->insertItem(1,"No Throttle",Qt::DisplayRole);
+    CThrottle->insertItem(2,"Pos. Throttle",Qt::DisplayRole);
     CThrottle->setCurrentIndex(axis->throttle + 1);
     connect( CThrottle, SIGNAL( activated( int )), this, SLOT( CThrottleChanged( int )));
 
