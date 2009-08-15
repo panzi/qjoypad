@@ -2,23 +2,24 @@
 #include "joypad.h"
 #include <stdio.h>
 #include <fcntl.h>
+#include<stdint.h>
 #include <poll.h>
 #include <QApplication>
 JoyPad::JoyPad( int i, int dev ) {
+    DEBUG("Constructing the joypad device\n");
     //remember the index,
     index = i;
 
     //load data from the joystick device, if available.
     joydevFileHandle = NULL;
     if(dev > 0) {
+        DEBUG("Valid file handle, setting up handlers and reading axis configs...\n");
         resetToDev(dev);
-        joydevFileHandle = new QSocketNotifier(dev, QSocketNotifier::Read, this);
-        joydevFileException = new QSocketNotifier(dev, QSocketNotifier::Exception, this);
-        connect(joydevFileHandle, SIGNAL(activated(int)), this, SLOT(handleJoyEvents(int)));
-        connect(joydevFileException, SIGNAL(activated(int)), this, SLOT(errorRead(int)));
+        DEBUG("done resetting and setting up\n");
     }
     //there is no JoyPadWidget yet.
     jpw = NULL;
+    DEBUG("Done constructing the joypad device\n");
 }
 
 void JoyPad::resetToDev(int dev ) {
@@ -31,7 +32,18 @@ void JoyPad::resetToDev(int dev ) {
     ioctl (joydev, JSIOCGAXES, &axes);
     buttons = 0;
     ioctl (joydev, JSIOCGBUTTONS, &buttons);
-
+    //~ uint16_t *button_mapping = (uint16_t*)calloc(KEY_MAX - BTN_MISC + 1, 2);
+    //~ ioctl (joydev, JSIOCGBTNMAP, button_mapping);
+    //~ for(int i = 0; i < buttons; i++) {
+        //~ printf("%04X\n", button_mapping[i]);
+    //~ }
+    //~ free((void*)button_mapping);
+    //~ printf("axis mapping\n");
+    //~ uint16_t *axis_mapping = (uint16_t*)calloc(ABS_MAX+1,2);
+    //~ for(int i = 0;  i < ABS_MAX + 1; i++) {
+        //~ printf("%04X\n", axis_mapping[i]);
+    //~ }
+    //~ free((void*)axis_mapping);
     //make sure that we have the axes we need.
     //if one that we need doesn't yet exist, add it in.
     //Note: if the current layout has a key assigned to an axis that did not
@@ -57,15 +69,12 @@ void JoyPad::resetToDev(int dev ) {
 }
 
 void JoyPad::setupJoyDeviceListener(int dev) {
-    DEBUG("Setting up joyDeviceListener\n");
-    if(joydevFileHandle != NULL) {
-        delete joydevFileHandle;
-    }
+    DEBUG("Setting up joyDeviceListeners\n");
     joydevFileHandle = new QSocketNotifier(dev, QSocketNotifier::Read, this);
     connect(joydevFileHandle, SIGNAL(activated(int)), this, SLOT(handleJoyEvents(int)));
     joydevFileException = new QSocketNotifier(dev, QSocketNotifier::Exception, this);
     connect(joydevFileException, SIGNAL(activated(int)), this, SLOT(errorRead(int)));
-    DEBUG("Done setting up joyDeviceListener\n")
+    DEBUG("Done setting up joyDeviceListeners\n")
 }
 
 void JoyPad::toDefault() {
