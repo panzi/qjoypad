@@ -22,6 +22,7 @@ JoyPad::JoyPad( int i, int dev ) {
 }
 
 void JoyPad::resetToDev(int dev ) {
+    DEBUG("resetting to dev\n");
     //remember the device file descriptor
     joydev = dev;
 
@@ -47,19 +48,24 @@ void JoyPad::resetToDev(int dev ) {
     read_struct.fd = joydev;
     read_struct.events = POLLIN;
     char buf[10];
-    while(poll(&read_struct, 1, 2)!=0) {
+    while(poll(&read_struct, 1, 5)!=0) {
         printf("reading junk data\n");
         read(joydev, buf, 10);
     }
     setupJoyDeviceListener(dev);
+    DEBUG("done resetting to dev\n");
 }
 
 void JoyPad::setupJoyDeviceListener(int dev) {
+    DEBUG("Setting up joyDeviceListener\n");
     if(joydevFileHandle != NULL) {
         delete joydevFileHandle;
     }
     joydevFileHandle = new QSocketNotifier(dev, QSocketNotifier::Read, this);
     connect(joydevFileHandle, SIGNAL(activated(int)), this, SLOT(handleJoyEvents(int)));
+    joydevFileException = new QSocketNotifier(dev, QSocketNotifier::Exception, this);
+    connect(joydevFileException, SIGNAL(activated(int)), this, SLOT(errorRead(int)))
+    DEBUG("Done setting up joyDeviceListener\n");
 }
 
 void JoyPad::toDefault() {
@@ -270,6 +276,7 @@ void JoyPad::unsetDev() {
 }
 
 void JoyPad::errorRead(int fd) {
+    DEBUG("There was an error reading off of the device, disabling\n");
     joydevFileHandle->blockSignals(true);
     joydevFileHandle->setEnabled(false);
     close(joydev);
@@ -283,4 +290,5 @@ void JoyPad::errorRead(int fd) {
         joydevFileException = NULL;
     }
     joydev = -1;
+    DEBUG("Done disabling\n");
 }

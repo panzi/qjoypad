@@ -314,7 +314,9 @@ void LayoutManager::fillPopup() {
 }
 
 void LayoutManager::updateJoyDevs() {
+    DEBUG("updating joydevs\n");
     QString devdir = DEVDIR;
+
     //reset all joydevs to sentinal value (-1)
     do {
         QHashIterator<int, JoyPad*> it( joypads );
@@ -375,4 +377,5 @@ void LayoutManager::updateJoyDevs() {
     //the actual update process is handled by main.cpp, we just need to signal
     //ourselves to do it.
     //raise(SIGUSR1);
+    DEBUG("done updating joydevs\n");
 }
