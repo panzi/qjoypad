@@ -11,13 +11,13 @@
 
 #####   Setup Targets   #####
 
-icons.path = $$INSTALL/$$PREFIX/share/pixmaps/qjoypad
+icons.path = $$INSTALL_PREFIX/share/pixmaps/qjoypad
 icons.conf_path = $$PREFIX/share/pixmaps/qjoypad
 icons.extra = cp ../icons/* $${icons.path}; cd $${icons.path}; ln -sf gamepad4-24x24.png icon24.png; ln -sf gamepad3-64x64.png icon64.png; chmod -R a+r $${icons.path}
 
-doc.path = $$INSTALL/$$PREFIX/share/doc/qjoypad3
+doc.path = $$INSTALL_PREFIX/share/doc/qjoypad3
 doc.extra = cp ../README.txt ../LICENSE.txt $${doc.path}
-
+target.path = $$INSTALL_PREFIX/bin
 
 
 
