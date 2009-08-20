@@ -32,18 +32,6 @@ void JoyPad::resetToDev(int dev ) {
     ioctl (joydev, JSIOCGAXES, &axes);
     buttons = 0;
     ioctl (joydev, JSIOCGBUTTONS, &buttons);
-    //~ uint16_t *button_mapping = (uint16_t*)calloc(KEY_MAX - BTN_MISC + 1, 2);
-    //~ ioctl (joydev, JSIOCGBTNMAP, button_mapping);
-    //~ for(int i = 0; i < buttons; i++) {
-        //~ printf("%04X\n", button_mapping[i]);
-    //~ }
-    //~ free((void*)button_mapping);
-    //~ printf("axis mapping\n");
-    //~ uint16_t *axis_mapping = (uint16_t*)calloc(ABS_MAX+1,2);
-    //~ for(int i = 0;  i < ABS_MAX + 1; i++) {
-        //~ printf("%04X\n", axis_mapping[i]);
-    //~ }
-    //~ free((void*)axis_mapping);
     //make sure that we have the axes we need.
     //if one that we need doesn't yet exist, add it in.
     //Note: if the current layout has a key assigned to an axis that did not

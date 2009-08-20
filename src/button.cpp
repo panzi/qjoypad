@@ -94,6 +94,7 @@ void Button::jsevent( int value ) {
         }
         if (!isButtonPressed && rapidfire) {
             timer->stop();
+            disconnect(timer, SIGNAL(timeout()), 0, 0);
             if(isDown) {
                 click(false);
             }
