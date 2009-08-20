@@ -62,7 +62,7 @@ void JoyPad::setupJoyDeviceListener(int dev) {
     connect(joydevFileHandle, SIGNAL(activated(int)), this, SLOT(handleJoyEvents(int)));
     joydevFileException = new QSocketNotifier(dev, QSocketNotifier::Exception, this);
     connect(joydevFileException, SIGNAL(activated(int)), this, SLOT(errorRead(int)));
-    DEBUG("Done setting up joyDeviceListeners\n")
+    DEBUG("Done setting up joyDeviceListeners\n");
 }
 
 void JoyPad::toDefault() {
