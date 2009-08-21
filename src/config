@@ -3,8 +3,9 @@
 
 devdir="/dev/input"
 prefix="/usr/local"
+installdir="";
 plain_keys=""
-
+debug_option="";
 for arg in $*
 do
 	case $arg in
@@ -24,8 +25,13 @@ Options:
                     filtering them for appearance. This will make displays
                     less attractive and readable, but will save processor power
                     and ensure that you see the right names for keys you press.
- 
-     --help         Show this message.
+                    
+     --install-dir=DIR  Sets an optional installation path that will be prepended
+                        to prefix during installation.
+     --debug        Causes Qjoypad to spit out debugging messages (debug messages
+                    will be  compiled in; to get rid of the messages you'll have
+                    to recompile).
+    --help          Show this message.
 "; exit 0;;
         --devdir=*) devdir=${arg##*=}
         	if [[ ! -d $devdir ]]
@@ -34,21 +40,30 @@ Options:
                 exit 1
             fi ;;
         --prefix=*) prefix=${arg##*=}
-        	if [[ ! -d $prefix ]]
+            if [[ ! -d $prefix ]]
             then
             	echo "Invalid prefix directory given: $prefix"
                 exit 1
-            fi ;;
+            fi;;
+        --install-dir=*) installdir=${arg##*=}
+            if [[ ! -d $installdir ]]
+            then
+                echo "invalid destination directory given: $installdir";
+                exit 1
+            fi;;
 		--plain_keys) plain_keys="PLAIN_KEYS";;
+        --debug)
+            debug_option+="_DEBUG";;
         *)  echo "Unrecognized argument: \"$arg\". Try ./config --help for help."
 	esac
 done
 
 arg1="DEVDIR=$devdir"
 arg2="PREFIX=$prefix"
-arg3="DEFINES += $plain_keys"
+arg3="DEFINES += $plain_keys $debug_option"
+arg4="INSTALL_PREFIX=${installdir}/${prefix}/"
 
-qmake -makefile "$arg1" "$arg2" "$arg3" qjoypad.pro
+qmake -makefile "$arg1" "$arg2" "$arg3" "$arg4" qjoypad.pro
 
 echo "
 Configuring QJoyPad installation...

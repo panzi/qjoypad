@@ -4,11 +4,11 @@
 //abs()
 #include <stdlib.h>
 
-//parent of Axis
-#include "component.h"
-
-//to request a periodic tap on the shoulder for gradient mode
-#include "timer.h"
+#include <QTimer>
+#include <QTextStream>
+#include <QRegExp>
+#include <QStringList>
+#include "constant.h"
 
 //default and arbitrary values for dZone and xZone
 #define DZONE 3000
@@ -18,8 +18,9 @@
 enum AxisMode {keybd, mousepv, mousenv, mouseph, mousenh};
 
 //represents one joystick axis
-class Axis : public Component {
-	//so AxisEdit can manipulate fields directly.
+class Axis : public QObject {
+	Q_OBJECT
+    //so AxisEdit can manipulate fields directly.
 	friend class AxisEdit;
 	public:
 		Axis( int i );
@@ -45,12 +46,13 @@ class Axis : public Component {
 		void setKey(bool positive, int value);
 		//happens every MSEC milliseconds (constant.h)
 		//uses tick to decide if key events should be generated
-		void timer( int tick );
+		void timerTick( int tick );
 		//recalculates the gradient curve. This should be run every time
 		//maxSpeed, xZone, or dZone are changed.
 		void adjustGradient();
 	protected:
-		//This axis is logically depressed (positive or negative)
+        int tick;
+        //This axis is logically depressed (positive or negative)
 		//if the axis is gradient, this is true even if it is not
 		//currently generating a keypress at the instant.
 		bool isOn;
@@ -84,6 +86,9 @@ class Axis : public Component {
 		//note, the key is still clicked at the same pace no matter what,
 		//this just decides how long it stays down each cycle.
 		int duration;
+        QTimer *timer;
+    public slots:
+        void timerCalled();
 };
 
 #endif

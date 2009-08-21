@@ -2,13 +2,13 @@
 #define JOYPAD_WIDGET_H
 
 //parts for the widget
-#include <qpushbutton.h>
-#include <qlayout.h>
+//Added by qt3to4:
 
+#include <linux/joystick.h>
+#include "axisw.h"
 //this all relates to a JoyPad
 #include "joypad.h"
 //and a JoyPadWidget is composed of AxisWidgets and ButtonWidgets
-#include "axisw.h"
 #include "buttonw.h"
 //JoyPadWidget also is what initiates the whole QuickSet procedure  :)
 #include "quickset.h"

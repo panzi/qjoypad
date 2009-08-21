@@ -19,7 +19,6 @@
  */
 
 #include "trayicon.h"
-#include "qpopupmenu.h"
 
 /*!
   \class TrayIcon qtrayicon.h
@@ -33,9 +32,9 @@
   \sa show
 */
 TrayIcon::TrayIcon( QObject *parent, const char *name )
-: QObject(parent, name), pop(0), d(0)
+        : QObject(parent/*, name*/), pop(0), d(0)
 {
-	v_isWMDock = FALSE;
+    v_isWMDock = FALSE;
 }
 
 /*!
@@ -45,10 +44,10 @@ TrayIcon::TrayIcon( QObject *parent, const char *name )
 
   \sa show
 */
-TrayIcon::TrayIcon( const QPixmap &icon, const QString &tooltip, QPopupMenu *popup, QObject *parent, const char *name )
-: QObject(parent, name), pop(popup), pm(icon), tip(tooltip), d(0)
+TrayIcon::TrayIcon( const QPixmap &icon, const QString &tooltip, QMenu *popup, QObject *parent, const char *name )
+        : QObject(parent/*, name*/), pop(popup), pm(icon), tip(tooltip), d(0)
 {
-	v_isWMDock = FALSE;
+    v_isWMDock = FALSE;
 }
 
 /*!
@@ -63,7 +62,7 @@ TrayIcon::~TrayIcon()
   Sets the context menu to \a popup. The context menu will pop up when the
   user clicks the system tray entry with the right mouse button.
 */
-void TrayIcon::setPopup( QPopupMenu* popup )
+void TrayIcon::setPopup( QMenu* popup )
 {
     pop = popup;
 }
@@ -73,7 +72,7 @@ void TrayIcon::setPopup( QPopupMenu* popup )
 
   \sa setPopup
 */
-QPopupMenu* TrayIcon::popup() const
+QMenu* TrayIcon::popup() const
 {
     return pop;
 }
@@ -139,22 +138,22 @@ bool TrayIcon::event( QEvent *e )
 {
     switch ( e->type() ) {
     case QEvent::MouseMove:
-	mouseMoveEvent( (QMouseEvent*)e );
-	break;
+        mouseMoveEvent( (QMouseEvent*)e );
+        break;
 
     case QEvent::MouseButtonPress:
-	mousePressEvent( (QMouseEvent*)e );
-	break;
+        mousePressEvent( (QMouseEvent*)e );
+        break;
 
     case QEvent::MouseButtonRelease:
-	mouseReleaseEvent( (QMouseEvent*)e );
-	break;
+        mouseReleaseEvent( (QMouseEvent*)e );
+        break;
 
     case QEvent::MouseButtonDblClick:
-	mouseDoubleClickEvent( (QMouseEvent*)e );
-	break;
+        mouseDoubleClickEvent( (QMouseEvent*)e );
+        break;
     default:
-	return QObject::event( e );
+        return QObject::event( e );
     }
 
     return TRUE;
@@ -183,22 +182,22 @@ void TrayIcon::mousePressEvent( QMouseEvent *e )
 #ifndef Q_WS_WIN
 // This is for X11, menus appear on mouse press
 // I'm not sure whether Mac should be here or below.. Somebody check?
-	switch ( e->button() ) {
-		case RightButton:
-			if ( pop ) {
-				pop->popup( e->globalPos() );
-				e->accept();
-			}
-			break;
-		case LeftButton:
-		case MidButton:
-			emit clicked( e->globalPos(), e->button() );
-			break;
-		default:
-			break;
-	}
+    switch ( e->button() ) {
+    case Qt::RightButton:
+        if ( pop ) {
+            pop->popup( e->globalPos() );
+            e->accept();
+        }
+        break;
+    case Qt::LeftButton:
+    case Qt::MidButton:
+        emit clicked( e->globalPos(), e->button() );
+        break;
+    default:
+        break;
+    }
 #endif
-	e->ignore();
+    e->ignore();
 }
 
 /*!
@@ -215,26 +214,26 @@ void TrayIcon::mouseReleaseEvent( QMouseEvent *e )
 {
 #ifdef Q_WS_WIN
 // This is for Windows, where menus appear on mouse release
-	switch ( e->button() ) {
-		case RightButton:
-			if ( pop ) {
-				// Necessary to make keyboard focus
-				// and menu closing work on Windows.
-				pop->setActiveWindow();
-				pop->popup( e->globalPos() );
-				pop->setActiveWindow();
-				e->accept();
-			}
-			break;
-		case LeftButton:
-		case MidButton:
-			emit clicked( e->globalPos(), e->button() );
-			break;
-		default:
-			break;
-	}
+    switch ( e->button() ) {
+    case Qt::RightButton:
+        if ( pop ) {
+            // Necessary to make keyboard focus
+            // and menu closing work on Windows.
+            pop->setActiveWindow();
+            pop->popup( e->globalPos() );
+            pop->setActiveWindow();
+            e->accept();
+        }
+        break;
+    case Qt::LeftButton:
+    case Qt::MidButton:
+        emit clicked( e->globalPos(), e->button() );
+        break;
+    default:
+        break;
+    }
 #endif
-	e->ignore();
+    e->ignore();
 }
 
 /*!
@@ -249,9 +248,9 @@ void TrayIcon::mouseReleaseEvent( QMouseEvent *e )
 */
 void TrayIcon::mouseDoubleClickEvent( QMouseEvent *e )
 {
-	if ( e->button() == LeftButton )
-		emit doubleClicked( e->globalPos() );
-	e->accept();
+    if ( e->button() == Qt::LeftButton )
+        emit doubleClicked( e->globalPos() );
+    e->accept();
 }
 
 /*!
@@ -272,5 +271,5 @@ void TrayIcon::mouseDoubleClickEvent( QMouseEvent *e )
 
 void TrayIcon::gotCloseEvent()
 {
-	closed();
+    closed();
 }

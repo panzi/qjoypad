@@ -1,12 +1,14 @@
 #ifndef AXIS_WIDGET_H
 #define AXIS_WIDGET_H
 
+#include <QMouseEvent>
 //so we can interact with the axis this refers to
 #include "axis.h"
-//so we can edit this axis when the user clicks the button
-#include "axis_edit.h"
 //for the FlashButton widget
 #include "flash.h"
+
+//so we can edit this axis when the user clicks the button
+#include "axis_edit.h"
 
 class AxisWidget : public FlashButton {
 	public:
