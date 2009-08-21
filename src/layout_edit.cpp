@@ -118,9 +118,9 @@ void LayoutEdit::windowActivationChange( bool oldActive ) {
     QHashIterator<int, JoyPad*> it( available );
     while (it.hasNext())
     {
-        printf("iterating and releasing\n");
+        DEBUG("iterating and releasing\n");
         it.next();
         it.value()->release();
     }
-    printf("done releasing!\n");
+    DEBUG("done releasing!\n");
 }

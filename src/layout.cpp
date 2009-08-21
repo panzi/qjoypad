@@ -265,7 +265,6 @@ void LayoutManager::trayClick() {
 void LayoutManager::trayMenu(QAction *menuItemAction) {
     //if they clicked on a Layout name, load it!
     //note that the other options are handled with their own special functions
-    printf("%s\n", qPrintable(menuItemAction->text()));
     if (Popup->actions().indexOf(menuItemAction) > 1 && menuItemAction->text() != "Quit" &&
         menuItemAction->text() != "Update lyaout list" &&
         menuItemAction->text() != "Update joystick devices") {
@@ -353,7 +352,7 @@ void LayoutManager::updateJoyDevs() {
                 read_struct.events = POLLIN;
                 char buf[10];
                 while(poll(&read_struct, 1, 5)!=0) {
-                    printf("reading junk data\n");
+                    DEBUG("reading junk data\n");
                     read(joydev, buf, 10);
                 }
                 joypad = new JoyPad( index, joydev );
@@ -368,7 +367,7 @@ void LayoutManager::updateJoyDevs() {
         }
         else {
             int errsv = errno;
-            printf("%s\n", strerror(errsv));
+            printf("error reading joypad dev device: %s\n", strerror(errsv));
         }
     }
     //when it's all done, rebuild the popup menu so it displays the correct

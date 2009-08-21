@@ -49,7 +49,7 @@ void JoyPad::resetToDev(int dev ) {
     read_struct.events = POLLIN;
     char buf[10];
     while(poll(&read_struct, 1, 5)!=0) {
-        printf("reading junk data\n");
+        DEBUG("reading junk data\n");
         read(joydev, buf, 10);
     }
     setupJoyDeviceListener(dev);
@@ -226,13 +226,13 @@ void JoyPad::jsevent( js_event msg ) {
     //otherwise, lets create us a fake event! Pass on the event to whichever
     //Button or Axis was pressed and let them decide what to do with it.
     if (msg.type & JS_EVENT_AXIS) {
-        printf("DEBUG: passing on an axis event\n");
-        printf("DEBUG: %d %d\n", msg.number, msg.value);
+        //printf("DEBUG: passing on an axis event\n");
+        //printf("DEBUG: %d %d\n", msg.number, msg.value);
         Axes[msg.number]->jsevent(msg.value);
     }
     else {
-        printf("DEBUG: passing on a button event\n");
-        printf("DEBUG: %d %d\n", msg.number, msg.value);
+        //printf("DEBUG: passing on a button event\n");
+        //printf("DEBUG: %d %d\n", msg.number, msg.value);
         Buttons[msg.number]->jsevent(msg.value);
     }
 }
