@@ -13,14 +13,16 @@ LayoutManager::LayoutManager( bool useTrayIcon ) {
 
     //make a tray icon
     if (useTrayIcon) {
-        TrayIcon* Tray = new TrayIcon(QPixmap(ICON24),NAME,Popup,0,"tray");
-        connect(Tray, SIGNAL( clicked(const QPoint&, int)), this, SLOT( trayClick()));
+        QSystemTrayIcon *Tray = new QSystemTrayIcon(this);
+        Tray->setContextMenu(Popup);
+        Tray->setIcon(QIcon(ICON24));
         Tray->show();
+        connect(Tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayClick(QSystemTrayIcon::ActivationReason)));
     }
     //or make a floating icon
     else {
         FloatingIcon* Icon = new FloatingIcon(QPixmap(ICON64),Popup,0,"tray");
-        connect(Icon, SIGNAL( clicked()), this, SLOT( trayClick()));
+        connect(Icon, SIGNAL( clicked()), this, SLOT( iconClick()));
         connect(Icon, SIGNAL( closed()), qApp, SLOT( quit()));
         Icon->show();
     }
@@ -243,23 +245,24 @@ void LayoutManager::setLayoutName(QString name) {
     }
 }
 
-void LayoutManager::trayClick() {
+void LayoutManager::iconClick() {
     //don't show the dialog if there aren't any joystick devices plugged in
     if (available.count() == 0) {
         error("No joystick devices available","No joystick devices are currently available to configure.\nPlease plug in a gaming device and select\n\"Update Joystick Devices\" from the popup menu.");
         return;
     }
+    if(le) {
+        return;
+    }
     //otherwise, make a new LayoutEdit dialog and show it.
     le = new LayoutEdit(this);
     le->setLayout(CurrentLayout);
-    //note, this will cause the menu to hang. You cannot use the menu while the
-    //dialog is active. I'd rather it not work out that way, but this makes my
-    //code MUCH simpler for a small inconvenience that shouldn't matter. For
-    //instance, I don't have to worry about the current joysticks changing
-    //while there's a dialog and therefore adjusting the dialog to match.
-    le->exec();
-    delete le;
-    le = NULL;
+}
+
+void LayoutManager::trayClick(QSystemTrayIcon::ActivationReason reason) {
+    if(reason == QSystemTrayIcon::Trigger) {
+        iconClick();
+    }
 }
 
 void LayoutManager::trayMenu(QAction *menuItemAction) {
@@ -375,6 +378,12 @@ void LayoutManager::updateJoyDevs() {
     fillPopup();
     //the actual update process is handled by main.cpp, we just need to signal
     //ourselves to do it.
-    //raise(SIGUSR1);
+    if(le) {
+        le->updateJoypadWidgets();
+    }
     DEBUG("done updating joydevs\n");
+}
+
+void LayoutManager::leWindowClosed() {
+    le=NULL;
 }

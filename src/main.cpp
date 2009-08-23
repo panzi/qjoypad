@@ -66,6 +66,7 @@ int main( int argc, char **argv )
     //create a new event loop. This will be captured by the QApplication
     //when it gets created
     QApplication a( argc, argv );
+    a.setQuitOnLastWindowClosed(false);
 
 
     //where to look for settings. If it does not exist, it will be created

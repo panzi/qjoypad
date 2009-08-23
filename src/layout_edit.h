@@ -15,17 +15,18 @@ class LayoutEdit;
 
 class LayoutManager;
 
-class LayoutEdit : public QDialog {
+class LayoutEdit : public QWidget {
 	public:
 		LayoutEdit( LayoutManager* l );
 		//swap to a new layout
 		void setLayout(QString layout);
 		//update the list of available layouts
 		void updateLayoutList();
+        void updateJoypadWidgets();
 	protected:
 		//the layout manager this represents
 		LayoutManager* lm;		
-		
+		virtual void closeEvent(QCloseEvent *event);
 		//find out when the window is activated.
 		virtual void windowActivationChange( bool oldActive );
 		//parts of the dialog:
