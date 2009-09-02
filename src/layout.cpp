@@ -340,6 +340,7 @@ void LayoutManager::updateJoyDevs() {
     //for every joystick device in the directory listing...
     //(note, with devfs, only available devices are listed)
     for (QStringList::Iterator it = devices.begin(); it != devices.end(); ++it) {
+        debug_mesg("found a device file, %s\n", qPrintable(devdir + "/" + (*it)));
         //try opening the device.
         joydev = open( qPrintable(devdir + "/" + (*it)), O_RDONLY | O_NONBLOCK);
         //if it worked, then we have a live joystick! Make sure it's properly
