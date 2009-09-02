@@ -316,7 +316,7 @@ void LayoutManager::fillPopup() {
 }
 
 void LayoutManager::updateJoyDevs() {
-    DEBUG("updating joydevs\n");
+    debug_mesg("updating joydevs\n");
     QString devdir = DEVDIR;
 
     //reset all joydevs to sentinal value (-1)
@@ -355,13 +355,14 @@ void LayoutManager::updateJoyDevs() {
                 read_struct.events = POLLIN;
                 char buf[10];
                 while(poll(&read_struct, 1, 5)!=0) {
-                    DEBUG("reading junk data\n");
+                    debug_mesg("reading junk data\n");
                     read(joydev, buf, 10);
                 }
                 joypad = new JoyPad( index, joydev );
                 joypads.insert(index,joypad);
             }
             else {
+                debug_mesg("found previously open joypad with index %d, ignoring", index);
                 joypad = joypads[index];
                 joypad->resetToDev(joydev);
             }
@@ -376,12 +377,10 @@ void LayoutManager::updateJoyDevs() {
     //when it's all done, rebuild the popup menu so it displays the correct
     //information.
     fillPopup();
-    //the actual update process is handled by main.cpp, we just need to signal
-    //ourselves to do it.
     if(le) {
         le->updateJoypadWidgets();
     }
-    DEBUG("done updating joydevs\n");
+    debug_mesg("done updating joydevs\n");
 }
 
 void LayoutManager::leWindowClosed() {

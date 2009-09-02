@@ -163,11 +163,11 @@ void LayoutEdit::windowActivationChange( bool oldActive ) {
     QHashIterator<int, JoyPad*> it( available );
     while (it.hasNext())
     {
-        DEBUG("iterating and releasing\n");
+        debug_mesg("iterating and releasing\n");
         it.next();
         it.value()->release();
     }
-    DEBUG("done releasing!\n");
+    debug_mesg("done releasing!\n");
 }
 void LayoutEdit::closeEvent(QCloseEvent *event) {
     lm->leWindowClosed();
