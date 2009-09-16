@@ -24,6 +24,7 @@ AxisEdit::AxisEdit( Axis* ax )
     v2->setSpacing(5);
     CGradient = new QCheckBox("Gradient", this);
     CGradient->setChecked(axis->gradient);
+    connect(CGradient, SIGNAL(toggled(bool)), this, SLOT( CGradientChanged( bool )));
     v2->addWidget(CGradient);
 
     CMode = new QComboBox(this);
@@ -35,6 +36,16 @@ AxisEdit::AxisEdit( Axis* ax )
     CMode->setCurrentIndex( axis->mode );
     connect(CMode, SIGNAL(activated(int)), this, SLOT( CModeChanged( int )));
     v2->addWidget(CMode);
+	CTransferCurve = new QComboBox(this);
+	CTransferCurve->insertItem(linear, QString("Linear"), Qt::DisplayRole);
+    CTransferCurve->insertItem(quadratic, QString("Quadratic"),Qt::DisplayRole );
+	CTransferCurve->insertItem(cubic, QString("Cubic"),Qt::DisplayRole );
+	CTransferCurve->insertItem(quadratic_extreme, QString("Quadratic Extreme"), Qt::DisplayRole);
+	CTransferCurve->insertItem(power_function, QString("Power Function"), Qt::DisplayRole);
+    CTransferCurve->setCurrentIndex( axis->transferCurve );
+    CTransferCurve->setEnabled(axis->gradient);
+	connect(CTransferCurve, SIGNAL(activated(int)), this, SLOT( CTransferCurveChanged( int )));
+	v2->addWidget(CTransferCurve);
     h->addLayout(v2);
 
     MouseBox = new QFrame(this);
@@ -50,6 +61,13 @@ AxisEdit::AxisEdit( Axis* ax )
     SSpeed->setSingleStep(1);
     SSpeed->setValue(axis->maxSpeed);
     v2->addWidget(SSpeed);
+	LSensitivity = new QLabel("Sensitivity", MouseBox);
+    v2->addWidget(LSensitivity);
+	SSensitivity = new QDoubleSpinBox(MouseBox);
+    SSensitivity->setRange(1e-3F, 1e+3F);
+    SSensitivity->setSingleStep(0.10);
+	SSensitivity->setValue(axis->sensitivity);
+    v2->addWidget(SSensitivity);
     h->addWidget(MouseBox);
     v->addLayout(h);
 
@@ -87,6 +105,7 @@ AxisEdit::AxisEdit( Axis* ax )
     v->addLayout(h);
 
     CModeChanged( axis->mode );
+	CTransferCurveChanged( axis->transferCurve );
     CThrottleChanged( axis->throttle + 1 );
 }
 
@@ -98,6 +117,16 @@ void AxisEdit::show() {
 void AxisEdit::setState( int val ) {
     Slider->setValue( val );
 }
+void AxisEdit::CGradientChanged( bool on ) {
+	CTransferCurve->setEnabled(on);
+	if (on) {
+		CTransferCurveChanged( axis->transferCurve );
+	}
+	else {
+		LSensitivity->setEnabled(false);
+		SSensitivity->setEnabled(false);
+	}
+}
 
 void AxisEdit::CModeChanged( int index ) {
     if (index == keybd) {
@@ -107,6 +136,21 @@ void AxisEdit::CModeChanged( int index ) {
     else {
         MouseBox->setEnabled(true);
         KeyBox->setEnabled(false);
+		if (CGradient->isChecked()) {
+			CTransferCurve->setEnabled(true);
+			CTransferCurveChanged( axis->transferCurve );
+		}
+	}
+}
+
+void AxisEdit::CTransferCurveChanged( int index ) {
+	if (index == power_function) {
+		LSensitivity->setEnabled(true);
+		SSensitivity->setEnabled(true);
+	}
+	else {
+		LSensitivity->setEnabled(false);
+		SSensitivity->setEnabled(false);
     }
 }
 
@@ -129,15 +173,10 @@ void AxisEdit::CThrottleChanged( int index ) {
 }
 
 void AxisEdit::accept() {
-//if the gradient status has changed, either request a timer or turn it down.
-    /*if (axis->gradient) {
-    	if (!CGradient->isChecked()) tossTimer(axis);
-    }
-    else {
-    	if (CGradient->isChecked()) takeTimer(axis);
-    }*/
     axis->gradient = CGradient->isChecked();
     axis->maxSpeed = SSpeed->value();
+	axis->transferCurve = (TransferCurve)CTransferCurve->currentIndex();
+	axis->sensitivity = SSensitivity->value();
     axis->throttle = CThrottle->currentIndex() - 1;
     axis->dZone = Slider->dZone();
     axis->xZone = Slider->xZone();

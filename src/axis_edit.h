@@ -6,6 +6,7 @@
 #include <QComboBox>
 #include <QSpinBox>
 #include <QCheckBox>
+#include <QDoubleSpinBox>
 #include <QLabel>
 //for my home-brewed widgets
 #include "joyslider.h"
@@ -22,7 +23,9 @@ class AxisEdit : public QDialog {
 		void setState( int val );
 	protected slots:
 		//slots for GUI events
-		void CModeChanged( int index );
+		void CGradientChanged( bool on );
+ 		void CModeChanged( int index );
+		void CTransferCurveChanged( int index );
 		void CThrottleChanged( int index );
 		void accept();
 	protected:
@@ -30,9 +33,11 @@ class AxisEdit : public QDialog {
 		Axis *axis;
 		//the important parts of the dialog:
 		QCheckBox *CGradient;
-		QComboBox *CMode, *CThrottle;
+		QComboBox *CMode, *CThrottle, *CTransferCurve;
 		QFrame *MouseBox, *KeyBox;
 		QSpinBox *SSpeed;
+		QLabel *LSensitivity;
+		QDoubleSpinBox *SSensitivity;
 		KeyButton *BNeg, *BPos;
 		JoySlider *Slider;
 		QPushButton *BOkay, *BCancel;
