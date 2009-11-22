@@ -3,14 +3,17 @@
 
 if( ! pkg-config --exists xtst ); then
     echo "Error: you will need libxtst to compile this program";
+    exit 1;
 fi;
 
 if( ! pkg-config --atleast-version=4.2 QtCore ); then
     echo "Error: you need at least Qt version 4.2 to use this program";
+    exit 1;
 fi;
 
 if ( ! qmake ); then
     echo "Error: you need qmake!";
+    exit 1;
 fi;
 
 if( ! ( qmake --version | grep -qi 'Qt version 4' ) ); then
