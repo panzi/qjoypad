@@ -16,6 +16,9 @@ JoyPad::JoyPad( int i, int dev ) {
         debug_mesg("Valid file handle, setting up handlers and reading axis configs...\n");
         resetToDev(dev);
         debug_mesg("done resetting and setting up device index %d\n", i);
+        char id[200];
+        ioctl(joydev, JSIOCGNAME(199), id);
+        deviceId = id;
     } else {
         debug_mesg("This joypad does not have a valid file handle, not setting up event listeners\n");
     }
@@ -41,10 +44,10 @@ void JoyPad::resetToDev(int dev ) {
     //that axis into use, the key assignment will not be lost because the axis
     //will already exist and no new axis will be created.
     for (int i = 0; i < axes; i++) {
-        if (Axes[i] == 0) Axes.insert(i, new Axis( i ));
+        if (Axes[i] == 0) Axes.insert(i, new Axis( i, this ));
     }
     for (int i = 0; i < buttons; i++) {
-        if (Buttons[i] == 0) Buttons.insert(i, new Button( i ));
+        if (Buttons[i] == 0) Buttons.insert(i, new Button( i, this ));
     }
     struct pollfd read_struct;
     read_struct.fd = joydev;
@@ -215,7 +218,7 @@ void JoyPad::release() {
 
 void JoyPad::jsevent( js_event msg ) {
     //if there is a JoyPadWidget around, ie, if the joypad is being edited
-    if (jpw != NULL) {
+    if (jpw != NULL && hasFocus) {
         //tell the dialog there was an event. It will use this to flash
         //the appropriate button, if necesary.
         jpw->jsevent(msg);
@@ -290,4 +293,8 @@ void JoyPad::errorRead(int fd) {
     }
     joydev = -1;
     debug_mesg("Done disabling device with fd %d\n", fd);
+}
+
+void JoyPad::focusChange(bool focusState) {
+	hasFocus = !focusState;
 }

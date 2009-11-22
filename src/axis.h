@@ -26,7 +26,7 @@ class Axis : public QObject {
     //so AxisEdit can manipulate fields directly.
 	friend class AxisEdit;
 	public:
-		Axis( int i );
+		Axis( int i, QObject *parent = 0 );
 		~Axis();
 		//read axis settings from a stream
 		bool read( QTextStream* stream );

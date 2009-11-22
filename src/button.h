@@ -14,7 +14,7 @@ class Button : public QObject {
 	Q_OBJECT
     friend class ButtonEdit;
 	public:
-		Button( int i );
+		Button( int i, QObject *parent = 0 );
 		~Button();
 		//read from stream
 		bool read( QTextStream* stream );

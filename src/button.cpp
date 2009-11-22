@@ -1,7 +1,7 @@
 #include "button.h"
 #include "event.h"
 
-Button::Button( int i ) {
+Button::Button( int i, QObject *parent ) : QObject(parent) {
     index = i;
     isButtonPressed = false;
     isDown = false;

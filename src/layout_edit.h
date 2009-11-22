@@ -16,6 +16,7 @@ class LayoutEdit;
 class LayoutManager;
 
 class LayoutEdit : public QWidget {
+	Q_OBJECT
 	public:
 		LayoutEdit( LayoutManager* l );
 		//swap to a new layout
@@ -23,6 +24,8 @@ class LayoutEdit : public QWidget {
 		//update the list of available layouts
 		void updateLayoutList();
         void updateJoypadWidgets();
+    signals:
+		void focusChange(bool);
 	protected:
 		//the layout manager this represents
 		LayoutManager* lm;		

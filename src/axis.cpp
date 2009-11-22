@@ -7,7 +7,7 @@
 	((a) < (a_low) ? (a_low) : (a) > (a_high) ? (a_high) : (a))
 
 
-Axis::Axis( int i ) {
+Axis::Axis( int i, QObject *parent ) : QObject(parent) {
     index = i;
     isOn = false;
     isDown = false;

@@ -48,6 +48,7 @@ LayoutEdit::LayoutEdit( LayoutManager* l ): QWidget(NULL) {
         {
             it.next();
             names[i] = it.value()->getName();
+            connect(this, SIGNAL(focusChange(bool)), it.value(), SLOT(focusChange(bool)));
             ++i;
         }
     } while (0);
@@ -157,6 +158,7 @@ void LayoutEdit::updateJoypadWidgets() {
 }
 
 void LayoutEdit::windowActivationChange( bool oldActive ) {
+	emit focusChange(oldActive);
     if (oldActive) return;
     //whenever the window becomes active, release all pressed buttons! This way
     //you don't get any presses without releases to confuse things.

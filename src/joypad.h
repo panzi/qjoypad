@@ -59,6 +59,7 @@ class JoyPad : public QObject{
 		JoyPadWidget* widget(QWidget* parent, int i);
 		//called when the joypad is no longer being edited.
 		void releaseWidget();
+		QString getId();
 	protected:
 		//lookup axes and buttons. These are dictionaries to support
 		//layouts with different numbers of axes/buttons than the current
@@ -74,9 +75,12 @@ class JoyPad : public QObject{
 		JoyPadWidget* jpw;
         QSocketNotifier *joydevFileHandle;
         QSocketNotifier *joydevFileException;
+        QString deviceId;
+        bool hasFocus;
     public slots:    
         void handleJoyEvents(int fd);
         void errorRead(int fd);
+        void focusChange(bool windowHasFocus);
 };
 
 #endif
