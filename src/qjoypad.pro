@@ -30,8 +30,7 @@ DEFINES += ICON24='\\\"$${icons.conf_path}/icon24.png\\\"'
 DEFINES += ICON64='\\\"$${icons.conf_path}/icon64.png\\\"'
 
 TEMPLATE = app
-DEPENDPATH += trayicon
-INCLUDEPATH += . trayicon
+INCLUDEPATH += .
 QMAKE_LIBS += -lXtst
 
 # Input
@@ -39,46 +38,40 @@ HEADERS += axis.h \
            axis_edit.h \
            axisw.h \
            button.h \
-		   button_edit.h \
+	   button_edit.h \
            buttonw.h \
            constant.h \
            device.h \
            error.h \
            event.h \
            flash.h \
-		   icon.h \
+	   icon.h \
            joypad.h \
            joypadw.h \
-		   joyslider.h \
+	   joyslider.h \
            keycode.h \
            layout.h \
            getkey.h \
            layout_edit.h \
-		   quickset.h \
-           trayicon/trayicon.h
+	   quickset.h
 SOURCES += axis.cpp \
            axis_edit.cpp \
            axisw.cpp \
            button.cpp \
-		   button_edit.cpp \
+	   button_edit.cpp \
            buttonw.cpp \
-		   event.cpp \
+	   event.cpp \
            flash.cpp \
-		   icon.cpp \
+	   icon.cpp \
            joypad.cpp \
            joypadw.cpp \
-		   joyslider.cpp \
+	   joyslider.cpp \
            keycode.cpp \
            layout.cpp \
            layout_edit.cpp \
            main.cpp \
-		   quickset.cpp \
-		   getkey.cpp \
-           trayicon/trayicon.cpp \
-           trayicon/trayicon_x11.cpp
-
-
-
+	   quickset.cpp \
+	   getkey.cpp
 
 
 #####      Install      #####
