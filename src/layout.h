@@ -23,8 +23,6 @@
 #include "error.h"
 //so we know which joypads have RL equivalents
 #include "device.h"
-//to display the tray icon
-#include "trayicon/trayicon.h"
 //For displaying a floating icon instead of a tray icon
 #include "icon.h"
 //So we can know if there is a graphical version of the Layout Manager displayed
