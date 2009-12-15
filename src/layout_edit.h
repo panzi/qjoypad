@@ -25,13 +25,13 @@ class LayoutEdit : public QWidget {
 		void updateLayoutList();
         void updateJoypadWidgets();
     signals:
-		void focusChange(bool);
+		void focusStateChanged(bool);
+    public slots:
+        void appFocusChanged(QWidget *old, QWidget *now);
 	protected:
 		//the layout manager this represents
 		LayoutManager* lm;		
 		virtual void closeEvent(QCloseEvent *event);
-		//find out when the window is activated.
-		virtual void windowActivationChange( bool oldActive );
 		//parts of the dialog:
 		QVBoxLayout *LMain;
 		QStackedWidget *PadStack;

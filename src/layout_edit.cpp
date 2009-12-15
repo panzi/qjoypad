@@ -48,7 +48,7 @@ LayoutEdit::LayoutEdit( LayoutManager* l ): QWidget(NULL) {
         {
             it.next();
             names[i] = it.value()->getName();
-            connect(this, SIGNAL(focusChange(bool)), it.value(), SLOT(focusChange(bool)));
+            connect(this, SIGNAL(focusStateChanged(bool)), it.value(), SLOT(focusChange(bool)));
             ++i;
         }
     } while (0);
@@ -93,6 +93,8 @@ LayoutEdit::LayoutEdit( LayoutManager* l ): QWidget(NULL) {
     connect( quit, SIGNAL( clicked() ), qApp, SLOT(quit()));
     h->addWidget(quit);
     LMain->addLayout(h);
+    connect(qApp, SIGNAL(focusChanged ( QWidget * , QWidget *  ) ), this, 
+        SLOT(appFocusChanged(QWidget *, QWidget *)));
     this->show();
 }
 
@@ -157,21 +159,23 @@ void LayoutEdit::updateJoypadWidgets() {
     } while (0);
 }
 
-void LayoutEdit::windowActivationChange( bool oldActive ) {
-	emit focusChange(oldActive);
-    if (oldActive) return;
-    //whenever the window becomes active, release all pressed buttons! This way
-    //you don't get any presses without releases to confuse things.
-    QHashIterator<int, JoyPad*> it( available );
-    while (it.hasNext())
-    {
-        debug_mesg("iterating and releasing\n");
-        it.next();
-        it.value()->release();
-    }
-    debug_mesg("done releasing!\n");
-}
 void LayoutEdit::closeEvent(QCloseEvent *event) {
     lm->leWindowClosed();
     event->accept();
+}
+
+void LayoutEdit::appFocusChanged(QWidget *old, QWidget *now) {
+    if(now!=NULL && old==NULL) {
+        emit focusStateChanged(false);
+    } else if(old!=NULL && now==NULL) {
+        emit focusStateChanged(true);
+        QHashIterator<int, JoyPad*> it( available );
+        while (it.hasNext())
+        {
+            debug_mesg("iterating and releasing\n");
+            it.next();
+            it.value()->release();
+        }
+        debug_mesg("done releasing!\n");
+    }
 }
