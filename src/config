@@ -31,6 +31,7 @@ prefix="/usr/local"
 installdir="";
 plain_keys=""
 debug_option="";
+build_mode="release";
 for arg in $*
 do
 	case $arg in
@@ -78,7 +79,8 @@ Options:
             fi;;
 		--plain_keys) plain_keys="PLAIN_KEYS";;
         --debug)
-            debug_option+="_DEBUG";;
+            debug_option+="_DEBUG";
+            build_mode="debug";;
         *)  echo "Unrecognized argument: \"$arg\". Try ./config --help for help."
 	esac
 done
@@ -88,7 +90,11 @@ arg2="PREFIX=$prefix"
 arg3="DEFINES += $plain_keys $debug_option"
 arg4="INSTALL_PREFIX=${installdir}/${prefix}/"
 
-$QMAKE_EXEC -makefile "$arg1" "$arg2" "$arg3" "$arg4" qjoypad.pro
+$QMAKE_EXEC -makefile DEVDIR=$devdir PREFIX=$prefix \
+    "DEFINES += $plain_keys $debug_option" \
+    INSTALL_PREFIX=${installdir}/${prefix}/ \
+    "CONFIG += $build_mode" \
+    qjoypad.pro
 
 echo "
 Configuring QJoyPad installation...
