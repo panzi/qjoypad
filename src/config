@@ -85,11 +85,6 @@ Options:
 	esac
 done
 
-arg1="DEVDIR=$devdir"
-arg2="PREFIX=$prefix"
-arg3="DEFINES += $plain_keys $debug_option"
-arg4="INSTALL_PREFIX=${installdir}/${prefix}/"
-
 $QMAKE_EXEC -makefile DEVDIR=$devdir PREFIX=$prefix \
     "DEFINES += $plain_keys $debug_option" \
     INSTALL_PREFIX=${installdir}/${prefix}/ \
