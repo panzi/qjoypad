@@ -57,6 +57,8 @@ Options:
      --debug        Causes Qjoypad to spit out debugging messages (debug messages
                     will be  compiled in; to get rid of the messages you'll have
                     to recompile).
+    --qmake4bin=EXEC   Overrides the qmake executable used by this script.
+	EXEC may be relative to PATH or an absolute pathname.
     --help          Show this message.
 "; exit 0;;
         --devdir=*) devdir=${arg##*=}
@@ -81,15 +83,20 @@ Options:
         --debug)
             debug_option+="_DEBUG";
             build_mode="debug";;
+	--qmake4bin=*) QMAKE_EXEC=${arg##*=};;
         *)  echo "Unrecognized argument: \"$arg\". Try ./config --help for help."
 	esac
 done
 
-$QMAKE_EXEC -makefile DEVDIR=$devdir PREFIX=$prefix \
+if ( ! $QMAKE_EXEC -makefile DEVDIR=$devdir PREFIX=$prefix \
     "DEFINES += $plain_keys $debug_option" \
     INSTALL_PREFIX=${installdir}/${prefix}/ \
     "CONFIG += $build_mode" \
-    qjoypad.pro
+    qjoypad.pro ); then
+	echo "Config failed.  If you overrode the qmake exec, make sure it
+is valid!  Otherwise, email virtuoussin13@users.sourceforge.net for help";
+exit 1;
+fi
 
 echo "
 Configuring QJoyPad installation...
