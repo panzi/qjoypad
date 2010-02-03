@@ -10,6 +10,7 @@
 #include <QRegExp>
 #include <QStringList>
 #include "constant.h"
+#include "error.h"
 
 //default and arbitrary values for dZone and xZone
 #define DZONE 3000

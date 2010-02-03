@@ -360,7 +360,7 @@ void Axis::move( bool press ) {
 			// mouse by the rounded magnitude
 			sumDist += fdist;
 			dist = static_cast<int>(rint(sumDist));
-			sumDist -= dist;
+            sumDist -= dist;
  		}
  		//if not gradient, always go full speed.
  		else dist = maxSpeed;

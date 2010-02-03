@@ -258,10 +258,6 @@ void JoyPad::handleJoyEvents(int fd) {
         //pass that event on to the joypad!
         jsevent(msg);
     }
-
-    //sleep for a moment. This is just to keep us from throwing all the
-    //available processer power into madly checking for new events.
-    //usleep(10000);
 }
 
 void JoyPad::releaseWidget() {

@@ -25,7 +25,7 @@
 #define SENSITIVITY_MIN	1e-8F
 #define SENSITIVITY_MAX	1e+8F
 
-#define NAME "QJoyPad 4.0"
+#define NAME "QJoyPad 4.1"
 
 #define MOUSE_OFFSET 400
 
