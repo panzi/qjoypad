@@ -15,19 +15,23 @@ class LayoutEdit;
 
 class LayoutManager;
 
-class LayoutEdit : public QDialog {
+class LayoutEdit : public QWidget {
+	Q_OBJECT
 	public:
 		LayoutEdit( LayoutManager* l );
 		//swap to a new layout
 		void setLayout(QString layout);
 		//update the list of available layouts
 		void updateLayoutList();
+        void updateJoypadWidgets();
+    signals:
+		void focusStateChanged(bool);
+    public slots:
+        void appFocusChanged(QWidget *old, QWidget *now);
 	protected:
 		//the layout manager this represents
 		LayoutManager* lm;		
-		
-		//find out when the window is activated.
-		virtual void windowActivationChange( bool oldActive );
+		virtual void closeEvent(QCloseEvent *event);
 		//parts of the dialog:
 		QVBoxLayout *LMain;
 		QStackedWidget *PadStack;

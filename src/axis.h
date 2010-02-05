@@ -3,12 +3,14 @@
 
 //abs()
 #include <stdlib.h>
+#include <math.h>
 
 #include <QTimer>
 #include <QTextStream>
 #include <QRegExp>
 #include <QStringList>
 #include "constant.h"
+#include "error.h"
 
 //default and arbitrary values for dZone and xZone
 #define DZONE 3000
@@ -16,6 +18,8 @@
 
 //each axis can create a key press or move the mouse in one of four directions.
 enum AxisMode {keybd, mousepv, mousenv, mouseph, mousenh};
+enum TransferCurve {linear, quadratic, cubic, quadratic_extreme,
+					power_function};
 
 //represents one joystick axis
 class Axis : public QObject {
@@ -23,7 +27,7 @@ class Axis : public QObject {
     //so AxisEdit can manipulate fields directly.
 	friend class AxisEdit;
 	public:
-		Axis( int i );
+		Axis( int i, QObject *parent = 0 );
 		~Axis();
 		//read axis settings from a stream
 		bool read( QTextStream* stream );
@@ -65,14 +69,17 @@ class Axis : public QObject {
 		bool isDown;
 
 		//variables for calculating quadratic used for gradient mouse axes
-		double a,b,c;
-
-		//actual axis settings:
-		bool gradient;
-		int maxSpeed; //0..MAXMOUSESPEED
-		int throttle; //-1 (nkey), 0 (no throttle), 1 (pkey)
-		int dZone;//-32767 .. 32767
-		int xZone;//-32767 .. 32767
+		float inverseRange;
+ 
+ 		//actual axis settings:
+ 		bool gradient;
+ 		int maxSpeed; //0..MAXMOUSESPEED
+		unsigned int transferCurve;
+		float sensitivity;
+ 		int throttle; //-1 (nkey), 0 (no throttle), 1 (pkey)
+ 		int dZone;//-32767 .. 32767
+ 		int xZone;//-32767 .. 32767
+		double sumDist;
 		AxisMode mode;
 		//positive keycode
 		int pkeycode;

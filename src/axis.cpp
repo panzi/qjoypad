@@ -2,9 +2,12 @@
 #include "event.h"
 #include "time.h"
 #define sqr(a) ((a)*(a))
+#define cub(a)	((a)*(a)*(a))
+#define clamp(a, a_low, a_high)	\
+	((a) < (a_low) ? (a_low) : (a) > (a_high) ? (a_high) : (a))
 
 
-Axis::Axis( int i ) {
+Axis::Axis( int i, QObject *parent ) : QObject(parent) {
     index = i;
     isOn = false;
     isDown = false;
@@ -13,9 +16,6 @@ Axis::Axis( int i ) {
     toDefault();
     tick = 0;
     timer = new QTimer(this);
-    a = 0;
-    b = 0;
-    c = 0;
 }
 
 
@@ -36,7 +36,7 @@ bool Axis::read( QTextStream* stream ) {
     bool ok;
     //int to store values derived from strings
     int val;
-
+    float fval;
     //step through each word, check if it's a token we recognize
     for ( QStringList::Iterator it = words.begin(); it != words.end(); ++it ) {
         if (*it == "maxspeed") {
@@ -66,6 +66,21 @@ bool Axis::read( QTextStream* stream ) {
             if (ok && val >= 0 && val <= JOYMAX) xZone = val;
             else return false;
         }
+		else if (*it == "tcurve") {
+			++it;
+			if (it == words.end()) return false;
+			val = (*it).toInt(&ok);
+			if (ok && val >= 0 && val <= power_function) transferCurve = val;
+			else return false;
+		}
+		else if (*it == "sens") {
+			++it;
+			if (it == words.end()) return false;
+			fval = (*it).toFloat(&ok);
+			if (ok && fval >= SENSITIVITY_MIN && fval <= SENSITIVITY_MAX)
+				sensitivity = fval;
+			else return false;
+		}
         //and for the positive keycode,
         else if (*it == "+key") {
             ++it;
@@ -134,6 +149,10 @@ void Axis::write( QTextStream* stream ) {
     }
     else {
         if (gradient) *stream << "maxSpeed " << maxSpeed << ", ";
+		if (transferCurve != quadratic)
+			*stream << "tCurve " << transferCurve << ", ";
+		if (sensitivity != 1.0F)
+			*stream << "sens " << sensitivity << ", ";
         *stream << "mouse";
         if (mode == mousepv)
             *stream << "+v\n";
@@ -199,6 +218,8 @@ void Axis::toDefault() {
     gradient = false;
     throttle = 0;
     maxSpeed = 100;
+	transferCurve = quadratic;
+	sensitivity = 1.0F;
     dZone = DZONE;
     tick = 0;
     xZone = XZONE;
@@ -275,13 +296,10 @@ void Axis::timerTick( int tick ) {
 }
 
 void Axis::adjustGradient() {
-    //create a nice quadratic curve fitting it to the points
-    //(dZone,0) and (xZone,MaxSpeed)
-    a = (double) (maxSpeed) / sqr(xZone - dZone);
-    b = -2 * a * dZone;
-    c = a * sqr(dZone);
-    //actual equation for curve is: y = ax^2 + b
-    //where x is the state of the axis and y is the distance the mouse should move.
+	inverseRange = 1.0F / (xZone - dZone);
+	// This is also the convenient spot to initialize the dithering
+	// accmulator.
+    sumDist = 0;
 }
 
 void Axis::move( bool press ) {
@@ -305,23 +323,51 @@ void Axis::move( bool press ) {
     //if using the mouse
     else if (press) {
         int dist;
-        if (gradient) {
-            //calculate our mouse speed curve based on calculations made in
-            //adjustGradient()
-            int absState = abs(state);
-            if (absState >= xZone) dist = maxSpeed;
-            else if (absState <= dZone) dist = 0;
-            else dist = (int) (a*sqr(absState) + b*absState + c);
-        }
-        //if not gradient, always go full speed.
-        else dist = maxSpeed;
 
-        //if we're on the negative side	of the axis, must compensate for
-        //squaring and make distance negative.
-        if (state < 0) dist = -dist;
-        e.type = WARP;
-        if (mode == mousepv) {
-            e.value1 = 0;
+ 		if (gradient) {
+			const int absState = abs(state);
+			float fdist;	// Floating point movement distance
+
+			if (absState >= xZone) fdist = 1.0F;
+			else if (absState <= dZone) fdist = 0.0F;
+			else {
+				const float u = inverseRange * (absState - dZone);
+
+				switch(transferCurve) {
+				case quadratic:
+					fdist = sqr(u);
+					break;
+				case cubic:
+					fdist = cub(u);
+					break;
+				case quadratic_extreme:
+					fdist = sqr(u);
+					if(u >= 0.95F) {
+						fdist *= 1.5F;
+					}
+					break;
+				case power_function:
+					fdist = clamp(powf(u, 1.0F / clamp(
+						sensitivity, 1e-8F, 1e+3F)), 0.0F, 1.0F);
+					break;
+				default:
+					fdist = u;
+				}
+			}
+			fdist *= maxSpeed;
+			if (state < 0) fdist = -fdist;
+			// Accumulate the floating point distance and shift the
+			// mouse by the rounded magnitude
+			sumDist += fdist;
+			dist = static_cast<int>(rint(sumDist));
+            sumDist -= dist;
+ 		}
+ 		//if not gradient, always go full speed.
+ 		else dist = maxSpeed;
+ 
+ 		e.type = WARP;
+ 		if (mode == mousepv) {
+ 			e.value1 = 0;
             e.value2 = dist;
         }
         else if (mode == mousenv) {

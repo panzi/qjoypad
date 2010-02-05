@@ -1,11 +1,11 @@
-QJoyPad 3 Documentation
+QJoyPad 4 Documentation
 
-Distributed with QJoyPad 3.4; available online at
+Distributed with QJoyPad 4.0; available online at
 http://qjoypad.sourceforge.net/doc/doc_index.html
 
-Nathan Gaylinn
+John Toman
 
-   wren42@users.sourceforge.net
+   virtuoussin13@users.sourceforge.net
    http://qjoypad.sourceforge.net
      _________________________________________________________
 

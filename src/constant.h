@@ -22,13 +22,11 @@
 //fastest the mouse can go. Completely arbitrary.
 #define MAXMOUSESPEED 5000
 
-#define NAME "QJoyPad 4.0"
+#define SENSITIVITY_MIN	1e-8F
+#define SENSITIVITY_MAX	1e+8F
+
+#define NAME "QJoyPad 4.1"
 
 #define MOUSE_OFFSET 400
-#ifdef _DEBUG
-#define DEBUG(str) printf(str);
-#else
-#define DEBUG
-#endif
 
 #endif

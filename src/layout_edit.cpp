@@ -1,9 +1,9 @@
 #include "layout_edit.h"
 
 //build the dialog
-LayoutEdit::LayoutEdit( LayoutManager* l ) {
+LayoutEdit::LayoutEdit( LayoutManager* l ): QWidget(NULL) {
     lm = l;
-
+    setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle( NAME );
     setWindowIcon(QPixmap(ICON24));
 
@@ -48,6 +48,7 @@ LayoutEdit::LayoutEdit( LayoutManager* l ) {
         {
             it.next();
             names[i] = it.value()->getName();
+            connect(this, SIGNAL(focusStateChanged(bool)), it.value(), SLOT(focusChange(bool)));
             ++i;
         }
     } while (0);
@@ -92,11 +93,14 @@ LayoutEdit::LayoutEdit( LayoutManager* l ) {
     connect( quit, SIGNAL( clicked() ), qApp, SLOT(quit()));
     h->addWidget(quit);
     LMain->addLayout(h);
+    connect(qApp, SIGNAL(focusChanged ( QWidget * , QWidget *  ) ), this, 
+        SLOT(appFocusChanged(QWidget *, QWidget *)));
+    this->show();
 }
 
 void LayoutEdit::setLayout(QString layout) {
     //change the text,
-    CLayouts->setItemText(CLayouts->currentIndex(), layout);
+    CLayouts->setCurrentIndex(lm->getLayoutNames().indexOf(layout));
     //update all the JoyPadWidgets.
     for (uint i = 0; i < available.count(); i++) {
         ((JoyPadWidget*)PadStack->widget(i))->update();
@@ -111,16 +115,67 @@ void LayoutEdit::updateLayoutList() {
     CLayouts->setCurrentIndex(layouts.indexOf(lm->CurrentLayout));
 }
 
-void LayoutEdit::windowActivationChange( bool oldActive ) {
-    if (oldActive) return;
-    //whenever the window becomes active, release all pressed buttons! This way
-    //you don't get any presses without releases to confuse things.
-    QHashIterator<int, JoyPad*> it( available );
-    while (it.hasNext())
+void LayoutEdit::updateJoypadWidgets() {
+    int indexOfFlashRadio = LMain->indexOf(JoyButtons);
+    FlashRadioArray *newJoyButtons;
+    int padcount = available.count();
+    QString names[padcount];
+    int i = 0;
+    do
     {
-        DEBUG("iterating and releasing\n");
-        it.next();
-        it.value()->release();
+        QHashIterator<int, JoyPad*> it( available );
+        while (it.hasNext())
+        {
+            it.next();
+            names[i] = it.value()->getName();
+            ++i;
+        }
+    } while (0);
+    
+    newJoyButtons = new FlashRadioArray(padcount, names, true, this );
+    LMain->insertWidget(indexOfFlashRadio, newJoyButtons);
+    LMain->removeWidget(JoyButtons);
+    FlashRadioArray* oldJoyButtons = JoyButtons;
+    JoyButtons = newJoyButtons;
+    connect( JoyButtons, SIGNAL( changed( int ) ), PadStack, SLOT( setCurrentIndex( int )));
+    oldJoyButtons->deleteLater();
+    int numberOfJoypads = PadStack->count();
+    for(int i = 0; i<numberOfJoypads; i++) {
+        PadStack->removeWidget(PadStack->widget(0));
     }
-    DEBUG("done releasing!\n");
+    i = 0;
+    do
+    {
+        QHashIterator<int, JoyPad*> it(available);
+        while (it.hasNext())
+        {
+            it.next();
+            //add a new JoyPadWidget to the stack
+            PadStack->insertWidget( i,it.value()->widget(PadStack,i) );
+            //every time it "flashes", flash the associated tab.
+            connect( PadStack->widget(i), SIGNAL( flashed( int ) ), JoyButtons, SLOT( flash( int )));
+            ++i;
+        }
+    } while (0);
+}
+
+void LayoutEdit::closeEvent(QCloseEvent *event) {
+    lm->leWindowClosed();
+    event->accept();
+}
+
+void LayoutEdit::appFocusChanged(QWidget *old, QWidget *now) {
+    if(now!=NULL && old==NULL) {
+        emit focusStateChanged(false);
+    } else if(old!=NULL && now==NULL) {
+        emit focusStateChanged(true);
+        QHashIterator<int, JoyPad*> it( available );
+        while (it.hasNext())
+        {
+            debug_mesg("iterating and releasing\n");
+            it.next();
+            it.value()->release();
+        }
+        debug_mesg("done releasing!\n");
+    }
 }

@@ -14,6 +14,7 @@
 #include <QApplication>
 #include <QDialog>
 #include <QInputDialog>
+#include <QSystemTrayIcon>
 #include <poll.h>
 
 //a layout handles several joypads
@@ -22,8 +23,6 @@
 #include "error.h"
 //so we know which joypads have RL equivalents
 #include "device.h"
-//to display the tray icon
-#include "trayicon/trayicon.h"
 //For displaying a floating icon instead of a tray icon
 #include "icon.h"
 //So we can know if there is a graphical version of the Layout Manager displayed
@@ -43,6 +42,7 @@ class LayoutManager : public QObject {
 		LayoutManager( bool useTrayIcon);
 		//produces a list of the names of all the available layout.
 		QStringList getLayoutNames();
+        void leWindowClosed();
 	public slots:
 		//load a layout with a given name
 		bool load(const QString& name);
@@ -64,7 +64,8 @@ class LayoutManager : public QObject {
 		void remove();
 		
 		//when the tray icon is clicked
-		void trayClick();
+		void iconClick();
+        void trayClick(QSystemTrayIcon::ActivationReason reason);
 		//when the user selects an item on the tray's popup menu
 		void trayMenu(QAction* menuItemAction);
 		//rebuild the popup menu with the current information

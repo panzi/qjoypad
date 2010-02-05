@@ -1,11 +1,37 @@
 #!/bin/bash
 
 
+if( ! pkg-config --exists xtst ); then
+    echo "Error: you will need libxtst to compile this program";
+    exit 1;
+fi;
+
+if( ! pkg-config --atleast-version=4.2 QtCore ); then
+    echo "Error: you need at least Qt version 4.2 to use this program";
+    exit 1;
+fi;
+
+if ( ! qmake ); then
+    echo "Error: you need qmake!";
+    exit 1;
+fi;
+
+if( ! ( qmake --version | grep -qi 'Qt version 4' ) ); then
+    echo "WARNING: Falling back on qmake-qt4; this may or may not work";
+    echo "WARNING: if it fails please see the compilation instructions on 
+    qjoypad.sourceforge.net";
+    QMAKE_EXEC="qmake-qt4";
+else
+    QMAKE_EXEC="qmake";
+fi;
+    
+
 devdir="/dev/input"
 prefix="/usr/local"
 installdir="";
 plain_keys=""
 debug_option="";
+build_mode="release";
 for arg in $*
 do
 	case $arg in
@@ -31,6 +57,8 @@ Options:
      --debug        Causes Qjoypad to spit out debugging messages (debug messages
                     will be  compiled in; to get rid of the messages you'll have
                     to recompile).
+    --qmake4bin=EXEC   Overrides the qmake executable used by this script.
+	EXEC may be relative to PATH or an absolute pathname.
     --help          Show this message.
 "; exit 0;;
         --devdir=*) devdir=${arg##*=}
@@ -53,17 +81,22 @@ Options:
             fi;;
 		--plain_keys) plain_keys="PLAIN_KEYS";;
         --debug)
-            debug_option+="_DEBUG";;
+            debug_option+="_DEBUG";
+            build_mode="debug";;
+	--qmake4bin=*) QMAKE_EXEC=${arg##*=};;
         *)  echo "Unrecognized argument: \"$arg\". Try ./config --help for help."
 	esac
 done
 
-arg1="DEVDIR=$devdir"
-arg2="PREFIX=$prefix"
-arg3="DEFINES += $plain_keys $debug_option"
-arg4="INSTALL_PREFIX=${installdir}/${prefix}/"
-
-qmake -makefile "$arg1" "$arg2" "$arg3" "$arg4" qjoypad.pro
+if ( ! $QMAKE_EXEC -makefile DEVDIR=$devdir PREFIX=$prefix \
+    "DEFINES += $plain_keys $debug_option" \
+    INSTALL_PREFIX=${installdir}/${prefix}/ \
+    "CONFIG += $build_mode" \
+    qjoypad.pro ); then
+	echo "Config failed.  If you overrode the qmake exec, make sure it
+is valid!  Otherwise, email virtuoussin13@users.sourceforge.net for help";
+exit 1;
+fi
 
 echo "
 Configuring QJoyPad installation...

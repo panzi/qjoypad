@@ -1,5 +1,4 @@
 #include "joypadw.h"
-//Added by qt3to4:
 
 JoyPadWidget::JoyPadWidget( JoyPad* jp, int i, QWidget* parent )
         : QWidget(parent) {
