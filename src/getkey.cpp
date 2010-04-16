@@ -29,7 +29,6 @@ bool GetKey::x11Event( XEvent* e )
 {
     //keep Qt from closing the dialog upon seeing Esc pressed.
     if (e->type == KeyPress) return true;
-
     //On a key press, return the key and quit
     //Ctrl+X == [No Key]
     if (e->type == KeyRelease) {
@@ -49,6 +48,11 @@ bool GetKey::x11Event( XEvent* e )
     //any other events we will pass on to the dialog. This allows for closing
     //the window and easy redrawing  :)
     return false;
+}
+
+void GetKey::closeEvent(QCloseEvent *e) {
+    e->ignore();
+    done(-1);
 }
 
 void GetKey::paintEvent ( QPaintEvent * ) {
