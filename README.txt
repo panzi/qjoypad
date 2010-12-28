@@ -904,17 +904,8 @@ Chapter 6. Credits
    Thank you for your interest and for your support, Mark.
      _________________________________________________________
 
-Chapter 7. This software is GPL!
+Chapter 7. Licensing
+    
+   This software is licensed under the terms of the GNU GPLv2.
+   Please see LICENSE.txt for a full text of the license.
 
-   Check  out  LICENSE.txt or http://www.gnu.org/licenses/gpl.txt
-   for  details!  The  bare  bones  of  it  is,  this  program is
-   distributed  in  open-source  form so that others may share it
-   freely,  learn from it, or modify it as they see fit. However,
-   under no circumstances can it be sold!
-
-   This  code  was  written entirely by Nathan Gaylinn (excepting
-   the  code used for displaying a tray icon that is adapted from
-   the  Psi source [http://psi.affinix.com/]) but is based on the
-   idea of xjoypad by Erich Kitzmüller.
-
-   Yay for the power GPL gives to developers!
