@@ -1,0 +1,5 @@
+.*
+*.o
+src/moc_*.cpp
+src/qjoypad
+src/Makefile
