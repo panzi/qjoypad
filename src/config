@@ -11,11 +11,6 @@ if( ! pkg-config --atleast-version=4.2 QtCore ); then
     exit 1;
 fi;
 
-if ( ! qmake ); then
-    echo "Error: you need qmake!";
-    exit 1;
-fi;
-
 if( ! ( qmake --version | grep -qi 'Qt version 4' ) ); then
     echo "WARNING: Falling back on qmake-qt4; this may or may not work";
     echo "WARNING: if it fails please see the compilation instructions on 
@@ -24,7 +19,7 @@ if( ! ( qmake --version | grep -qi 'Qt version 4' ) ); then
 else
     QMAKE_EXEC="qmake";
 fi;
-    
+
 
 devdir="/dev/input"
 prefix="/usr/local"

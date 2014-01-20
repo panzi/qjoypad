@@ -31,7 +31,7 @@ DEFINES += ICON64='\\\"$${icons.conf_path}/icon64.png\\\"'
 
 TEMPLATE = app
 INCLUDEPATH += .
-QMAKE_LIBS += -lXtst
+QMAKE_LIBS += -lXtst -lX11
 
 # Input
 HEADERS += axis.h \
