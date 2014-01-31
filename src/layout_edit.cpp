@@ -102,7 +102,7 @@ void LayoutEdit::setLayout(QString layout) {
     //change the text,
     CLayouts->setCurrentIndex(lm->getLayoutNames().indexOf(layout));
     //update all the JoyPadWidgets.
-    for (uint i = 0; i < available.count(); i++) {
+    for (int i = 0; i < available.count(); i++) {
         ((JoyPadWidget*)PadStack->widget(i))->update();
     }
 }

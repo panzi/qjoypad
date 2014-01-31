@@ -28,7 +28,7 @@ AxisEdit::AxisEdit( Axis* ax )
     v2->addWidget(CGradient);
 
     CMode = new QComboBox(this);
-    CMode->insertItem((int)keybd, QString("Keyboard"), Qt::DisplayRole);
+    CMode->insertItem((int)keybd, QString("Keyboard/Mouse Button"), Qt::DisplayRole);
     CMode->insertItem((int) mousepv,QString("Mouse (Vert.)"),Qt::DisplayRole);
     CMode->insertItem((int) mousenv, QString("Mouse (Vert. Rev.)"), Qt::DisplayRole);
     CMode->insertItem((int) mouseph, "Mouse (Hor.)", Qt::DisplayRole);
@@ -80,7 +80,7 @@ AxisEdit::AxisEdit( Axis* ax )
     h->setSpacing(5);
     h->setMargin(5);
     //h->setAutoAdd(true);
-    BNeg = new KeyButton(axis->getName(),axis->nkeycode,KeyBox);
+    BNeg = new KeyButton(axis->getName(),axis->nkeycode,KeyBox,true,axis->nuseMouse);
 
     CThrottle = new QComboBox(KeyBox);
     CThrottle->insertItem(0,"Neg. Throttle",Qt::DisplayRole);
@@ -89,7 +89,7 @@ AxisEdit::AxisEdit( Axis* ax )
     CThrottle->setCurrentIndex(axis->throttle + 1);
     connect( CThrottle, SIGNAL( activated( int )), this, SLOT( CThrottleChanged( int )));
 
-    BPos = new KeyButton(axis->getName(),axis->pkeycode,KeyBox);
+    BPos = new KeyButton(axis->getName(),axis->pkeycode,KeyBox,true,axis->puseMouse);
     h->addWidget(BNeg);
     h->addWidget(CThrottle);
     h->addWidget(BPos);
@@ -183,6 +183,8 @@ void AxisEdit::accept() {
     axis->mode = (AxisMode) CMode->currentIndex();
     axis->pkeycode = BPos->getValue();
     axis->nkeycode = BNeg->getValue();
+	axis->puseMouse = BPos->choseMouse();
+	axis->nuseMouse = BNeg->choseMouse();
     axis->adjustGradient();
 
     QDialog::accept();

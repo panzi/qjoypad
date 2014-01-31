@@ -97,6 +97,26 @@ bool Axis::read( QTextStream* stream ) {
             if (ok && val >= 0 && val <= MAXKEY) nkeycode = val;
             else return false;
         }
+        else if (*it == "+mouse") {
+            ++it;
+            if (it == words.end()) return false;
+            val = (*it).toInt(&ok);
+            if (ok && val >= 0 && val <= MAXKEY) {
+                puseMouse = true;
+                pkeycode = val;
+            }
+            else return false;
+        }
+        else if (*it == "-mouse") {
+            ++it;
+            if (it == words.end()) return false;
+            val = (*it).toInt(&ok);
+            if (ok && val >= 0 && val <= MAXKEY) {
+                nuseMouse = true;
+                nkeycode = val;
+            }
+            else return false;
+        }
         //the rest of the options are keywords without integers
         else if (*it == "gradient") {
             gradient = true;
@@ -144,8 +164,9 @@ void Axis::write( QTextStream* stream ) {
     if (dZone != DZONE) *stream << "dZone " << dZone << ", ";
     if (xZone != XZONE) *stream << "xZone " << xZone << ", ";
     if (mode == keybd) {
-        *stream << "+key " << pkeycode << ", "
-        << "-key " << nkeycode << "\n";
+        *stream
+            << (puseMouse ? "+mouse " : "+key ") << pkeycode << ", "
+            << (nuseMouse ? "-mouse " : "-key ") << nkeycode << "\n";
     }
     else {
         if (gradient) *stream << "maxSpeed " << maxSpeed << ", ";
@@ -226,6 +247,8 @@ void Axis::toDefault() {
     mode = keybd;
     pkeycode = 0;
     nkeycode = 0;
+    puseMouse = false;
+    nuseMouse = false;
     downkey = 0;
     state = 0;
     adjustGradient();
@@ -239,7 +262,9 @@ bool Axis::isDefault() {
            (xZone == XZONE) &&
            (mode == keybd) &&
            (pkeycode == 0) &&
-           (nkeycode == 0);
+           (nkeycode == 0) &&
+           (puseMouse == false) &&
+           (nuseMouse == false) ;
 }
 
 bool Axis::inDeadZone( int val ) {
@@ -256,19 +281,34 @@ bool Axis::inDeadZone( int val ) {
 QString Axis::status() {
     QString result = getName() + " : [";
     if (mode == keybd) {
-        if (throttle == 0)
-            result += "KEYBOARD";
-        else result += "THROTTLE";
+        if (throttle == 0) {
+            if (puseMouse != nuseMouse) {
+                result += "KEYBOARD/MOUSE";
+            }
+            else if (puseMouse) {
+                result += "MOUSE";
+            }
+            else {
+                result += "KEYBOARD";
+            }
+        }
+        else {
+            result += "THROTTLE";
+    }
     }
     else result += "MOUSE";
     return result + "]";
 }
 
 void Axis::setKey(bool positive, int value) {
-    if (positive)
+    if (positive) {
         pkeycode = value;
-    else
+        puseMouse = false;
+    }
+    else {
         nkeycode = value;
+        nuseMouse = false;
+    }
 }
 
 void Axis::timerTick( int tick ) {
@@ -310,12 +350,13 @@ void Axis::move( bool press ) {
         //dialog being open and blocking events from happening.
         if (isDown == press) return;
         isDown = press;
+        bool useMouse = (state > 0)?puseMouse:nuseMouse;
         if (press) {
-            e.type = KPRESS;
+            e.type = useMouse?BPRESS:KPRESS;
             downkey = (state > 0)?pkeycode:nkeycode;
         }
         else {
-            e.type = KREL;
+            e.type = useMouse?BREL:KREL;
         }
         e.value1 = downkey;
         e.value2 = 0;

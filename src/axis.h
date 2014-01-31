@@ -85,6 +85,8 @@ class Axis : public QObject {
 		int pkeycode;
 		//negative keycode
 		int nkeycode;
+		bool puseMouse;
+		bool nuseMouse;
 		//the key that is currently pressed
 		int downkey;
 		//the position of the axis, as from jsevent

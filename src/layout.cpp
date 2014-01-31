@@ -357,7 +357,7 @@ void LayoutManager::updateJoyDevs() {
                 char buf[10];
                 while(poll(&read_struct, 1, 5)!=0) {
                     debug_mesg("reading junk data\n");
-                    read(joydev, buf, 10);
+                    if (read(joydev, buf, 10) <= 0) break;
                 }
                 joypad = new JoyPad( index, joydev );
                 joypads.insert(index,joypad);

@@ -55,7 +55,7 @@ void JoyPad::resetToDev(int dev ) {
     char buf[10];
     while(poll(&read_struct, 1, 5)!=0) {
         debug_mesg("reading junk data\n");
-        read(joydev, buf, 10);
+        if (read(joydev, buf, 10) <= 0) break;
     }
     setupJoyDeviceListener(dev);
     debug_mesg("done resetting to dev\n");
@@ -249,6 +249,8 @@ JoyPadWidget* JoyPad::widget( QWidget* parent, int i) {
 }
 
 void JoyPad::handleJoyEvents(int fd) {
+    Q_UNUSED(fd);
+
     js_event msg;
     int len;
 

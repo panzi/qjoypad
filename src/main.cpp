@@ -147,7 +147,7 @@ int main( int argc, char **argv )
     if (pidFile.exists())
     {
         int pid;
-        if (pidFile.open( QIODevice::ReadOnly ));
+        if (pidFile.open( QIODevice::ReadOnly ))
         {
             //try to get that pid...
             QTextStream( &pidFile ) >> pid;
