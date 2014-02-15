@@ -20,9 +20,10 @@
 #include <QSystemTrayIcon>
 #include <poll.h>
 #include <cstdlib>
+#include <getopt.h>
 
 //for making universally available variables
-QHash<int, JoyPad*> available;			//to device.h
+QHash<int, JoyPad*> available;         //to device.h
 QHash<int, JoyPad*> joypads;           //to device.h
 
 //variables needed in various functions in this file
@@ -53,8 +54,8 @@ void catchSIGUSR1( int sig ) {
 
 /*  A new feature to add? We'll see.
 void catchSIGUSR2( int sig ) {
-	lm->trayClick();
-	signal( sig, catchSIGUSR2 );
+    lm->trayClick();
+    signal( sig, catchSIGUSR2 );
 }
 */
 
@@ -79,7 +80,7 @@ int main( int argc, char **argv )
 
 
     //start out with no special layout.
-    QString layout = "";
+    QString layout;
     //by default, we use a tray icon
     bool useTrayIcon = true;
     //this execution wasn't made to update the joystick device list.
@@ -87,56 +88,86 @@ int main( int argc, char **argv )
     bool forceTrayIcon = false;
 
     //parse command-line options
-    for (int i = 1; i < a.argc(); i++) {
-        //if a device directory was specified,
-        if (QRegExp("-{1,2}device").exactMatch(a.argv()[i])) {
-            ++i;
-            if (i < a.argc()) {
-                if (QFile::exists(a.argv()[i])) {
-                    devdir = a.argv()[i];
+    struct option long_options[] = {
+        {"help",       no_argument,       0, 'h'},
+        {"device",     required_argument, 0, 'd'},
+        {"force-tray", no_argument,       0, 't'},
+        {"notray",     no_argument,       0, 'T'},
+        {"update",     no_argument,       0, 'u'},
+        {0,            0,                 0,  0 }
+    };
+
+    for (;;) {
+        int c = getopt_long(argc, argv, "hd:tTu", long_options, NULL);
+
+        if (c == -1)
+            break;
+
+        switch (c) {
+            case 'h':
+                printf("%s\n"
+                    "Usage: %s [--device=\"/device/path\"] [--notray|--force-tray] [\"layout name\"]\n"
+                    "\n"
+                    "Options:\n"
+                    "  -h, --help            Print this help message.\n"
+                    "  -d, --device=PATH     Look for joystick devices in PATH. This should\n"
+                    "                        be something like \"/dev/input\" if your game\n"
+                    "                        devices are in /dev/input/js0, /dev/input/js1, etc.\n"
+                    "  -t, --force-tray      Forece to use a system tray icon.\n"
+                    "  -T, --notray          Do not use a system tray icon. This is useful for\n"
+                    "                        window managers that don't support this feature.\n"
+                    "  -u, --update          Force a running instance of QJoyPad to update its\n"
+                    "                        list of devices and layouts.\n"
+                    "  \"layout name\"         Load the given layout in an already running\n"
+                    "                        instance of QJoyPad, or start QJoyPad using the\n"
+                    "                        given layout.\n", NAME, argc > 0 ? argv[0] : "qjoypad");
+                return 0;
+
+            case 'd':
+                if (QFile::exists(optarg)) {
+                    devdir = optarg;
                 }
                 else {
-                    error("Command Line Argument Problems", "No such directory: " + QString(a.argv()[i]));
-                    continue;
+                    fprintf(stderr, "No such file or directory: %s\n", optarg);
+                    return 1;
                 }
-            }
+                break;
+
+            case 'T':
+                useTrayIcon = false;
+                break;
+
+            case 't':
+                useTrayIcon = true;
+                forceTrayIcon = true;
+                break;
+
+            case 'u':
+                update = true;
+                break;
+
+            case '?':
+                fprintf(stderr,
+                    "See `%s --help` for more information\n",
+                    argc > 0 ? argv[0] : "qjoypad");
+                return 1;
         }
-        //if no-tray mode was requested,
-        else if (QRegExp("-{1,2}notray").exactMatch(a.argv()[i])) {
-            useTrayIcon = false;
-        }
-        //if this execution is just meant to update the joystick devices,
-        else if (QRegExp("-{1,2}update").exactMatch(a.argv()[i])) {
-            update = true;
-        }
-        //if help was requested,
-        else if (QRegExp("-{1,2}h(elp)?").exactMatch(a.argv()[i])) {
-            printf("%s\n"
-				"Usage: qjoypad [--device \"/device/path\"] [--notray] [\"layout name\"]\n"
-				"\n"
-				"Options:\n"
-				"  --device path     Look for joystick devices in \"path\". This should\n"
-				"                    be something like \"/dev/input\" if your game\n"
-				"                    devices are in /dev/input/js0, /dev/input/js1, etc.\n"
-				"  --notray          Do not use a system tray icon. This is useful for\n"
-				"                    window managers that don't support this feature.\n"
-				"  --update          Force a running instance of QJoyPad to update its\n"
-				"                    list of devices and layouts.\n"
-				"  \"layout name\"     Load the given layout in an already running\n"
-				"                    instance of QJoyPad, or start QJoyPad using the\n"
-				"                    given layout.\n", NAME);
+    }
+
+    if (optind < argc) {
+        layout = argv[optind ++];
+
+        if (optind < argc) {
+            fprintf(stderr,
+                "Too many arguments.\n"
+                "See `%s --help` for more information\n",
+                argc > 0 ? argv[0] : "qjoypad");
             return 1;
-        } else if(QRegExp("--force-tray").exactMatch(a.argv()[i])) {
-            useTrayIcon = true;
-            forceTrayIcon = true;
         }
-        //in all other cases, an argument is assumed to be a layout name.
-        //note: only the last layout name given will be used.
-        else layout = a.argv()[i];
     }
 
     //if the user specified a layout to use,
-    if (layout != "")
+    if (!layout.isEmpty())
     {
         //then we try to store that layout in the last-used layout spot, to be
         //loaded by default.
@@ -170,12 +201,13 @@ int main( int argc, char **argv )
                 //then prevent two instances from running at once.
                 //however, if we are setting the layout or updating the device
                 //list, this is not an error and we shouldn't make one!
-                if (layout == "" && update == false) error("Instance Error","There is already a running instance of QJoyPad; please close\nthe old instance before starting a new one.");
-                else  {
+                if (layout.isEmpty() && update == false)
+                    error("Instance Error","There is already a running instance of QJoyPad; please close\nthe old instance before starting a new one.");
+                else {
                     //if one of these is the case, send the approrpriate signal!
                     if (update == true)
                         kill(pid,SIGUSR1);
-                    if (layout != "")
+                    if (!layout.isEmpty())
                         kill(pid,SIGIO);
                 }
                 //and quit. We don't need two instances.
@@ -218,7 +250,7 @@ int main( int argc, char **argv )
     //prepare the signal handlers
     signal( SIGIO,   catchSIGIO );
     signal( SIGUSR1, catchSIGUSR1 );
-//	signal( SIGUSR2, catchSIGUSR2 );
+//    signal( SIGUSR2, catchSIGUSR2 );
 
     //and run the program!
     int result = a.exec();
