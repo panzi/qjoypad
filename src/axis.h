@@ -30,9 +30,9 @@ class Axis : public QObject {
 		Axis( int i, QObject *parent = 0 );
 		~Axis();
 		//read axis settings from a stream
-		bool read( QTextStream* stream );
+		bool read( QTextStream &stream );
 		//write axis settings to a stream
-		void write( QTextStream* stream );
+		void write( QTextStream &stream );
 		//releases any pushed buttons and returns to a neutral state
 		void release();
 		//pass a message from the joystick device to this axis object

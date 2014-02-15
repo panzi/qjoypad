@@ -16,11 +16,11 @@ Button::~Button() {
     //delete timer;
 }
 
-bool Button::read( QTextStream* stream ) {
+bool Button::read( QTextStream &stream ) {
 //	at this point, toDefault() has just been called.
 
     //read in a line of text and break it into words
-    QString input = stream->readLine().toLower();
+    QString input = stream.readLine().toLower();
     QRegExp regex("[\\s,]+");
     QStringList words = input.split(regex);
 
@@ -61,11 +61,16 @@ bool Button::read( QTextStream* stream ) {
     return true;
 }
 
-void Button::write( QTextStream* stream ) {
-    *stream << "\t" << getName() << ": ";
-    if (rapidfire) *stream << "rapidfire, ";
-    if (sticky) *stream << "sticky, ";
-    *stream << (useMouse?"mouse ":"key ") << (useMouse?mousecode:keycode) << "\n";
+void Button::write( QTextStream &stream ) {
+    stream << "\t" << getName() << ": ";
+    if (rapidfire) stream << "rapidfire, ";
+    if (sticky) stream << "sticky, ";
+	if (useMouse) {
+		stream << "mouse " << mousecode << "\n";
+	}
+	else {
+		stream << "key " << keycode << "\n";
+	}
 }
 
 void Button::release() {

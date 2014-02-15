@@ -59,11 +59,8 @@ bool LayoutManager::load(const QString& name) {
     //note that we don't use available here, but joypads instead. This is so
     //if one layout has more joypads than this one does, this won't have the
     //extra settings left over after things are supposed to be "cleared"
-    QHashIterator<int, JoyPad*> it( joypads );
-    while (it.hasNext())
-    {
-        it.next();
-        it.value()->toDefault();
+    foreach (JoyPad *joypad, joypads) {
+        joypad->toDefault();
     }
 
     //start reading joypads!
@@ -90,7 +87,7 @@ bool LayoutManager::load(const QString& name) {
                 joypads.insert(num-1, new JoyPad(num-1, 0));
             }
             //try to read the joypad, report error on fail.
-            if (!joypads[num-1]->readConfig(&stream)) {
+            if (!joypads[num-1]->readConfig(stream)) {
                 error( "Load error", "Error reading definition for joystick " + QString::number(num-1));
                 //if this was attempting to change to a new layout and it failed,
                 //revert back to the old layout.
@@ -135,11 +132,8 @@ bool LayoutManager::reload() {
 
 void LayoutManager::clear() {
     //reset all the joypads...
-    QHashIterator<int, JoyPad*> it (joypads);
-    while (it.hasNext())
-    {
-        it.next();
-        it.value()->toDefault();
+    foreach (JoyPad *joypad, joypads) {
+        joypad->toDefault();
     }
     //and call our layout NL
     setLayoutName(NL);
@@ -158,11 +152,8 @@ void LayoutManager::save() {
     if (file.open(QIODevice::WriteOnly)) {
         QTextStream stream( &file );
         stream << "# " NAME " Layout File\n\n";
-        QHashIterator<int, JoyPad*> it (joypads);
-        while (it.hasNext())
-        {
-            it.next();
-            it.value()->write( &stream );
+        foreach (JoyPad *joypad, joypads) {
+            joypad->write( stream );
         }
         file.close();
     }
@@ -320,13 +311,9 @@ void LayoutManager::updateJoyDevs() {
     QString devdir = DEVDIR;
 
     //reset all joydevs to sentinal value (-1)
-    do {
-        QHashIterator<int, JoyPad*> it( joypads );
-        while (it.hasNext() ) {
-            it.next();
-            it.value()->unsetDev();
-        }
-    } while (0);
+    foreach (JoyPad *joypad, joypads) {
+        joypad->unsetDev();
+    }
 
     //clear out the list of previously available joysticks
     available.clear();

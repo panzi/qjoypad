@@ -31,9 +31,9 @@ class JoyPad : public QObject{
 		void setupJoyDeviceListener(int dev);
         JoyPad( int i, int dev );
         //read from a stream
-		bool readConfig( QTextStream* stream );
+		bool readConfig( QTextStream &stream );
 		//write to a stream
-		void write( QTextStream* stream );
+		void write( QTextStream &stream );
 		//release any pushed buttons and return to a neutral state
 		void release();
 		//handle an event from the joystick device this is associated with

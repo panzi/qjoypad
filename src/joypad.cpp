@@ -5,6 +5,7 @@
 #include<stdint.h>
 #include <poll.h>
 #include <QApplication>
+
 JoyPad::JoyPad( int i, int dev ) {
     debug_mesg("Constructing the joypad device with index %d and fd %d\n", i, dev);
     //remember the index,
@@ -72,61 +73,39 @@ void JoyPad::setupJoyDeviceListener(int dev) {
 
 void JoyPad::toDefault() {
     //to reset the whole, reset all the parts.
-    do
-    {
-        QHashIterator<int, Axis*> it( Axes );
-        while (it.hasNext())
-        {
-            it.next();
-            it.value()->toDefault();
-        }
-    } while (0);
-    do
-    {
-        QHashIterator<int, Button*> it( Buttons );
-        while (it.hasNext())
-        {
-            it.next();
-            it.value()->toDefault();
-        }
-    } while (0);
+    foreach (Axis *axis, Axes) {
+        axis->toDefault();
+    }
+    foreach (Button *button, Buttons) {
+        button->toDefault();
+    }
 }
 
 bool JoyPad::isDefault() {
     //if any of the parts are not at default, then the whole isn't either.
-    do {
-        QHashIterator<int, Axis*> it( Axes );
-        while (it.hasNext())
-        {
-            it.next();
-            if (!it.value()->isDefault()) return false;
-        }
-    } while (0);
-    do {
-        QHashIterator<int, Button*> it( Buttons );
-        while (it.hasNext())
-        {
-            it.next();
-            if (!it.value()->isDefault()) return false;
-        }
-    } while (0);
+    foreach (Axis *axis, Axes) {
+        if (!axis->isDefault()) return false;
+    }
+    foreach (Button *button, Buttons) {
+        if (!button->isDefault()) return false;
+    }
     return true;
 }
 
-bool JoyPad::readConfig( QTextStream* stream ) {
+bool JoyPad::readConfig( QTextStream &stream ) {
     toDefault();
 
     QString word;
     QChar dump;
     int num;
 
-    *stream >> word;
+    stream >> word;
     while (word != NULL && word != "}") {
         word = word.toLower();
         if (word == "button") {
-            *stream >> num;
+            stream >> num;
             if (num > 0) {
-                *stream >> dump;
+                stream >> dump;
                 if (dump != ':') {
                     error("Layout file error", "Expected ':', found '" + QString(dump) + "'.");
                     return false;
@@ -140,13 +119,13 @@ bool JoyPad::readConfig( QTextStream* stream ) {
                 }
             }
             else {
-                stream->readLine();
+                stream.readLine();
             }
         }
         else if (word == "axis") {
-            *stream >> num;
+            stream >> num;
             if (num > 0) {
-                *stream >> dump;
+                stream >> dump;
                 if (dump != ':') {
                     error("Layout file error", "Expected ':', found '" + QString(dump) + "'.");
                     return false;
@@ -164,56 +143,32 @@ bool JoyPad::readConfig( QTextStream* stream ) {
             error( "Layout file error", "Error while reading layout. Unrecognized word: " + word );
             return false;
         }
-        *stream >> word;
+        stream >> word;
     }
     return true;
 }
 
 //only actually writes something if this JoyPad is NON DEFAULT.
-void JoyPad::write( QTextStream* stream ) {
-    int i = 0; //use to test if this is default or not.
-    QString result;
-    QTextStream* s = new QTextStream(&result, QIODevice::WriteOnly);
-    *s << getName() << " {\n";
-    do {
-        QHashIterator<int, Axis*> it( Axes );
-        while (it.hasNext()) {
-            it.next();
-            if (!it.value()->isDefault()) {
-                it.value()->write( s );
-                ++i;
-            }
+void JoyPad::write( QTextStream &stream ) {
+    if (!Axes.empty() || !Buttons.empty()) {
+        stream << getName() << " {\n";
+        foreach (Axis *axis, Axes) {
+            axis->write(stream);
         }
-    } while (0);
-    QHashIterator<int, Button*> it( Buttons );
-    while (it.hasNext()) {
-        it.next();
-        if (!it.value()->isDefault()) {
-            it.value()->write( s );
-            ++i;
+        foreach (Button *button, Buttons) {
+            button->write(stream);
         }
-    }
-
-    if (i > 0) {
-        *stream << result << "}\n\n";
+        stream << "}\n\n";
     }
 }
 
 void JoyPad::release() {
-    do {
-        QHashIterator<int, Axis*> it( Axes );
-        while (it.hasNext()) {
-            it.next();
-            it.value()->release();
-        }
-    } while (0);
-    do {
-        QHashIterator<int, Button*> it( Buttons );
-        while (it.hasNext()) {
-            it.next();
-            it.value()->release();
-        }
-    } while (0);
+    foreach (Axis *axis, Axes) {
+        axis->release();
+    }
+    foreach (Button *button, Buttons) {
+        button->release();
+    }
 }
 
 void JoyPad::jsevent( js_event msg ) {

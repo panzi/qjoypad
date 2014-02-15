@@ -17,9 +17,9 @@ class Button : public QObject {
 		Button( int i, QObject *parent = 0 );
 		~Button();
 		//read from stream
-		bool read( QTextStream* stream );
+		bool read( QTextStream &stream );
 		//write to stream
-		void write( QTextStream* stream );
+		void write( QTextStream &stream );
 		//releases any pushed buttons and returns to a neutral state
 		void release();
 		//process an event from the actual joystick device

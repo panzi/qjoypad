@@ -24,11 +24,11 @@ Axis::~Axis() {
     delete timer;
 }
 
-bool Axis::read( QTextStream* stream ) {
+bool Axis::read( QTextStream &stream ) {
 //	At this point, toDefault has just been called.
 
     //read in a line from the stream, and split it up into individual words
-    QString input = stream->readLine().toLower();
+    QString input = stream.readLine().toLower();
     QRegExp regex("[\\s,]+");
     QStringList words = input.split(regex);
 
@@ -156,33 +156,33 @@ void Axis::timerCalled() {
     timerTick(++tick);
 }
 
-void Axis::write( QTextStream* stream ) {
-    *stream << "\t" << getName() << ": ";
-    if (gradient)  *stream << "gradient, ";
-    if (throttle > 0) *stream << "throttle+, ";
-    else if (throttle < 0) *stream << "throttle-, ";
-    if (dZone != DZONE) *stream << "dZone " << dZone << ", ";
-    if (xZone != XZONE) *stream << "xZone " << xZone << ", ";
+void Axis::write( QTextStream &stream ) {
+    stream << "\t" << getName() << ": ";
+    if (gradient) stream << "gradient, ";
+    if (throttle > 0) stream << "throttle+, ";
+    else if (throttle < 0) stream << "throttle-, ";
+    if (dZone != DZONE) stream << "dZone " << dZone << ", ";
+    if (xZone != XZONE) stream << "xZone " << xZone << ", ";
     if (mode == keybd) {
-        *stream
+        stream
             << (puseMouse ? "+mouse " : "+key ") << pkeycode << ", "
             << (nuseMouse ? "-mouse " : "-key ") << nkeycode << "\n";
     }
     else {
-        if (gradient) *stream << "maxSpeed " << maxSpeed << ", ";
+        if (gradient) stream << "maxSpeed " << maxSpeed << ", ";
 		if (transferCurve != quadratic)
-			*stream << "tCurve " << transferCurve << ", ";
+			stream << "tCurve " << transferCurve << ", ";
 		if (sensitivity != 1.0F)
-			*stream << "sens " << sensitivity << ", ";
-        *stream << "mouse";
+			stream << "sens " << sensitivity << ", ";
+        stream << "mouse";
         if (mode == mousepv)
-            *stream << "+v\n";
+            stream << "+v\n";
         else if (mode == mousenv)
-            *stream << "-v\n";
+            stream << "-v\n";
         else if (mode == mouseph)
-            *stream << "+h\n";
+            stream << "+h\n";
         else if (mode == mousenh)
-            *stream << "-h\n";
+            stream << "-h\n";
     }
 
 }
