@@ -47,13 +47,15 @@ class JoyPad : public QObject{
 		//read the dimensions on the real joystick and use them
 		void resetToDev( int dev );
 		//generates a name ("Joystick 1")
-		QString getName() { return "Joystick " + QString::number(index+1);};
+        QString getName() { return QString("Joystick %1").arg(index+1);}
 		
+    private:
 		//it's just easier to have these publicly available.
 		int joydev;  //the actual file descriptor to the joystick device
 		int axes;    //the number of axes available on this device
 		int buttons; //the number of buttons
-		
+
+    public:
 		//request the joypad to make a JoyPadWidget. We create them this way
 		//so that the joypad is always aware when it has a widget active.
 		JoyPadWidget* widget(QWidget* parent, int i);
