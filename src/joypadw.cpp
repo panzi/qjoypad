@@ -8,41 +8,41 @@ JoyPadWidget::JoyPadWidget( JoyPad* jp, int i, QWidget* parent )
     /* This was in below, no idea what it does :( ...
      * (joypad->axes+1)/2 +(joypad->buttons+1)/2 + 2
      */
-    LMain = new QGridLayout(this);
-    LMain->setSpacing(5);
-    LMain->setMargin(5);
+    layoutMain = new QGridLayout(this);
+    layoutMain->setSpacing(5);
+    layoutMain->setMargin(5);
     flashcount = 0;
     int insertCounter = 0;
     quickset = NULL;
 
-    Axes = new AxisWidget*[joypad->axes];
-    for (int i = 0; i < joypad->axes; i++) {
-        Axes[i] = new AxisWidget(joypad->Axes[i],this);
-        connect( Axes[i], SIGNAL( flashed( bool ) ), this, SLOT( flash( bool )));
-        LMain->addWidget(Axes[i], insertCounter / 2, insertCounter %2);
+    foreach (Axis *axis, joypad->Axes) {
+        AxisWidget *aw = new AxisWidget(axis,this);
+        axes.append(aw);
+        connect( aw, SIGNAL( flashed( bool ) ), this, SLOT( flash( bool )));
+        layoutMain->addWidget(aw, insertCounter / 2, insertCounter %2);
         insertCounter++;
     }
 
-    Buttons = new ButtonWidget*[joypad->buttons];
-    for (int i = 0; i < joypad->buttons; i++) {
-        Buttons[i] = new ButtonWidget(joypad->Buttons[i],this);
-        connect( Buttons[i], SIGNAL( flashed( bool ) ), this, SLOT( flash( bool )));
-        LMain->addWidget(Buttons[i], insertCounter/2, insertCounter%2);
+    foreach (Button *button, joypad->Buttons) {
+        ButtonWidget *bw = new ButtonWidget(button,this);
+        buttons.append(bw);
+        connect( bw, SIGNAL( flashed( bool ) ), this, SLOT( flash( bool )));
+        layoutMain->addWidget(bw, insertCounter/2, insertCounter%2);
         insertCounter++;
     }
     
     
-    if(insertCounter % 2 == 1) {
-        insertCounter++;
+    if (insertCounter % 2 == 1) {
+        insertCounter ++;
     }
-    insertCounter+=2;
-    BClear = new QPushButton("Clear", this);
-    connect(BClear, SIGNAL(clicked()), this, SLOT(clear()));
-    LMain->addWidget(BClear, insertCounter / 2, insertCounter %2);
+    insertCounter += 2;
+    btnClear = new QPushButton("Clear", this);
+    connect(btnClear, SIGNAL(clicked()), this, SLOT(clear()));
+    layoutMain->addWidget(btnClear, insertCounter / 2, insertCounter %2);
     insertCounter++;
-    BAll = new QPushButton("Quick Set", this);
-    LMain->addWidget(BAll, insertCounter /2, insertCounter%2);
-    connect(BAll, SIGNAL(clicked()), this, SLOT(setAll()));
+    btnAll = new QPushButton("Quick Set", this);
+    layoutMain->addWidget(btnAll, insertCounter /2, insertCounter%2);
+    connect(btnAll, SIGNAL(clicked()), this, SLOT(setAll()));
 }
 
 JoyPadWidget::~JoyPadWidget() {
@@ -63,11 +63,11 @@ void JoyPadWidget::flash( bool on ) {
 }
 
 void JoyPadWidget::update() {
-    for (int i = 0; i < joypad->axes; i++) {
-        Axes[i]->update();
+    foreach (AxisWidget *axis, axes) {
+        axis->update();
     }
-    for (int i = 0; i < joypad->buttons; i++) {
-        Buttons[i]->update();
+    foreach (ButtonWidget *button, buttons) {
+        button->update();
     }
 }
 
@@ -79,7 +79,7 @@ void JoyPadWidget::clear() {
 void JoyPadWidget::setAll() {
     //quickset is NULL if there is no quickset dialog, and a pointer to the
     //dialog otherwise. This is so we can forward jsevents properly.
-    quickset = new QuickSet(joypad);
+    quickset = new QuickSet(joypad, this);
     quickset->exec();
     update();
     delete quickset;
@@ -90,10 +90,10 @@ void JoyPadWidget::jsevent( js_event msg ) {
     //notify the component this event applies to. this cannot generate anything
     //other than a flash  :)
     if (msg.type == JS_EVENT_AXIS) {
-        Axes[msg.number]->jsevent(msg.value);
+        if (msg.number < axes.count()) axes[msg.number]->jsevent(msg.value);
     }
     else {
-        Buttons[msg.number]->jsevent(msg.value);
+        if (msg.number < buttons.count()) buttons[msg.number]->jsevent(msg.value);
     }
     //if we're doing quickset, it needs to know when we do something.
     if (quickset != NULL)

@@ -15,13 +15,11 @@ Axis::Axis( int i, QObject *parent ) : QObject(parent) {
     gradient = false;
     toDefault();
     tick = 0;
-    timer = new QTimer(this);
 }
 
 
 Axis::~Axis() {
     release();
-    delete timer;
 }
 
 bool Axis::read( QTextStream &stream ) {
@@ -210,8 +208,8 @@ void Axis::jsevent( int value ) {
         if (gradient) {
             duration = 0;
             release();
-            timer->stop();
-            disconnect(timer, SIGNAL(timeout()), 0, 0);
+            timer.stop();
+            disconnect(&timer, SIGNAL(timeout()), 0, 0);
             tick = 0;
         }
     }
@@ -220,8 +218,8 @@ void Axis::jsevent( int value ) {
         isOn = true;
         if (gradient) {
             duration = (abs(state) * FREQ) / JOYMAX;
-            connect(timer, SIGNAL(timeout()), this, SLOT(timerCalled()));
-            timer->start(MSEC);
+            connect(&timer, SIGNAL(timeout()), this, SLOT(timerCalled()));
+            timer.start(MSEC);
         }
     }
     //otherwise, state doesn't change! Don't touch it.

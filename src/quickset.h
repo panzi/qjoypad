@@ -19,7 +19,7 @@ class JoyPad;
 //a dialog to quickly set a key to a button
 class QuickSet : public QDialog {
 	public:
-		QuickSet(JoyPad* jp);
+        QuickSet(JoyPad* jp, QWidget *parent = 0);
 		//this needs to see js_events so it can capture them directly
 		void jsevent( js_event msg );
 	private:

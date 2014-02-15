@@ -98,7 +98,7 @@ void LayoutEdit::updateLayoutList() {
     CLayouts->clear();
     QStringList layouts = lm->getLayoutNames();
     CLayouts->insertItems(-1, layouts);
-    CLayouts->setCurrentIndex(layouts.indexOf(lm->CurrentLayout));
+    CLayouts->setCurrentIndex(layouts.indexOf(lm->currentLayout));
 }
 
 void LayoutEdit::updateJoypadWidgets() {

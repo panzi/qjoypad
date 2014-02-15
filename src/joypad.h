@@ -23,11 +23,11 @@
 class JoyPadWidget;
 
 //represents an actual joystick device
-class JoyPad : public QObject{
+class JoyPad : public QObject {
 	Q_OBJECT
     friend class JoyPadWidget;
 	friend class QuickSet;
-	public:
+    public:
 		void setupJoyDeviceListener(int dev);
         JoyPad( int i, int dev );
         //read from a stream
@@ -47,9 +47,11 @@ class JoyPad : public QObject{
 		//read the dimensions on the real joystick and use them
 		void resetToDev( int dev );
 		//generates a name ("Joystick 1")
-        QString getName() { return QString("Joystick %1").arg(index+1);}
+        QString getName() const { return QString("Joystick %1").arg(index+1);}
+        int getIndex() const { return index; }
 		
     private:
+
 		//it's just easier to have these publicly available.
 		int joydev;  //the actual file descriptor to the joystick device
 		int axes;    //the number of axes available on this device
@@ -60,8 +62,7 @@ class JoyPad : public QObject{
 		//so that the joypad is always aware when it has a widget active.
 		JoyPadWidget* widget(QWidget* parent, int i);
 		//called when the joypad is no longer being edited.
-		void releaseWidget();
-		QString getId();
+        void releaseWidget();
 	protected:
 		//lookup axes and buttons. These are dictionaries to support
 		//layouts with different numbers of axes/buttons than the current

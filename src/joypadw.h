@@ -4,6 +4,7 @@
 //parts for the widget
 //Added by qt3to4:
 
+#include <QList>
 #include <linux/joystick.h>
 #include "axisw.h"
 //this all relates to a JoyPad
@@ -40,7 +41,7 @@ class JoyPadWidget : public QWidget {
 		//(either on or off) The int is the index of this widget so that this
 		//signal can be directly connected to FlashRadioArray's flash(int)
 		void flashed(int);
-	protected:
+    private:
 		//the joypad this is linked to
 		JoyPad* joypad;
 		//the index of this widget IN THE WIDGET STACK! This is unique from
@@ -53,10 +54,10 @@ class JoyPadWidget : public QWidget {
 		int flashcount;
 		
 		//the parts of the dialog
-		QGridLayout *LMain;
-		AxisWidget **Axes;
-		ButtonWidget **Buttons;
-		QPushButton *BClear, *BAll;	
+        QGridLayout *layoutMain;
+        QList<AxisWidget*> axes;
+        QList<ButtonWidget*> buttons;
+        QPushButton *btnClear, *btnAll;
 		
 		//the quickset window, when we create it
 		QuickSet* quickset;

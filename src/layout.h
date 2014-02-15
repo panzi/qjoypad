@@ -31,19 +31,15 @@
 //for recognizing when the special empty layout is in use
 #define NL "[NO LAYOUT]"
 
-//where QJoyPad saves its settings!
-const QString settingsDir(QDir::homePath() + "/.qjoypad3/");
-
-extern QString devdir;
-
 //handles loading, saving, and changing of layouts
 class LayoutManager : public QObject {
 	friend class LayoutEdit;
 	Q_OBJECT
 	public:
-		LayoutManager( bool useTrayIcon);
+        LayoutManager(bool useTrayIcon, const QString &devdir, const QString &settingsDir);
+
 		//produces a list of the names of all the available layout.
-		QStringList getLayoutNames();
+        QStringList getLayoutNames() const;
         void leWindowClosed();
 	public slots:
 		//load a layout with a given name
@@ -79,13 +75,16 @@ class LayoutManager : public QObject {
 		void setLayoutName(QString name);
 		//get the file name for a layout name
 		QString getFileName( QString layoutname );
+        //the directory in wich the joystick devices are (e.g. "/dev/input")
+        QString devdir;
+        QString settingsDir;
 		//the layout that is currently in use
-		QString CurrentLayout;
+        QString currentLayout;
 		//the popup menu from the tray/floating icon
-		QMenu* Popup;
+        QMenu trayMenuPopup;
 
 		//if there is a LayoutEdit open, this points to it. Otherwise, NULL.	
-		LayoutEdit* le;
+        LayoutEdit* le;
 };
 
 #endif

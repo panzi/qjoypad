@@ -13,13 +13,18 @@ JoyPad::JoyPad( int i, int dev ) {
 
     //load data from the joystick device, if available.
     joydevFileHandle = NULL;
-    if(dev > 0) {
+    if(dev >= 0) {
         debug_mesg("Valid file handle, setting up handlers and reading axis configs...\n");
         resetToDev(dev);
         debug_mesg("done resetting and setting up device index %d\n", i);
-        char id[200];
-        ioctl(joydev, JSIOCGNAME(199), id);
-        deviceId = id;
+        char id[256];
+        memset(id, 0, sizeof(id));
+        if (ioctl(joydev, JSIOCGNAME(sizeof(id)), id) < 0) {
+            deviceId = "Unknown";
+        }
+        else {
+            deviceId = id;
+        }
     } else {
         debug_mesg("This joypad does not have a valid file handle, not setting up event listeners\n");
     }
@@ -96,25 +101,25 @@ bool JoyPad::readConfig( QTextStream &stream ) {
     toDefault();
 
     QString word;
-    QChar dump;
-    int num;
+    QChar ch = 0;
+    int num = 0;
 
     stream >> word;
-    while (word != NULL && word != "}") {
+    while (!word.isNull() && word != "}") {
         word = word.toLower();
         if (word == "button") {
             stream >> num;
             if (num > 0) {
-                stream >> dump;
-                if (dump != ':') {
-                    error("Layout file error", "Expected ':', found '" + QString(dump) + "'.");
+                stream >> ch;
+                if (ch != ':') {
+                    error("Layout file error", QString("Expected ':', found '%1'.").arg(ch));
                     return false;
                 }
                 if (Buttons[num-1] == 0) {
                     Buttons.insert(num-1,new Button(num-1));
                 }
                 if (!Buttons[num-1]->read( stream )) {
-                    error("Layout file error", "Error reading Button " + QString::number(num));
+                    error("Layout file error", QString("Error reading Button %1").arg(num));
                     return false;
                 }
             }
@@ -125,22 +130,22 @@ bool JoyPad::readConfig( QTextStream &stream ) {
         else if (word == "axis") {
             stream >> num;
             if (num > 0) {
-                stream >> dump;
-                if (dump != ':') {
-                    error("Layout file error", "Expected ':', found '" + QString(dump) + "'.");
+                stream >> ch;
+                if (ch != ':') {
+                    error("Layout file error", QString("Expected ':', found '%1'.").arg(ch));
                     return false;
                 }
                 if (Axes[num-1] == 0) {
                     Axes.insert(num-1,new Axis(num-1));
                 }
                 if (!Axes[num-1]->read(stream)) {
-                    error("Layout file error", "Error reading Axis " + QString::number(num));
+                    error("Layout file error", QString("Error reading Axis %1").arg(num));
                     return false;
                 }
             }
         }
         else {
-            error( "Layout file error", "Error while reading layout. Unrecognized word: " + word );
+            error( "Layout file error", QString("Error while reading layout. Unrecognized word: %1").arg(word) );
             return false;
         }
         stream >> word;

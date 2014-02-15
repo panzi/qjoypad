@@ -6,14 +6,12 @@ Button::Button( int i, QObject *parent ) : QObject(parent) {
     isButtonPressed = false;
     isDown = false;
     rapidfire = false;
-    timer = new QTimer(this);
     toDefault();
     tick = 0;
 }
 
 Button::~Button() {
     release();
-    //delete timer;
 }
 
 bool Button::read( QTextStream &stream ) {
@@ -37,7 +35,7 @@ bool Button::read( QTextStream &stream ) {
             val = (*it).toInt(&ok);
             if (ok && val >= 0 && val <= MAXKEY) {
                 useMouse = true;
-                mousecode = val;
+                keycode = val;
             }
             else return false;
         }
@@ -65,12 +63,7 @@ void Button::write( QTextStream &stream ) {
     stream << "\t" << getName() << ": ";
     if (rapidfire) stream << "rapidfire, ";
     if (sticky) stream << "sticky, ";
-	if (useMouse) {
-		stream << "mouse " << mousecode << "\n";
-	}
-	else {
-		stream << "key " << keycode << "\n";
-	}
+    stream << (useMouse ? "mouse " : "key ") << keycode << "\n";
 }
 
 void Button::release() {
@@ -94,12 +87,12 @@ void Button::jsevent( int value ) {
         isButtonPressed = newval; //change state
         if (isButtonPressed && rapidfire) {
             tick = 0;
-            connect(timer, SIGNAL(timeout()), this, SLOT(timerCalled()));
-            timer->start(MSEC);
+            connect(&timer, SIGNAL(timeout()), this, SLOT(timerCalled()));
+            timer.start(MSEC);
         }
         if (!isButtonPressed && rapidfire) {
-            timer->stop();
-            disconnect(timer, SIGNAL(timeout()), 0, 0);
+            timer.stop();
+            disconnect(&timer, SIGNAL(timeout()), 0, 0);
             if(isDown) {
                 click(false);
             }
@@ -120,36 +113,28 @@ void Button::toDefault() {
     sticky = false;
     useMouse = false;
     keycode = 0;
-    mousecode = 0;
-    timer->stop();
+    timer.stop();
 }
 
 bool Button::isDefault() {
     return	(rapidfire == false) &&
            (sticky == false) &&
            (useMouse == false) &&
-           (keycode == 0) &&
-           (mousecode == 0);
+           (keycode == 0);
 }
 
 QString Button::status() {
     if (useMouse) {
-        return getName() + " : Mouse " + QString::number(mousecode);
+        return QString("%1 : Mouse %2").arg(getName(), keycode);
     }
     else {
-        return getName() + " : " + QString(ktos(keycode));
+        return QString("%1 : %2").arg(getName(), ktos(keycode));
     }
 }
 
 void Button::setKey( bool mouse, int value ) {
-    if (mouse) {
-        mousecode = value;
-        useMouse = true;
-    }
-    else {
-        keycode = value;
-        useMouse = false;
-    }
+    useMouse = mouse;
+    keycode = value;
 }
 
 void Button::timerTick( int tick ) {
@@ -173,7 +158,7 @@ void Button::click( bool press ) {
     if (press) click.type = useMouse?BPRESS:KPRESS;
     else click.type = useMouse?BREL:KREL;
     //set up the event,
-    click.value1 = useMouse?mousecode:keycode;
+    click.value1 = keycode;
     click.value2 = 0;
     //and send it.
     sendevent( display, click );

@@ -41,7 +41,7 @@ class Axis : public QObject {
 		void toDefault();
 		//True iff currently at defaults
 		bool isDefault();
-		QString getName() { return "Axis " + QString::number(index+1);};
+		QString getName() { return QString("Axis %1").arg(index+1);}
 		//true iff the given value is in the dead zone for this axis.
 		bool inDeadZone( int val );
 		//a descriptive string used as a label for the button representing this axis
@@ -95,7 +95,7 @@ class Axis : public QObject {
 		//note, the key is still clicked at the same pace no matter what,
 		//this just decides how long it stays down each cycle.
 		int duration;
-        QTimer *timer;
+        QTimer timer;
     public slots:
         void timerCalled();
 };

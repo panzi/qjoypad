@@ -2,8 +2,8 @@
 #include "getkey.h"
 
 //build the dialog
-QuickSet::QuickSet( JoyPad* jp)
-        : QDialog() {
+QuickSet::QuickSet( JoyPad* jp, QWidget *parent)
+        : QDialog(parent) {
     setting = false;
     joypad = jp;
     setWindowTitle("Set " + jp->getName());

@@ -1,5 +1,5 @@
-#ifndef JCONST_H
-#define JCONST_H
+#ifndef QJOYPAD_CONSTANT_H
+#define QJOYPAD_CONSTANT_H
 
 //How many cycles there are per click.
 #define FREQ 10

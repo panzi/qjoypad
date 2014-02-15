@@ -1,12 +1,12 @@
-#ifndef JOY_ERROR_H
-#define JOY_ERROR_H
+#ifndef QJOYPAD_ERROR_H
+#define QJOYPAD_ERROR_H
 
 #include <qmessagebox.h>
 #include <stdarg.h>
 //a nice simple way of throwing up an error message if something goes wrong.
 
-inline void error(QString type, QString message ) {
-	QMessageBox::warning(0,NAME" - " + type,
+inline void error(const QString &type, const QString &message ) {
+    QMessageBox::warning(0, QString("%1 - %2").arg(NAME, type),
 		message, QMessageBox::Ok, Qt::NoButton);
 }
 

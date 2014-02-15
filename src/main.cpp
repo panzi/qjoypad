@@ -18,6 +18,7 @@
 #include "error.h"
 #include <QX11Info>
 #include <QSystemTrayIcon>
+#include <QPointer>
 #include <getopt.h>
 
 //for making universally available variables
@@ -25,15 +26,14 @@ QHash<int, JoyPad*> available;         //to device.h
 QHash<int, JoyPad*> joypads;           //to device.h
 
 //variables needed in various functions in this file
-LayoutManager* lm = 0;
-QString devdir = DEVDIR;
+QPointer<LayoutManager> layoutManagerPtr;
 
 //signal handler for SIGIO
 //SIGIO means that a new layout should be loaded. It is saved in
 // ~/.qjoypad/layout, where the last used layout is put.
 void catchSIGIO( int sig )
 {
-    lm->load();
+    if (layoutManagerPtr) layoutManagerPtr->load();
     //remember to catch this signal again next time.
     signal( sig, catchSIGIO );
 }
@@ -44,7 +44,7 @@ void catchSIGIO( int sig )
 //SIGUSR1 means that we should update the available joystick device list.
 void catchSIGUSR1( int sig ) {
     //buildJoyDevices();
-    lm->updateJoyDevs();
+    if (layoutManagerPtr) layoutManagerPtr->updateJoyDevs();
     //remember to catch this signal again next time.
     signal( sig, catchSIGUSR1 );
 }
@@ -67,8 +67,14 @@ int main( int argc, char **argv )
     a.setQuitOnLastWindowClosed(false);
 
 
+    //where QJoyPad saves its settings!
+    const QString settingsDir(QDir::homePath() + "/.qjoypad3/");
+
     //where to look for settings. If it does not exist, it will be created
     QDir dir(settingsDir);
+
+    //the directory in wich the joystick devices are (e.g. "/dev/input")
+    QString devdir = DEVDIR;
 
     //if there is no new directory and we can't make it, complain
     if (!dir.exists() && !dir.mkdir(settingsDir)) {
@@ -236,14 +242,15 @@ int main( int argc, char **argv )
 
     //create a new LayoutManager with a tray icon / floating icon, depending
     //on the user's request
-    lm = new LayoutManager(useTrayIcon);
+    LayoutManager layoutManager(useTrayIcon,devdir,settingsDir);
+    layoutManagerPtr = &layoutManager;
 
     //build the joystick device list for the first time,
     //buildJoyDevices();
-    lm->updateJoyDevs();
+    layoutManager.updateJoyDevs();
     
     //load the last used layout (Or the one given as a command-line argument)
-    lm->load();
+    layoutManager.load();
 
     //prepare the signal handlers
     signal( SIGIO,   catchSIGIO );
@@ -254,7 +261,7 @@ int main( int argc, char **argv )
     int result = a.exec();
 
     //when everything is done, save the current layout for next time...
-    lm->saveDefault();
+    layoutManager.saveDefault();
 
     //remove the lock file...
     pidFile.remove();

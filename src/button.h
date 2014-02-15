@@ -29,7 +29,7 @@ class Button : public QObject {
 		//True iff is currently using default settings
 		bool isDefault();
 		//returns a string representation of this button.
-		QString getName() { return "Button " + QString::number(index+1);};
+        QString getName() { return QString("Button %1").arg(index+1); }
 		//a descriptive string used as a label for the button representing this axis
 		QString status();
 		//set the key code for this axis. Used by quickset.
@@ -50,9 +50,8 @@ class Button : public QObject {
 		bool rapidfire;
 		bool sticky;
 		bool useMouse;
-		int keycode;
-		int mousecode; //like keycode, only mousebutton  ;)
-        QTimer *timer;
+        int keycode;
+        QTimer timer;
     public slots:
         void timerCalled();
 };

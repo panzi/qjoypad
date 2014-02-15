@@ -15,7 +15,7 @@ ButtonEdit::ButtonEdit(Button* butt)
     v->setMargin(5);
     v->setSpacing(5);
 
-    BKKey = new KeyButton( button->getName(), button->useMouse?button->mousecode:button->keycode, this, true, button->useMouse);
+    BKKey = new KeyButton( button->getName(), button->keycode, this, true, button->useMouse);
     v->addWidget(BKKey);
 
     QHBoxLayout* h = new QHBoxLayout();
@@ -53,14 +53,8 @@ void ButtonEdit::accept() {
     button->rapidfire = CRapid->isChecked();
     button->sticky = (CSticky->isChecked());
     //if the user chose a mouse button...
-    if (BKKey->choseMouse()) {
-        button->useMouse = true;
-        button->mousecode = BKKey->getValue();
-    }
-    else {
-        button->useMouse = false;
-        button->keycode = BKKey->getValue();
-    }
+    button->useMouse = BKKey->choseMouse();
+    button->keycode = BKKey->getValue();
 
     QDialog::accept();
 }

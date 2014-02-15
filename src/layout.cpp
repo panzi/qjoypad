@@ -2,26 +2,22 @@
 #include <errno.h>
 
 //initialize things and set up an icon  :)
-LayoutManager::LayoutManager( bool useTrayIcon ) {
-    //no LayoutEdit yet.
-    le = NULL;
-
+LayoutManager::LayoutManager( bool useTrayIcon, const QString &devdir, const QString &settingsDir ) : devdir(devdir), settingsDir(settingsDir), le(0) {
     //prepare the popup first.
-    Popup = new QMenu();
     fillPopup();
-    connect(Popup,SIGNAL(triggered(QAction*)),this, SLOT(trayMenu(QAction*)));
+    connect(&trayMenuPopup,SIGNAL(triggered(QAction*)),this, SLOT(trayMenu(QAction*)));
 
     //make a tray icon
     if (useTrayIcon) {
-        QSystemTrayIcon *Tray = new QSystemTrayIcon(this);
-        Tray->setContextMenu(Popup);
-        Tray->setIcon(QIcon(ICON24));
-        Tray->show();
-        connect(Tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayClick(QSystemTrayIcon::ActivationReason)));
+        QSystemTrayIcon *tray = new QSystemTrayIcon(this);
+        tray->setContextMenu(&trayMenuPopup);
+        tray->setIcon(QIcon(ICON24));
+        tray->show();
+        connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayClick(QSystemTrayIcon::ActivationReason)));
     }
     //or make a floating icon
     else {
-        FloatingIcon* Icon = new FloatingIcon(QPixmap(ICON64),Popup,0,"tray");
+        FloatingIcon* Icon = new FloatingIcon(QPixmap(ICON64),&trayMenuPopup,0,"tray");
         connect(Icon, SIGNAL( clicked()), this, SLOT( iconClick()));
         connect(Icon, SIGNAL( closed()), qApp, SLOT( quit()));
         Icon->show();
@@ -32,7 +28,7 @@ LayoutManager::LayoutManager( bool useTrayIcon ) {
 }
 
 QString LayoutManager::getFileName( QString layoutname ) {
-    return settingsDir + layoutname + ".lyt";
+    return QString("%1%2.lyt").arg(settingsDir, layoutname);
 }
 
 bool LayoutManager::load(const QString& name) {
@@ -65,42 +61,65 @@ bool LayoutManager::load(const QString& name) {
 
     //start reading joypads!
     QTextStream stream( &file );
-    QString input = stream.readLine().toLower();
-    QRegExp quoted("\"(.*)\"");
-    bool okay;
-    int num;
+    bool okay = false;
+    int num = 0;
+    QChar ch = 0;
+    QString word;
 
-    while (input != QString::null) {
-        QStringList words = input.split(" ");
+    while (!stream.atEnd()) {
+        stream >> word;
+
+        if (word.isNull())
+            break;
+
         //if this line is specifying a joystick
-        if (words[0] == "joystick") {
-            num = words[1].toInt(&okay);
+        if (word.compare(QLatin1String("joystick"), Qt::CaseInsensitive) == 0) {
+            stream >> word;
+            num = word.toInt(&okay);
             //make sure the number of the joystick is valid
-            if (!okay || okay < 1) {
-                error( "Load error", "Error reading joystick definition. Expected: Joysyick 1 {");
-                if (name != CurrentLayout) reload();
+            if (!okay || num < 1) {
+                error( "Load error", QString("Error reading joystick definition. Unexpected token \"%1\". Expected a positive number.").arg(word));
+                if (name != currentLayout) reload();
                 else clear();
                 return false;
             }
+            stream.skipWhiteSpace();
+            stream >> ch;
+            if (ch != QChar('{')) {
+                error( "Load error", QString("Error reading joystick definition. Unexpected character \"%1\". Expected '{'.").arg(ch));
+                if (name != currentLayout) reload();
+                else clear();
+                return false;
+            }
+            int index = num - 1;
             //if there was no joypad defined for this index before, make it now!
-            if (joypads[num-1] == 0) {
-                joypads.insert(num-1, new JoyPad(num-1, 0));
+            if (joypads[index] == 0) {
+                joypads.insert(index, new JoyPad(index, -1));
             }
             //try to read the joypad, report error on fail.
-            if (!joypads[num-1]->readConfig(stream)) {
-                error( "Load error", "Error reading definition for joystick " + QString::number(num-1));
+            if (!joypads[index]->readConfig(stream)) {
+                error( "Load error", QString("Error reading definition for joystick %1.").arg(index));
                 //if this was attempting to change to a new layout and it failed,
                 //revert back to the old layout.
-                if (name != CurrentLayout) reload();
+                if (name != currentLayout) reload();
                 //to keep from going into an infinite loop, if there is no good
                 //layout to fall back on, go to NL.
                 else clear();
                 return false;
             }
         }
-        //read a new line.
-        input = stream.readLine().toLower();
+        else if (word == QLatin1String("#")) {
+            // ignore comment
+            stream.readLine();
+        }
+        else {
+            error("Load error", QString("Error reading joystick definition. Unexpected token \"%1\". Expected \"Joystick\".").arg(word));
+            if (name != currentLayout) reload();
+            else clear();
+            return false;
+        }
     }
+
     //if loading succeeded, this is our new layout.
     setLayoutName(name);
     return true;
@@ -115,7 +134,7 @@ bool LayoutManager::load() {
         name = stream.readLine();
         file.close();
         //if there was no name, don't load.
-        if (name == "") {
+        if (name.isEmpty()) {
             return false;
         }
         //if there was a name, try to load it! Note, this will still return
@@ -127,7 +146,7 @@ bool LayoutManager::load() {
 }
 
 bool LayoutManager::reload() {
-    return load(CurrentLayout);
+    return load(currentLayout);
 }
 
 void LayoutManager::clear() {
@@ -140,13 +159,13 @@ void LayoutManager::clear() {
 }
 
 void LayoutManager::save() {
-    if (CurrentLayout == NL) {
+    if (currentLayout == NL) {
         saveAs();
         return;
     }
 
     //get a filename
-    QString filename = getFileName( CurrentLayout );
+    QString filename = getFileName( currentLayout );
     QFile file(filename);
     //if it's good, start writing the file
     if (file.open(QIODevice::WriteOnly)) {
@@ -194,15 +213,15 @@ void LayoutManager::saveDefault() {
     QFile file( settingsDir + "layout");
     if (file.open(QIODevice::WriteOnly)) {
         QTextStream stream(&file);
-        stream << CurrentLayout;
+        stream << currentLayout;
         file.close();
     }
 }
 
 void LayoutManager::remove() {
-    if (CurrentLayout == NL) return;
+    if (currentLayout == NL) return;
     if (QMessageBox::warning( 0, NAME" - Delete layout?","Remove layout permanently from your hard drive?", "Yes", "No", 0, 0, 1 ) == 1) return;
-    QString filename = getFileName( CurrentLayout );
+    QString filename = getFileName( currentLayout );
     if (!QFile(filename).remove()) {
         error("Remove error", "Could not remove file " + filename);
     }
@@ -214,12 +233,12 @@ void LayoutManager::remove() {
     clear();
 }
 
-QStringList LayoutManager::getLayoutNames() {
+QStringList LayoutManager::getLayoutNames() const {
     //goes through the list of .lyt files and removes the file extensions ;)
     QStringList result = QDir(settingsDir).entryList(QStringList("*.lyt"));
 
-    for ( QStringList::Iterator it = result.begin(); it != result.end(); ++it ) {
-        *it = (*it).left((*it).length() - 4);
+    for (int i = 0; i < result.size(); ++ i) {
+        result[i] = result[i].left(result[i].length() - 4);
     }
     //and, of course, there's always NL.
     result.prepend(NL);
@@ -228,7 +247,7 @@ QStringList LayoutManager::getLayoutNames() {
 }
 
 void LayoutManager::setLayoutName(QString name) {
-    CurrentLayout = name;
+    currentLayout = name;
     fillPopup();
 
     if (le != NULL) {
@@ -238,7 +257,7 @@ void LayoutManager::setLayoutName(QString name) {
 
 void LayoutManager::iconClick() {
     //don't show the dialog if there aren't any joystick devices plugged in
-    if (available.count() == 0) {
+    if (available.isEmpty()) {
         error("No joystick devices available","No joystick devices are currently available to configure.\nPlease plug in a gaming device and select\n\"Update Joystick Devices\" from the popup menu.");
         return;
     }
@@ -247,7 +266,7 @@ void LayoutManager::iconClick() {
     }
     //otherwise, make a new LayoutEdit dialog and show it.
     le = new LayoutEdit(this);
-    le->setLayout(CurrentLayout);
+    le->setLayout(currentLayout);
 }
 
 void LayoutManager::trayClick(QSystemTrayIcon::ActivationReason reason) {
@@ -259,7 +278,7 @@ void LayoutManager::trayClick(QSystemTrayIcon::ActivationReason reason) {
 void LayoutManager::trayMenu(QAction *menuItemAction) {
     //if they clicked on a Layout name, load it!
     //note that the other options are handled with their own special functions
-    if (Popup->actions().indexOf(menuItemAction) > 1 && menuItemAction->text() != "Quit" &&
+    if (trayMenuPopup.actions().indexOf(menuItemAction) > 1 && menuItemAction->text() != "Quit" &&
         menuItemAction->text() != "Update lyaout list" &&
         menuItemAction->text() != "Update joystick devices") {
         load(menuItemAction->text());
@@ -268,42 +287,40 @@ void LayoutManager::trayMenu(QAction *menuItemAction) {
 
 void LayoutManager::fillPopup() {
     //start with an empty slate
-    Popup->clear();
+    trayMenuPopup.clear();
 
     //make a list of joystick devices
     QString devs = "Joysticks: ";
-    QHashIterator<int, JoyPad*> it( available );
-    while (it.hasNext())
-    {
-        it.next();
-        devs += QString::number(it.key() + 1) + " ";
+    foreach (JoyPad *joypad, available) {
+        devs += QString("%1 ").arg(joypad->getIndex() + 1);
     }
-    QAction *temp = Popup->addAction(devs);
-    Popup->addSeparator(/*temp*/);
+
+    QAction *temp = trayMenuPopup.addAction(devs);
+    trayMenuPopup.addSeparator(/*temp*/);
 
     //add in the Update options
     QAction *tempAdd = new QAction("Update layout list", this);
     connect(tempAdd, SIGNAL(triggered(bool)), this, SLOT(fillPopup()));
-    Popup->addAction(tempAdd);
+    trayMenuPopup.addAction(tempAdd);
     tempAdd = new QAction("Update joystick devices", this);
     connect(tempAdd, SIGNAL(triggered(bool)), this, SLOT(updateJoyDevs()));
-    Popup->addAction(tempAdd);
-    Popup->addSeparator(/*temp*/);
+    trayMenuPopup.addAction(tempAdd);
+    trayMenuPopup.addSeparator(/*temp*/);
 
     //then add all the layout names
     QStringList names = getLayoutNames();
-    for ( QStringList::Iterator it = names.begin(); it != names.end(); ++it ) {
-        temp = Popup->addAction(*it);
+    foreach (const QString &name, names) {
+        temp = trayMenuPopup.addAction(name);
         temp->setCheckable(true);
         //put a check by the current one  ;)
-        if (CurrentLayout == (*it)) {
+        if (currentLayout == name) {
             temp->setChecked(true);
         }
     }
-    Popup->addSeparator();
+    trayMenuPopup.addSeparator();
 
     //and, at the end, quit!
-    Popup->addAction("Quit",qApp,SLOT(quit()));
+    trayMenuPopup.addAction("Quit",qApp,SLOT(quit()));
 }
 
 void LayoutManager::updateJoyDevs() {
@@ -318,30 +335,31 @@ void LayoutManager::updateJoyDevs() {
     available.clear();
 
     //set all joydevs anew (create new JoyPad's if necesary)
-    QDir DeviceDir(devdir);
-    QStringList devices = DeviceDir.entryList(QStringList("js*"), QDir::System );
+    QDir deviceDir(devdir);
+    QStringList devices = deviceDir.entryList(QStringList("js*"), QDir::System);
     QRegExp devicename(".*\\js(\\d+)");
-    int joydev;
-    int index;
+    int joydev = 0;
+    int index = 0;
     //for every joystick device in the directory listing...
     //(note, with devfs, only available devices are listed)
-    for (QStringList::Iterator it = devices.begin(); it != devices.end(); ++it) {
-        debug_mesg("found a device file, %s\n", qPrintable(devdir + "/" + (*it)));
+    foreach (const QString &device, devices) {
+        QString devpath = QString("%1/%2").arg(devdir, device);
+        debug_mesg("found a device file, %s\n", qPrintable(devpath));
         //try opening the device.
-        joydev = open( qPrintable(devdir + "/" + (*it)), O_RDONLY | O_NONBLOCK);
+        joydev = open( qPrintable(devpath), O_RDONLY | O_NONBLOCK);
         //if it worked, then we have a live joystick! Make sure it's properly
         //setup.
         if (joydev > 0) {
-            devicename.indexIn(*it);
-            index = QString(devicename.cap(1)).toInt();
-            JoyPad* joypad;
+            devicename.indexIn(device);
+            index = devicename.cap(1).toInt();
+            JoyPad* joypad = joypads[index];
             //if we've never seen this device before, make a new one!
-            if (joypads[index] == 0) {
+            if (joypad == 0) {
                 struct pollfd read_struct;
                 read_struct.fd = joydev;
                 read_struct.events = POLLIN;
                 char buf[10];
-                while(poll(&read_struct, 1, 5)!=0) {
+                while (poll(&read_struct, 1, 5) != 0) {
                     debug_mesg("reading junk data\n");
                     if (read(joydev, buf, 10) <= 0) break;
                 }
@@ -350,15 +368,13 @@ void LayoutManager::updateJoyDevs() {
             }
             else {
                 debug_mesg("found previously open joypad with index %d, ignoring", index);
-                joypad = joypads[index];
                 joypad->resetToDev(joydev);
             }
             //make this joystick device available.
             available.insert(index,joypad);
         }
         else {
-            int errsv = errno;
-            printf("error reading joypad dev device: %s\n", strerror(errsv));
+            perror(qPrintable(devpath));
         }
     }
     //when it's all done, rebuild the popup menu so it displays the correct
