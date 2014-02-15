@@ -34,6 +34,8 @@
 //where QJoyPad saves its settings!
 const QString settingsDir(QDir::homePath() + "/.qjoypad3/");
 
+extern QString devdir;
+
 //handles loading, saving, and changing of layouts
 class LayoutManager : public QObject {
 	friend class LayoutEdit;

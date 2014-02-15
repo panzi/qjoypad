@@ -308,7 +308,6 @@ void LayoutManager::fillPopup() {
 
 void LayoutManager::updateJoyDevs() {
     debug_mesg("updating joydevs\n");
-    QString devdir = DEVDIR;
 
     //reset all joydevs to sentinal value (-1)
     foreach (JoyPad *joypad, joypads) {
