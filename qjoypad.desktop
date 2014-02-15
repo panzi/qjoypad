@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=QJoyPad
+GenericName=Joypad to Keyboard/Mouse Mapper
+GenericName[de]=Joypad zu Tastatur/Maus Mapper
+Exec=qjoypad
+Icon=qjoypad
+Type=Application
+Terminal=false
+Categories=Qt;Games;
+Comment=Maps joypad button and stick events to keyboard and mouse events.
+Comment[de]=Bildet Joypad Knopf und Stick Ereignisse auf Tastatur und Maus Ereignisse ab.
