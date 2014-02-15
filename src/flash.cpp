@@ -43,7 +43,7 @@ void FlashButton::flash()
 }
 
 
-FlashRadioArray::FlashRadioArray( int count, QString names[], bool horizontal, QWidget* parent)
+FlashRadioArray::FlashRadioArray( const QStringList &names, bool horizontal, QWidget* parent)
         :QWidget( parent )
 {
     if (horizontal) {
@@ -55,19 +55,23 @@ FlashRadioArray::FlashRadioArray( int count, QString names[], bool horizontal, Q
         LMain->setMargin(5);
         LMain->setSpacing(5);
     }
-
+// TODO: fix memleak
+    int count = names.size();
+    int i = 0;
     Buttons = new FlashButton*[count];
-    for (int i = 0; i < count; i++)
-    {
-        Buttons[i] = new FlashButton( names[i], this, "" );
+    foreach (const QString &name, names) {
+        Buttons[i] = new FlashButton( name, this, "" );
         //when any of the buttons is clicked, it calls the same function on this.
         connect( Buttons[i], SIGNAL( clicked() ), this, SLOT( clicked() ));
         LMain->addWidget(Buttons[i]);
+        ++i;
     }
 
     Count = count;
     State = 0;
-    Buttons[0]->setDown( true );
+    if (count > 0) {
+        Buttons[0]->setDown( true );
+    }
 }
 
 int FlashRadioArray::getState()

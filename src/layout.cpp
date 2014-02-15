@@ -157,7 +157,7 @@ void LayoutManager::save() {
     //if it's good, start writing the file
     if (file.open(QIODevice::WriteOnly)) {
         QTextStream stream( &file );
-        stream << "# "NAME" Layout File\n\n";
+        stream << "# " NAME " Layout File\n\n";
         QHashIterator<int, JoyPad*> it (joypads);
         while (it.hasNext())
         {

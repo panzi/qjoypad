@@ -18,6 +18,7 @@
 #include <QPushButton>
 #include <QPalette>
 #include <QBoxLayout>
+#include <QStringList>
 
 
 //A QPushButton that can flash a color
@@ -50,7 +51,7 @@ class FlashRadioArray : public QWidget
 {
 	Q_OBJECT
 	public:
-		FlashRadioArray( int count, QString names[], bool horizontal, QWidget* parent);
+		FlashRadioArray( const QStringList &names, bool horizontal, QWidget* parent);
 		//returns an integer returning the currently selected button.
 		//First button is 0.
 		int getState();

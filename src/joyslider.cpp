@@ -212,7 +212,7 @@ void JoySlider::mousePressEvent( QMouseEvent* e )
     else if (throttle >= 0 && abs( xpt - pointFor( XZone, false )) < 5) result = DRAG_XZ;
     else if (throttle >= 0 && abs( xpt - pointFor( DeadZone, false )) < 5) result = DRAG_DZ;
     dragging = result;
-};
+}
 
 void JoySlider::mouseReleaseEvent( QMouseEvent* )
 {

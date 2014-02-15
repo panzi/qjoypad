@@ -38,23 +38,14 @@ LayoutEdit::LayoutEdit( LayoutManager* l ): QWidget(NULL) {
     //produce a list of names for the FlashRadioArray
     //this is only necesary since joystick devices need not always be
     //contiguous
-    int padcount = available.count();
-    QString names[padcount];
-    int i = 0;
-    do
-    {
-        QHashIterator<int, JoyPad*> it( available );
-        while (it.hasNext())
-        {
-            it.next();
-            names[i] = it.value()->getName();
-            connect(this, SIGNAL(focusStateChanged(bool)), it.value(), SLOT(focusChange(bool)));
-            ++i;
-        }
-    } while (0);
+    QStringList names;
+    foreach (JoyPad *joypad, available) {
+        names.append(joypad->getName());
+        connect(this, SIGNAL(focusStateChanged(bool)), joypad, SLOT(focusChange(bool)));
+    }
     
     //flash radio array
-    JoyButtons = new FlashRadioArray(padcount, names, true, this );
+    JoyButtons = new FlashRadioArray(names, true, this );
     LMain->addWidget( JoyButtons );
     
     //we have a WidgetStack to represent the multiple joypads
@@ -63,20 +54,15 @@ LayoutEdit::LayoutEdit( LayoutManager* l ): QWidget(NULL) {
     LMain->addWidget(PadStack);
 
     //go through each of the available joysticks
-    i = 0; // i is the current index into PadStack
-    do
-    {
-        QHashIterator<int, JoyPad*> it(available);
-        while (it.hasNext())
-        {
-            it.next();
-            //add a new JoyPadWidget to the stack
-            PadStack->insertWidget( i,it.value()->widget(PadStack,i) );
-            //every time it "flashes", flash the associated tab.
-            connect( PadStack->widget(i), SIGNAL( flashed( int ) ), JoyButtons, SLOT( flash( int )));
-            ++i;
-        }
-    } while (0);
+    // i is the current index into PadStack
+    int i = 0;
+    foreach (JoyPad *joypad, available) {
+        //add a new JoyPadWidget to the stack
+        PadStack->insertWidget( i, joypad->widget(PadStack,i) );
+        //every time it "flashes", flash the associated tab.
+        connect( PadStack->widget(i), SIGNAL( flashed( int ) ), JoyButtons, SLOT( flash( int )));
+        ++i;
+    }
     //whenever a new tab is selected, raise the appropriate JoyPadWidget
     connect( JoyButtons, SIGNAL( changed( int ) ), PadStack, SLOT( setCurrentIndex( int )));
 
@@ -118,21 +104,12 @@ void LayoutEdit::updateLayoutList() {
 void LayoutEdit::updateJoypadWidgets() {
     int indexOfFlashRadio = LMain->indexOf(JoyButtons);
     FlashRadioArray *newJoyButtons;
-    int padcount = available.count();
-    QString names[padcount];
-    int i = 0;
-    do
-    {
-        QHashIterator<int, JoyPad*> it( available );
-        while (it.hasNext())
-        {
-            it.next();
-            names[i] = it.value()->getName();
-            ++i;
-        }
-    } while (0);
+    QStringList names;
+    foreach (JoyPad *joypad, available) {
+        names.append(joypad->getName());
+    }
     
-    newJoyButtons = new FlashRadioArray(padcount, names, true, this );
+    newJoyButtons = new FlashRadioArray( names, true, this );
     LMain->insertWidget(indexOfFlashRadio, newJoyButtons);
     LMain->removeWidget(JoyButtons);
     FlashRadioArray* oldJoyButtons = JoyButtons;
@@ -143,20 +120,14 @@ void LayoutEdit::updateJoypadWidgets() {
     for(int i = 0; i<numberOfJoypads; i++) {
         PadStack->removeWidget(PadStack->widget(0));
     }
-    i = 0;
-    do
-    {
-        QHashIterator<int, JoyPad*> it(available);
-        while (it.hasNext())
-        {
-            it.next();
-            //add a new JoyPadWidget to the stack
-            PadStack->insertWidget( i,it.value()->widget(PadStack,i) );
-            //every time it "flashes", flash the associated tab.
-            connect( PadStack->widget(i), SIGNAL( flashed( int ) ), JoyButtons, SLOT( flash( int )));
-            ++i;
-        }
-    } while (0);
+    int i = 0;
+    foreach (JoyPad *joypad, available) {
+        //add a new JoyPadWidget to the stack
+        PadStack->insertWidget( i, joypad->widget(PadStack,i) );
+        //every time it "flashes", flash the associated tab.
+        connect( PadStack->widget(i), SIGNAL( flashed( int ) ), JoyButtons, SLOT( flash( int )));
+        ++i;
+    }
 }
 
 void LayoutEdit::closeEvent(QCloseEvent *event) {
@@ -169,12 +140,9 @@ void LayoutEdit::appFocusChanged(QWidget *old, QWidget *now) {
         emit focusStateChanged(false);
     } else if(old!=NULL && now==NULL) {
         emit focusStateChanged(true);
-        QHashIterator<int, JoyPad*> it( available );
-        while (it.hasNext())
-        {
+        foreach (JoyPad *joypad, available) {
             debug_mesg("iterating and releasing\n");
-            it.next();
-            it.value()->release();
+            joypad->release();
         }
         debug_mesg("done releasing!\n");
     }
