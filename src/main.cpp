@@ -22,12 +22,11 @@
 #include <cstdlib>
 
 //for making universally available variables
-extern Display* display;			//from event.h
 QHash<int, JoyPad*> available;			//to device.h
 QHash<int, JoyPad*> joypads;           //to device.h
 
 //variables needed in various functions in this file
-LayoutManager* lm;
+LayoutManager* lm = 0;
 QString devdir = DEVDIR;
 
 //signal handler for SIGIO
@@ -112,7 +111,20 @@ int main( int argc, char **argv )
         }
         //if help was requested,
         else if (QRegExp("-{1,2}h(elp)?").exactMatch(a.argv()[i])) {
-            printf(NAME"\nUsage: qjoypad [--device \"/device/path\"] [--notray] [\"layout name\"]\n\nOptions:\n  --device path     Look for joystick devices in \"path\". This should\n                    be something like \"/dev/input\" if your game\n                    devices are in /dev/input/js0, /dev/input/js1, etc.\n  --notray          Do not use a system tray icon. This is useful for\n                    window managers that don't support this feature.\n  --update          Force a running instance of QJoyPad to update its\n                    list of devices and layouts.\n  \"layout name\"     Load the given layout in an already running\n                    instance of QJoyPad, or start QJoyPad using the\n                    given layout.\n");
+            printf("%s\n"
+				"Usage: qjoypad [--device \"/device/path\"] [--notray] [\"layout name\"]\n"
+				"\n"
+				"Options:\n"
+				"  --device path     Look for joystick devices in \"path\". This should\n"
+				"                    be something like \"/dev/input\" if your game\n"
+				"                    devices are in /dev/input/js0, /dev/input/js1, etc.\n"
+				"  --notray          Do not use a system tray icon. This is useful for\n"
+				"                    window managers that don't support this feature.\n"
+				"  --update          Force a running instance of QJoyPad to update its\n"
+				"                    list of devices and layouts.\n"
+				"  \"layout name\"     Load the given layout in an already running\n"
+				"                    instance of QJoyPad, or start QJoyPad using the\n"
+				"                    given layout.\n", NAME);
             return 1;
         } else if(QRegExp("--force-tray").exactMatch(a.argv()[i])) {
             useTrayIcon = true;
@@ -146,7 +158,7 @@ int main( int argc, char **argv )
     //if that file already exists, then qjoypad is already running!
     if (pidFile.exists())
     {
-        int pid;
+        int pid = 0;
         if (pidFile.open( QIODevice::ReadOnly ))
         {
             //try to get that pid...
@@ -178,15 +190,6 @@ int main( int argc, char **argv )
         pidFile.close();
     }
 
-
-
-
-    //prepare the signal handlers
-    signal( SIGIO,   catchSIGIO );
-    signal( SIGUSR1, catchSIGUSR1 );
-//	signal( SIGUSR2, catchSIGUSR2 );
-
-
     if(forceTrayIcon) {
         int sleepCounter = 0;
         while(!QSystemTrayIcon::isSystemTrayAvailable()) {
@@ -211,6 +214,11 @@ int main( int argc, char **argv )
     
     //load the last used layout (Or the one given as a command-line argument)
     lm->load();
+
+    //prepare the signal handlers
+    signal( SIGIO,   catchSIGIO );
+    signal( SIGUSR1, catchSIGUSR1 );
+//	signal( SIGUSR2, catchSIGUSR2 );
 
     //and run the program!
     int result = a.exec();

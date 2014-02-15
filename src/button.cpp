@@ -176,7 +176,7 @@ void Button::click( bool press ) {
     click.value1 = useMouse?mousecode:keycode;
     click.value2 = 0;
     //and send it.
-    sendevent( click );
+    sendevent( display, click );
 }
 
 void Button::timerCalled() {

@@ -16,7 +16,8 @@ struct xevent {
 	int value2; //y
 };
 
+extern Display* display;
 
-void sendevent( xevent e );
+void sendevent( Display* display, xevent e );
 
 #endif

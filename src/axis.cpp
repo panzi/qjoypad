@@ -425,5 +425,5 @@ void Axis::move( bool press ) {
         }
     }
     //actually create the event
-    sendevent(e);
+    sendevent(display, e);
 }
