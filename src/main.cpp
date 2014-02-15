@@ -18,8 +18,6 @@
 #include "error.h"
 #include <QX11Info>
 #include <QSystemTrayIcon>
-#include <poll.h>
-#include <cstdlib>
 #include <getopt.h>
 
 //for making universally available variables
