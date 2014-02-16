@@ -62,12 +62,13 @@ class LayoutManager : public QObject {
 		//when the tray icon is clicked
 		void iconClick();
         void trayClick(QSystemTrayIcon::ActivationReason reason);
-		//when the user selects an item on the tray's popup menu
-		void trayMenu(QAction* menuItemAction);
 		//rebuild the popup menu with the current information
 		void fillPopup();
 		//update the list of available joystick devices
 		void updateJoyDevs();
+    private slots:
+        //when the user selects an item on the tray's popup menu
+        void layoutTriggered();
 	private:
 		//change to the given layout name and make all the necesary adjustments
 		void setLayoutName(QString name);
@@ -79,7 +80,13 @@ class LayoutManager : public QObject {
 		//the layout that is currently in use
         QString currentLayout;
 		//the popup menu from the tray/floating icon
-        QMenu trayMenuPopup;
+        QMenu trayMenu;
+        //known actions for the popup menu
+        QActionGroup *layoutGroup;
+        QAction *titleAction;
+        QAction *updateDevicesAction;
+        QAction *updateLayoutsAction;
+        QAction *quitAction;
 
 		//if there is a LayoutEdit open, this points to it. Otherwise, NULL.	
         QPointer<LayoutEdit> le;

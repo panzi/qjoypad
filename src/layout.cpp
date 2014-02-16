@@ -2,26 +2,37 @@
 #include <errno.h>
 
 //initialize things and set up an icon  :)
-LayoutManager::LayoutManager( bool useTrayIcon, const QString &devdir, const QString &settingsDir ) : devdir(devdir), settingsDir(settingsDir), le(0) {
+LayoutManager::LayoutManager( bool useTrayIcon, const QString &devdir, const QString &settingsDir )
+    : devdir(devdir), settingsDir(settingsDir),
+      layoutGroup(new QActionGroup(this)),
+      titleAction(new QAction(this)),
+      updateDevicesAction(new QAction("Update &Joystick Devices",this)),
+      updateLayoutsAction(new QAction("Update &Layout List",this)),
+      quitAction(new QAction("&Quit",this)),
+      le(0) {
     //prepare the popup first.
+    titleAction->setEnabled(false);
     fillPopup();
-    connect(&trayMenuPopup,SIGNAL(triggered(QAction*)),this, SLOT(trayMenu(QAction*)));
 
     //make a tray icon
     if (useTrayIcon) {
         QSystemTrayIcon *tray = new QSystemTrayIcon(this);
-        tray->setContextMenu(&trayMenuPopup);
+        tray->setContextMenu(&trayMenu);
         tray->setIcon(QIcon(ICON24));
         tray->show();
         connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayClick(QSystemTrayIcon::ActivationReason)));
     }
     //or make a floating icon
     else {
-        FloatingIcon* icon = new FloatingIcon(QPixmap(ICON64),&trayMenuPopup,0,"tray");
+        FloatingIcon* icon = new FloatingIcon(QPixmap(ICON64),&trayMenu,0,"tray");
         connect(icon, SIGNAL( clicked()), this, SLOT( iconClick()));
         connect(icon, SIGNAL( closed()), qApp, SLOT( quit()));
         icon->show();
     }
+
+    connect(updateLayoutsAction, SIGNAL(triggered()), this, SLOT(fillPopup()));
+    connect(updateDevicesAction, SIGNAL(triggered()), this, SLOT(updateJoyDevs()));
+    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 
     //no layout loaded at start.
     setLayoutName(NL);
@@ -289,52 +300,53 @@ void LayoutManager::trayClick(QSystemTrayIcon::ActivationReason reason) {
     }
 }
 
-void LayoutManager::trayMenu(QAction *menuItemAction) {
+void LayoutManager::layoutTriggered() {
+    QAction *action = qobject_cast<QAction*>(sender());
     //if they clicked on a Layout name, load it!
-    //note that the other options are handled with their own special functions
-    if (trayMenuPopup.actions().indexOf(menuItemAction) > 1 && menuItemAction->text() != "Quit" &&
-        menuItemAction->text() != "Update layout list" &&
-        menuItemAction->text() != "Update joystick devices") {
-        load(menuItemAction->text());
+    if (action) {
+        load(action->data().toString());
     }
 }
 
 void LayoutManager::fillPopup() {
     //start with an empty slate
-    trayMenuPopup.clear();
+    trayMenu.clear();
 
     //make a list of joystick devices
-    QString devs = "Joysticks: ";
+    QString title = "Joysticks: ";
     foreach (JoyPad *joypad, available) {
-        devs += QString("%1 ").arg(joypad->getIndex() + 1);
+        title += QString("%1 ").arg(joypad->getIndex() + 1);
     }
 
-    QAction *temp = trayMenuPopup.addAction(devs);
-    trayMenuPopup.addSeparator(/*temp*/);
+    trayMenu.setTitle(title);
+    titleAction->setText(title);
+    trayMenu.addAction(titleAction);
+    trayMenu.addSeparator();
 
     //add in the Update options
-    QAction *tempAdd = new QAction("Update layout list", this);
-    connect(tempAdd, SIGNAL(triggered(bool)), this, SLOT(fillPopup()));
-    trayMenuPopup.addAction(tempAdd);
-    tempAdd = new QAction("Update joystick devices", this);
-    connect(tempAdd, SIGNAL(triggered(bool)), this, SLOT(updateJoyDevs()));
-    trayMenuPopup.addAction(tempAdd);
-    trayMenuPopup.addSeparator(/*temp*/);
+    trayMenu.addAction(updateLayoutsAction);
+    trayMenu.addAction(updateDevicesAction);
+    trayMenu.addSeparator();
 
     //then add all the layout names
     QStringList names = getLayoutNames();
     foreach (const QString &name, names) {
-        temp = trayMenuPopup.addAction(name);
-        temp->setCheckable(true);
+        QString title = name;
+        title.replace('&',"&&");
+        QAction *action = trayMenu.addAction(title);
+        action->setData(name);
+        action->setCheckable(true);
+        action->setActionGroup(layoutGroup);
         //put a check by the current one  ;)
         if (currentLayout == name) {
-            temp->setChecked(true);
+            action->setChecked(true);
         }
+        connect(action, SIGNAL(triggered()), this, SLOT(layoutTriggered()));
     }
-    trayMenuPopup.addSeparator();
+    trayMenu.addSeparator();
 
     //and, at the end, quit!
-    trayMenuPopup.addAction("Quit",qApp,SLOT(quit()));
+    trayMenu.addAction(quitAction);
 }
 
 void LayoutManager::updateJoyDevs() {

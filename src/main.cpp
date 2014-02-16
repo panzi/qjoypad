@@ -21,14 +21,14 @@
 //variables needed in various functions in this file
 QPointer<LayoutManager> layoutManagerPtr;
 
-//signal handler for SIGIO
-//SIGIO means that a new layout should be loaded. It is saved in
+//signal handler for SIGUSR2
+//SIGUSR2 means that a new layout should be loaded. It is saved in
 // ~/.qjoypad/layout, where the last used layout is put.
-void catchSIGIO( int sig )
+void catchSIGUSR2( int sig )
 {
     if (layoutManagerPtr) layoutManagerPtr->load();
     //remember to catch this signal again next time.
-    signal( sig, catchSIGIO );
+    signal( sig, catchSIGUSR2 );
 }
 
 
@@ -41,15 +41,6 @@ void catchSIGUSR1( int sig ) {
     //remember to catch this signal again next time.
     signal( sig, catchSIGUSR1 );
 }
-
-
-/*  A new feature to add? We'll see.
-void catchSIGUSR2( int sig ) {
-    lm->trayClick();
-    signal( sig, catchSIGUSR2 );
-}
-*/
-
 
 
 int main( int argc, char **argv )
@@ -171,8 +162,7 @@ int main( int argc, char **argv )
         QFile file( settingsDir + "layout");
         if (file.open(QIODevice::WriteOnly))
         {
-            QTextStream stream( &file );
-            stream << layout;
+            QTextStream( &file ) << layout;
             file.close();
         }
     }
@@ -205,7 +195,7 @@ int main( int argc, char **argv )
                     if (update == true)
                         kill(pid,SIGUSR1);
                     if (!layout.isEmpty())
-                        kill(pid,SIGIO);
+                        kill(pid,SIGUSR2);
                 }
                 //and quit. We don't need two instances.
                 return 0;
@@ -219,7 +209,7 @@ int main( int argc, char **argv )
         pidFile.close();
     }
 
-    if(forceTrayIcon) {
+    if (forceTrayIcon) {
         int sleepCounter = 0;
         while(!QSystemTrayIcon::isSystemTrayAvailable()) {
             sleep(1);
@@ -243,9 +233,8 @@ int main( int argc, char **argv )
     layoutManager.load();
 
     //prepare the signal handlers
-    signal( SIGIO,   catchSIGIO );
     signal( SIGUSR1, catchSIGUSR1 );
-//    signal( SIGUSR2, catchSIGUSR2 );
+    signal( SIGUSR2, catchSIGUSR2 );
 
     //and run the program!
     int result = app.exec();
