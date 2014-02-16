@@ -88,7 +88,7 @@ void JoyPadWidget::setAll() {
 void JoyPadWidget::jsevent( const js_event& msg ) {
     //notify the component this event applies to. this cannot generate anything
     //other than a flash  :)
-    qulonglong type = msg.type & ~JS_EVENT_INIT;
+    unsigned int type = msg.type & ~JS_EVENT_INIT;
     if (type == JS_EVENT_AXIS) {
         if (msg.number < axes.count()) axes[msg.number]->jsevent(msg.value);
     }

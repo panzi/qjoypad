@@ -5,8 +5,8 @@
 #include <stdarg.h>
 //a nice simple way of throwing up an error message if something goes wrong.
 
-inline void error(const QString &type, const QString &message ) {
-    QMessageBox::warning(0, QString("%1 - %2").arg(NAME, type),
+inline void errorBox(const QString &type, const QString &message, QWidget *parent = 0) {
+    QMessageBox::warning(parent, QString("%1 - %2").arg(NAME, type),
 		message, QMessageBox::Ok, Qt::NoButton);
 }
 
@@ -19,5 +19,6 @@ inline void debug_mesg(const char *fmt, ...) {
 }
 #else
 inline void debug_mesg(...) {}
+#define debug_mesg(...)
 #endif
 #endif

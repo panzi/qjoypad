@@ -16,7 +16,6 @@
 #include <QPointer>
 #include <QInputDialog>
 #include <QSystemTrayIcon>
-#include <poll.h>
 
 //a layout handles several joypads
 #include "joypad.h"

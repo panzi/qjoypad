@@ -4,7 +4,6 @@
 #include <string.h>
 #include <fcntl.h>
 #include <stdint.h>
-#include <poll.h>
 #include <QApplication>
 
 #include "joypad.h"
@@ -88,14 +87,6 @@ void JoyPad::open(int dev) {
     for (int i = 0; i < buttonCount; i++) {
         if (buttons[i] == 0) buttons.insert(i, new Button( i, this ));
     }
-    struct pollfd read_struct;
-    read_struct.fd = joydev;
-    read_struct.events = POLLIN;
-    char buf[10];
-    while (poll(&read_struct, 1, 5) != 0) {
-        debug_mesg("reading junk data\n");
-        if (read(joydev, buf, 10) <= 0) break;
-    }
     debug_mesg("Setting up joyDeviceListeners\n");
     readNotifier = new QSocketNotifier(joydev, QSocketNotifier::Read, this);
     connect(readNotifier, SIGNAL(activated(int)), this, SLOT(handleJoyEvents()));
@@ -141,14 +132,14 @@ bool JoyPad::readConfig( QTextStream &stream ) {
             if (num > 0) {
                 stream >> ch;
                 if (ch != ':') {
-                    error("Layout file error", QString("Expected ':', found '%1'.").arg(ch));
+                    errorBox("Layout file error", QString("Expected ':', found '%1'.").arg(ch));
                     return false;
                 }
                 if (buttons[num-1] == 0) {
-                    buttons.insert(num-1,new Button(num-1));
+                    buttons.insert(num-1,new Button(num-1,this));
                 }
                 if (!buttons[num-1]->read( stream )) {
-                    error("Layout file error", QString("Error reading Button %1").arg(num));
+                    errorBox("Layout file error", QString("Error reading Button %1").arg(num));
                     return false;
                 }
             }
@@ -161,20 +152,20 @@ bool JoyPad::readConfig( QTextStream &stream ) {
             if (num > 0) {
                 stream >> ch;
                 if (ch != ':') {
-                    error("Layout file error", QString("Expected ':', found '%1'.").arg(ch));
+                    errorBox("Layout file error", QString("Expected ':', found '%1'.").arg(ch));
                     return false;
                 }
                 if (axes[num-1] == 0) {
-                    axes.insert(num-1,new Axis(num-1));
+                    axes.insert(num-1,new Axis(num-1,this));
                 }
                 if (!axes[num-1]->read(stream)) {
-                    error("Layout file error", QString("Error reading Axis %1").arg(num));
+                    errorBox("Layout file error", QString("Error reading Axis %1").arg(num));
                     return false;
                 }
             }
         }
         else {
-            error( "Layout file error", QString("Error while reading layout. Unrecognized word: %1").arg(word) );
+            errorBox( "Layout file error", QString("Error while reading layout. Unrecognized word: %1").arg(word) );
             return false;
         }
         stream >> word;
@@ -219,7 +210,7 @@ void JoyPad::jsevent(const js_event &msg) {
 
     //otherwise, lets create us a fake event! Pass on the event to whichever
     //Button or Axis was pressed and let them decide what to do with it.
-    qulonglong type = msg.type & ~JS_EVENT_INIT;
+    unsigned int type = msg.type & ~JS_EVENT_INIT;
     if (type == JS_EVENT_AXIS) {
         debug_mesg("DEBUG: passing on an axis event\n");
         debug_mesg("DEBUG: %d %d\n", msg.number, msg.value);

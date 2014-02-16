@@ -24,7 +24,7 @@ void QuickSet::jsevent(const js_event &msg ) {
     if (setting) return;
 
     //if a button was pressed on the joystick
-    qulonglong type = msg.type & ~JS_EVENT_INIT;
+    unsigned int type = msg.type & ~JS_EVENT_INIT;
     if (type == JS_EVENT_BUTTON) {
         //capture that button.
         Button* button = joypad->buttons[msg.number];

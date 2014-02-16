@@ -199,7 +199,7 @@ int main( int argc, char **argv )
                 //however, if we are setting the layout or updating the device
                 //list, this is not an error and we shouldn't make one!
                 if (layout.isEmpty() && update == false)
-                    error("Instance Error","There is already a running instance of QJoyPad; please close\nthe old instance before starting a new one.");
+                    errorBox("Instance Error","There is already a running instance of QJoyPad; please close\nthe old instance before starting a new one.");
                 else {
                     //if one of these is the case, send the approrpriate signal!
                     if (update == true)
