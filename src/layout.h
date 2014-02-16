@@ -13,6 +13,7 @@
 #include <QMenu>
 #include <QApplication>
 #include <QDialog>
+#include <QPointer>
 #include <QInputDialog>
 #include <QSystemTrayIcon>
 #include <poll.h>
@@ -35,10 +36,10 @@ class LayoutManager : public QObject {
 	Q_OBJECT
 	public:
         LayoutManager(bool useTrayIcon, const QString &devdir, const QString &settingsDir);
+        ~LayoutManager();
 
 		//produces a list of the names of all the available layout.
         QStringList getLayoutNames() const;
-        void leWindowClosed();
 	public slots:
 		//load a layout with a given name
 		bool load(const QString& name);
@@ -82,7 +83,7 @@ class LayoutManager : public QObject {
         QMenu trayMenuPopup;
 
 		//if there is a LayoutEdit open, this points to it. Otherwise, NULL.	
-        LayoutEdit* le;
+        QPointer<LayoutEdit> le;
 
         QHash<int, JoyPad*> available;
         QHash<int, JoyPad*> joypads;

@@ -1,3 +1,4 @@
+#include <QX11Info>
 #include "axis.h"
 #include "event.h"
 #include "time.h"
@@ -423,5 +424,5 @@ void Axis::move( bool press ) {
         }
     }
     //actually create the event
-    sendevent(display, e);
+    sendevent(QX11Info::display(), e);
 }

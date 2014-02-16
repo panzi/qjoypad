@@ -25,7 +25,7 @@ class JoyPadWidget : public QWidget {
 		JoyPadWidget( JoyPad* jp, int i, QWidget* parent);
 		~JoyPadWidget();
 		//takes in an event and decides whether or not to flash anything
-		void jsevent( js_event msg );
+        void jsevent(const js_event &msg );
 	public slots:
 		//called whenever one of the subwidgets flashes... used to determine
 		//when to emit the flashed() signal.

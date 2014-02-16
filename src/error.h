@@ -18,8 +18,6 @@ inline void debug_mesg(const char *fmt, ...) {
     va_end(ap);
 }
 #else
-inline void debug_mesg(...) {
-    return;
-}
+inline void debug_mesg(...) {}
 #endif
 #endif

@@ -10,8 +10,6 @@
 //The KeySym for "x"
 #define XK_x 0x078
 
-extern Display *display;
-
 //a keycode dialog box
 class GetKey : public QDialog {
 	Q_OBJECT

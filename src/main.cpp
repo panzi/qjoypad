@@ -14,7 +14,6 @@
 #include "event.h"
 //to produce errors!
 #include "error.h"
-#include <QX11Info>
 #include <QSystemTrayIcon>
 #include <QPointer>
 #include <getopt.h>
@@ -57,8 +56,8 @@ int main( int argc, char **argv )
 {
     //create a new event loop. This will be captured by the QApplication
     //when it gets created
-    QApplication a( argc, argv );
-    a.setQuitOnLastWindowClosed(false);
+    QApplication app( argc, argv );
+    app.setQuitOnLastWindowClosed(false);
 
 
     //where QJoyPad saves its settings!
@@ -231,9 +230,6 @@ int main( int argc, char **argv )
             }
         }
     }
-    //capture the current display for event.h
-    display = QX11Info::display();
-
     //create a new LayoutManager with a tray icon / floating icon, depending
     //on the user's request
     LayoutManager layoutManager(useTrayIcon,devdir,settingsDir);
@@ -252,7 +248,7 @@ int main( int argc, char **argv )
 //    signal( SIGUSR2, catchSIGUSR2 );
 
     //and run the program!
-    int result = a.exec();
+    int result = app.exec();
 
     //when everything is done, save the current layout for next time...
     layoutManager.saveDefault();

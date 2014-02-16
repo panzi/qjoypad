@@ -2,7 +2,7 @@
 
 
 ButtonWidget::ButtonWidget( Button* b, QWidget* parent )
-        : FlashButton( "", parent) {
+        : FlashButton(QString::null, QString::null, parent) {
     button = b;
     update();
     on = false;

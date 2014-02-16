@@ -17,14 +17,21 @@ LayoutManager::LayoutManager( bool useTrayIcon, const QString &devdir, const QSt
     }
     //or make a floating icon
     else {
-        FloatingIcon* Icon = new FloatingIcon(QPixmap(ICON64),&trayMenuPopup,0,"tray");
-        connect(Icon, SIGNAL( clicked()), this, SLOT( iconClick()));
-        connect(Icon, SIGNAL( closed()), qApp, SLOT( quit()));
-        Icon->show();
+        FloatingIcon* icon = new FloatingIcon(QPixmap(ICON64),&trayMenuPopup,0,"tray");
+        connect(icon, SIGNAL( clicked()), this, SLOT( iconClick()));
+        connect(icon, SIGNAL( closed()), qApp, SLOT( quit()));
+        icon->show();
     }
 
     //no layout loaded at start.
     setLayoutName(NL);
+}
+
+LayoutManager::~LayoutManager() {
+    if (le) {
+        le->close();
+        le = 0;
+    }
 }
 
 QString LayoutManager::getFileName( QString layoutname ) {
@@ -204,7 +211,7 @@ void LayoutManager::saveAs() {
 
     //add the new name to our lists
     fillPopup();
-    if (le != NULL) {
+    if (le) {
         le->updateLayoutList();
     }
 }
@@ -227,7 +234,7 @@ void LayoutManager::remove() {
     }
     fillPopup();
 
-    if (le != NULL) {
+    if (le) {
         le->updateLayoutList();
     }
     clear();
@@ -238,7 +245,8 @@ QStringList LayoutManager::getLayoutNames() const {
     QStringList result = QDir(settingsDir).entryList(QStringList("*.lyt"));
 
     for (int i = 0; i < result.size(); ++ i) {
-        result[i] = result[i].left(result[i].length() - 4);
+        QString& name = result[i];
+        name.truncate(name.length() - 4);
     }
     //and, of course, there's always NL.
     result.prepend(NL);
@@ -250,7 +258,7 @@ void LayoutManager::setLayoutName(QString name) {
     currentLayout = name;
     fillPopup();
 
-    if (le != NULL) {
+    if (le) {
         le->setLayout(name);
     }
 }
@@ -261,7 +269,13 @@ void LayoutManager::iconClick() {
         error("No joystick devices available","No joystick devices are currently available to configure.\nPlease plug in a gaming device and select\n\"Update Joystick Devices\" from the popup menu.");
         return;
     }
-    if(le) {
+    if (le) {
+        if (le->hasFocus()) {
+            le->close();
+        }
+        else {
+            le->raise();
+        }
         return;
     }
     //otherwise, make a new LayoutEdit dialog and show it.
@@ -328,7 +342,7 @@ void LayoutManager::updateJoyDevs() {
 
     //reset all joydevs to sentinal value (-1)
     foreach (JoyPad *joypad, joypads) {
-        joypad->unsetDev();
+        joypad->close();
     }
 
     //clear out the list of previously available joysticks
@@ -338,8 +352,8 @@ void LayoutManager::updateJoyDevs() {
     QDir deviceDir(devdir);
     QStringList devices = deviceDir.entryList(QStringList("js*"), QDir::System);
     QRegExp devicename(".*\\js(\\d+)");
-    int joydev = 0;
-    int index = 0;
+    int joydev = -1;
+    int index = -1;
     //for every joystick device in the directory listing...
     //(note, with devfs, only available devices are listed)
     foreach (const QString &device, devices) {
@@ -349,7 +363,7 @@ void LayoutManager::updateJoyDevs() {
         joydev = open( qPrintable(devpath), O_RDONLY | O_NONBLOCK);
         //if it worked, then we have a live joystick! Make sure it's properly
         //setup.
-        if (joydev > 0) {
+        if (joydev >= 0) {
             devicename.indexIn(device);
             index = devicename.cap(1).toInt();
             JoyPad* joypad = joypads[index];
@@ -368,7 +382,7 @@ void LayoutManager::updateJoyDevs() {
             }
             else {
                 debug_mesg("found previously open joypad with index %d, ignoring", index);
-                joypad->resetToDev(joydev);
+                joypad->open(joydev);
             }
             //make this joystick device available.
             available.insert(index,joypad);
@@ -384,8 +398,4 @@ void LayoutManager::updateJoyDevs() {
         le->updateJoypadWidgets();
     }
     debug_mesg("done updating joydevs\n");
-}
-
-void LayoutManager::leWindowClosed() {
-    le=NULL;
 }

@@ -130,15 +130,10 @@ void LayoutEdit::updateJoypadWidgets() {
     }
 }
 
-void LayoutEdit::closeEvent(QCloseEvent *event) {
-    lm->leWindowClosed();
-    event->accept();
-}
-
 void LayoutEdit::appFocusChanged(QWidget *old, QWidget *now) {
-    if(now!=NULL && old==NULL) {
+    if (now != NULL && old == NULL) {
         emit focusStateChanged(false);
-    } else if(old!=NULL && now==NULL) {
+    } else if(old != NULL && now == NULL) {
         emit focusStateChanged(true);
         foreach (JoyPad *joypad, lm->available) {
             debug_mesg("iterating and releasing\n");

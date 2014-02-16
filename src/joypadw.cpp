@@ -15,22 +15,21 @@ JoyPadWidget::JoyPadWidget( JoyPad* jp, int i, QWidget* parent )
     int insertCounter = 0;
     quickset = NULL;
 
-    foreach (Axis *axis, joypad->Axes) {
+    foreach (Axis *axis, joypad->axes) {
         AxisWidget *aw = new AxisWidget(axis,this);
         axes.append(aw);
         connect( aw, SIGNAL( flashed( bool ) ), this, SLOT( flash( bool )));
-        layoutMain->addWidget(aw, insertCounter / 2, insertCounter %2);
+        layoutMain->addWidget(aw, insertCounter / 2, insertCounter % 2);
         insertCounter++;
     }
 
-    foreach (Button *button, joypad->Buttons) {
+    foreach (Button *button, joypad->buttons) {
         ButtonWidget *bw = new ButtonWidget(button,this);
         buttons.append(bw);
         connect( bw, SIGNAL( flashed( bool ) ), this, SLOT( flash( bool )));
-        layoutMain->addWidget(bw, insertCounter/2, insertCounter%2);
+        layoutMain->addWidget(bw, insertCounter / 2, insertCounter % 2);
         insertCounter++;
     }
-    
     
     if (insertCounter % 2 == 1) {
         insertCounter ++;
@@ -38,10 +37,10 @@ JoyPadWidget::JoyPadWidget( JoyPad* jp, int i, QWidget* parent )
     insertCounter += 2;
     btnClear = new QPushButton("Clear", this);
     connect(btnClear, SIGNAL(clicked()), this, SLOT(clear()));
-    layoutMain->addWidget(btnClear, insertCounter / 2, insertCounter %2);
+    layoutMain->addWidget(btnClear, insertCounter / 2, insertCounter % 2);
     insertCounter++;
     btnAll = new QPushButton("Quick Set", this);
-    layoutMain->addWidget(btnAll, insertCounter /2, insertCounter%2);
+    layoutMain->addWidget(btnAll, insertCounter / 2, insertCounter % 2);
     connect(btnAll, SIGNAL(clicked()), this, SLOT(setAll()));
 }
 
@@ -86,16 +85,18 @@ void JoyPadWidget::setAll() {
     quickset = NULL;
 }
 
-void JoyPadWidget::jsevent( js_event msg ) {
+void JoyPadWidget::jsevent( const js_event& msg ) {
     //notify the component this event applies to. this cannot generate anything
     //other than a flash  :)
-    if (msg.type == JS_EVENT_AXIS) {
+    qulonglong type = msg.type & ~JS_EVENT_INIT;
+    if (type == JS_EVENT_AXIS) {
         if (msg.number < axes.count()) axes[msg.number]->jsevent(msg.value);
     }
-    else {
+    else if (type == JS_EVENT_BUTTON) {
         if (msg.number < buttons.count()) buttons[msg.number]->jsevent(msg.value);
     }
     //if we're doing quickset, it needs to know when we do something.
-    if (quickset != NULL)
+    if (quickset != NULL) {
         quickset->jsevent(msg);
+    }
 }

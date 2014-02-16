@@ -16,7 +16,7 @@ class LayoutManager;
 class LayoutEdit : public QWidget {
 	Q_OBJECT
 	public:
-		LayoutEdit( LayoutManager* l );
+        LayoutEdit( LayoutManager* l );
 		//swap to a new layout
 		void setLayout(QString layout);
 		//update the list of available layouts
@@ -28,8 +28,7 @@ class LayoutEdit : public QWidget {
         void appFocusChanged(QWidget *old, QWidget *now);
 	protected:
 		//the layout manager this represents
-		LayoutManager* lm;		
-		virtual void closeEvent(QCloseEvent *event);
+        LayoutManager* lm;
 		//parts of the dialog:
         QVBoxLayout *mainLayout;
         QStackedWidget *padStack;

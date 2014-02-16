@@ -1,3 +1,4 @@
+#include <QX11Info>
 #include "button.h"
 #include "event.h"
 
@@ -125,7 +126,7 @@ bool Button::isDefault() {
 
 QString Button::status() {
     if (useMouse) {
-        return QString("%1 : Mouse %2").arg(getName(), keycode);
+        return QString("%1 : Mouse %2").arg(getName()).arg(keycode);
     }
     else {
         return QString("%1 : %2").arg(getName(), ktos(keycode));
@@ -161,7 +162,7 @@ void Button::click( bool press ) {
     click.value1 = keycode;
     click.value2 = 0;
     //and send it.
-    sendevent( display, click );
+    sendevent( QX11Info::display(), click );
 }
 
 void Button::timerCalled() {

@@ -1,3 +1,4 @@
+#include <QX11Info>
 #include "keycode.h"
 #include "getkey.h"
 
@@ -7,7 +8,7 @@ const QString ktos( int keycode )
 
     if (keycode == 0) return "[NO KEY]";
 
-    QString xname = XKeysymToString(XKeycodeToKeysym(display, keycode,0));
+    QString xname = XKeysymToString(XKeycodeToKeysym(QX11Info::display(), keycode,0));
 
 //this section of code converts standard X11 keynames into much nicer names
 //which are prettier, fit the dialogs better, and are more readily understandable.

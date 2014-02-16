@@ -19,14 +19,15 @@ QuickSet::QuickSet( JoyPad* jp, QWidget *parent)
     connect( button, SIGNAL(clicked()), this, SLOT(accept()));
 }
 
-void QuickSet::jsevent( js_event msg ) {
+void QuickSet::jsevent(const js_event &msg ) {
     //ignore any joystick events if we're waiting for a keypress
     if (setting) return;
 
     //if a button was pressed on the joystick
-    if (msg.type == JS_EVENT_BUTTON) {
+    qulonglong type = msg.type & ~JS_EVENT_INIT;
+    if (type == JS_EVENT_BUTTON) {
         //capture that button.
-        Button* button = joypad->Buttons[msg.number];
+        Button* button = joypad->buttons[msg.number];
 
         //go into setting mode and request a key/mousebutton
         setting = true;
@@ -41,16 +42,16 @@ void QuickSet::jsevent( js_event msg ) {
             //otherwise, tell it to use a keycode.
             button->setKey(false, code);
     }
-    else {
+    else if (type == JS_EVENT_AXIS) {
         //require a signal strength of at least 5000 to consider an axis moved.
         if (abs(msg.value) < 5000) return;
 
         //capture the axis that moved
-        Axis* axis = joypad->Axes[msg.number];
+        Axis* axis = joypad->axes[msg.number];
 
         //grab a keycode for that axis and that direction
         setting = true;
-        int code = GetKey(axis->getName() + ", " + QString((msg.value > 0)?"positive":"negative"), false).exec();
+        int code = GetKey(QString("%1, %2").arg(axis->getName(), msg.value > 0 ? "positive" : "negative"), false).exec();
         setting = false;
 
         //assign the key to the axis.

@@ -28,8 +28,10 @@ class JoyPad : public QObject {
     friend class JoyPadWidget;
 	friend class QuickSet;
     public:
-		void setupJoyDeviceListener(int dev);
         JoyPad( int i, int dev, QObject* parent );
+        ~JoyPad();
+        // close file descriptor and socket notifier
+        void close();
         //read from a stream
 		bool readConfig( QTextStream &stream );
 		//write to a stream
@@ -37,15 +39,13 @@ class JoyPad : public QObject {
 		//release any pushed buttons and return to a neutral state
 		void release();
 		//handle an event from the joystick device this is associated with
-		void jsevent( js_event msg );
+        void jsevent( const js_event& msg );
 		//reset to default settings
 		void toDefault();
 		//true iff this is currently at default settings
-		bool isDefault();
-		//release the connection to the real joystick
-		void unsetDev();
+        bool isDefault();
 		//read the dimensions on the real joystick and use them
-		void resetToDev( int dev );
+        void open( int dev );
 		//generates a name ("Joystick 1")
         QString getName() const { return QString("Joystick %1").arg(index+1);}
         int getIndex() const { return index; }
@@ -54,8 +54,8 @@ class JoyPad : public QObject {
 
 		//it's just easier to have these publicly available.
 		int joydev;  //the actual file descriptor to the joystick device
-		int axes;    //the number of axes available on this device
-		int buttons; //the number of buttons
+        char axisCount;   //the number of axes available on this device
+        char buttonCount; //the number of buttons
 
     public:
 		//request the joypad to make a JoyPadWidget. We create them this way
@@ -68,21 +68,21 @@ class JoyPad : public QObject {
 		//layouts with different numbers of axes/buttons than the current
 		//devices. Note that with the current layout settings, the defined
 		//buttons that don't actually exist on the device may not be contiguous.
-		QHash<int, Axis*> Axes;
-		QHash<int, Button*> Buttons;
+        QHash<int, Axis*> axes;
+        QHash<int, Button*> buttons;
 		//the index of this device (devicenum)
 		int index;
 		
 		//the widget that edits this. Mainly I keep track of this to know if
 		//the joypad is currently being edited.
 		JoyPadWidget* jpw;
-        QSocketNotifier *joydevFileHandle;
-        QSocketNotifier *joydevFileException;
+        QSocketNotifier *readNotifier;
+        QSocketNotifier *errorNotifier;
         QString deviceId;
         bool hasFocus;
     public slots:    
-        void handleJoyEvents(int fd);
-        void errorRead(int fd);
+        void handleJoyEvents();
+        void errorRead();
         void focusChange(bool windowHasFocus);
 };
 

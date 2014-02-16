@@ -1,3 +1,4 @@
+#include <QX11Info>
 #include "getkey.h"
 
 GetKey::GetKey( QString button, bool m )
@@ -33,7 +34,7 @@ bool GetKey::x11Event( XEvent* e )
     //On a key press, return the key and quit
     //Ctrl+X == [No Key]
     if (e->type == KeyRelease) {
-        if (XKeycodeToKeysym(display,e->xkey.keycode,0) == XK_x ) {
+        if (XKeycodeToKeysym(QX11Info::display(),e->xkey.keycode,0) == XK_x ) {
             if (e->xkey.state & ControlMask) done( 0 );
             else done( e->xkey.keycode );
         }

@@ -23,7 +23,7 @@ class QuickSet : public QDialog {
 	public:
         QuickSet(JoyPad* jp, QWidget *parent = 0);
 		//this needs to see js_events so it can capture them directly
-		void jsevent( js_event msg );
+        void jsevent( const js_event& msg );
 	private:
 		//the joypad that is being configured
 		JoyPad* joypad;

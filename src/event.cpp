@@ -4,7 +4,7 @@
 Display *display = 0;
 
 //actually creates an XWindows event  :)
-void sendevent( Display* display, xevent e ) {
+void sendevent(Display* display, const xevent &e ) {
     if (e.value1 == 0 && e.value2 == 0) return;
     if (e.type == WARP) {
         XTestFakeRelativeMotionEvent(display, e.value1, e.value2, 0);

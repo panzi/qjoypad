@@ -13,9 +13,6 @@
 //Produce a string for any keycode
 const QString ktos( int keycode );
 
-//The X11 display, taken from main.cpp
-extern Display* display;
-
 
 //a button that requests a keycode from the user when clicked.
 class KeyButton : public QPushButton {

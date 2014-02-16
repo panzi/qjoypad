@@ -30,7 +30,7 @@ class FlashButton : public QPushButton
 {
 	Q_OBJECT
 	public:
-		FlashButton( QString text, QWidget* parent, QString name = "" );
+        FlashButton(QString text, QString name = "" , QWidget* parent = 0);
 	public slots:
 		//make the button turn blue if it was gray, or visa versa.
 		void flash();
@@ -51,7 +51,7 @@ class FlashRadioArray : public QWidget
 {
 	Q_OBJECT
 	public:
-		FlashRadioArray( const QStringList &names, bool horizontal, QWidget* parent);
+        FlashRadioArray( const QStringList &names, bool horizontal, QWidget* parent);
 		//returns an integer returning the currently selected button.
 		//First button is 0.
 		int getState();
@@ -64,15 +64,13 @@ class FlashRadioArray : public QWidget
 	signals:
 		//happens when the state changes. The int is the new state.
 		void changed( int );
-	private:
-		//how many buttons
-		int Count;
+    private:
 		//which is currently down
-		int State;
+        int state;
 		//the array of buttons
-		FlashButton** Buttons;
+        QList<FlashButton*> buttons;
 		//the main layout.
-		QBoxLayout* LMain;
+        QBoxLayout* mainLayout;
 };
 
 #endif
