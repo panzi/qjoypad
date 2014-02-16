@@ -126,7 +126,7 @@ bool LayoutManager::load(const QString& name) {
                 return false;
             }
         }
-        else if (word == QLatin1String("#")) {
+        else if (word.startsWith('#')) {
             // ignore comment
             stream.readLine();
         }
