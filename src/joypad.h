@@ -1,5 +1,5 @@
-#ifndef JOYPAD_H
-#define JOYPAD_H
+#ifndef QJOYPAD_JOYPAD_H
+#define QJOYPAD_JOYPAD_H
 
 //parts of the joypad
 #include "button.h"
@@ -29,7 +29,7 @@ class JoyPad : public QObject {
 	friend class QuickSet;
     public:
 		void setupJoyDeviceListener(int dev);
-        JoyPad( int i, int dev );
+        JoyPad( int i, int dev, QObject* parent );
         //read from a stream
 		bool readConfig( QTextStream &stream );
 		//write to a stream

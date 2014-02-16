@@ -1,5 +1,5 @@
-#ifndef BUTTON_WIDGET_H
-#define BUTTON_WIDGET_H
+#ifndef QJOYPAD_BUTTON_WIDGET_H
+#define QJOYPAD_BUTTON_WIDGET_H
 
 //this represents a Button
 #include "button.h"
@@ -14,6 +14,8 @@
 #include <QMouseEvent>
 
 class ButtonWidget : public FlashButton {
+    Q_OBJECT
+
 	public:
 		ButtonWidget( Button* b, QWidget* parent);
 		void jsevent( int val );

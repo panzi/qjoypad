@@ -1,5 +1,5 @@
-#ifndef JEVENT_H
-#define JEVENT_H
+#ifndef QJOYPAD_EVENT_H
+#define QJOYPAD_EVENT_H
 
 //for the functions we need to generate keypresses / mouse actions
 #include <X11/extensions/XTest.h>

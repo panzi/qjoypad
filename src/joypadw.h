@@ -1,5 +1,5 @@
-#ifndef JOYPAD_WIDGET_H
-#define JOYPAD_WIDGET_H
+#ifndef QJOYPAD_JOYPAD_WIDGET_H
+#define QJOYPAD_JOYPAD_WIDGET_H
 
 //parts for the widget
 //Added by qt3to4:

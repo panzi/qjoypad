@@ -1,3 +1,6 @@
+#ifndef QJOYPAD_GETKEY_H
+#define QJOYPAD_GETKEY_H
+
 #include <QDialog>
 #include <QPainter>
 #include <QPixmap>
@@ -26,3 +29,5 @@ class GetKey : public QDialog {
 		//does this dialog accept mouse clicks?
 		bool mouse;
 };
+
+#endif

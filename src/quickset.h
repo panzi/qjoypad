@@ -1,5 +1,5 @@
-#ifndef QUICKSET_H
-#define QUICKSET_H
+#ifndef QJOYPAD_QUICKSET_H
+#define QJOYPAD_QUICKSET_H
 
 //for building the dialog
 #include <QLayout>
@@ -18,6 +18,8 @@ class JoyPad;
 
 //a dialog to quickly set a key to a button
 class QuickSet : public QDialog {
+    Q_OBJECT
+
 	public:
         QuickSet(JoyPad* jp, QWidget *parent = 0);
 		//this needs to see js_events so it can capture them directly

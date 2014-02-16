@@ -1,5 +1,5 @@
-#ifndef JOY_ICON_H
-#define JOY_ICON_H
+#ifndef QJOYPAD_ICON_H
+#define QJOYPAD_ICON_H
 
 #include <QDialog>
 #include <QMenu>

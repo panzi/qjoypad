@@ -1,5 +1,5 @@
-#ifndef BUTTON_EDIT_H
-#define BUTTON_EDIT_H
+#ifndef QJOYPAD_BUTTON_EDIT_H
+#define QJOYPAD_BUTTON_EDIT_H
 
 #include <QPushButton>
 #include <QCheckBox>

@@ -12,18 +12,12 @@
 #include "layout.h"
 //to give event.h the current X11 display
 #include "event.h"
-//to update the joystick device list
-#include "device.h"
 //to produce errors!
 #include "error.h"
 #include <QX11Info>
 #include <QSystemTrayIcon>
 #include <QPointer>
 #include <getopt.h>
-
-//for making universally available variables
-QHash<int, JoyPad*> available;         //to device.h
-QHash<int, JoyPad*> joypads;           //to device.h
 
 //variables needed in various functions in this file
 QPointer<LayoutManager> layoutManagerPtr;

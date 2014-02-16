@@ -1,5 +1,5 @@
-#ifndef Q_JOYSLIDER_H
-#define Q_JOYSLIDER_H
+#ifndef QJOYPAD_JOYSLIDER_H
+#define QJOYPAD_JOYSLIDER_H
 
 //the parent of this
 
@@ -15,14 +15,20 @@
 #include <QSpinBox>
 #include "constant.h"
 
-//dragging constants.
-//When dragging == DRAG_XZ, that means we are currently dragging the xZone mark
-#define DRAG_XZ 1
-//When dragging == DRAG_DZ, that means we are currently dragging the dZone mark
-#define DRAG_DZ 2
-
 class JoySlider : public QWidget
 {
+    Q_OBJECT
+
+    enum DragState {
+        DragNone = 0,
+
+        //When dragState == DragXZ, that means we are currently dragging the xZone mark
+        DragXZ   = 1,
+
+        //When dragState == DragDZ, that means we are currently dragging the deadZone mark
+        DragDZ   = 2
+    };
+
 	public:
 		JoySlider( int dz, int xz, int val, QWidget* parent );
 		//set where the axis physically is
@@ -30,8 +36,8 @@ class JoySlider : public QWidget
 		//change the throttle mode
 		void setThrottle( int );
 		//get the current settings
-		int dZone() { return DeadZone; };
-		int xZone() { return XZone; };
+        int deadZone() { return deadzone; }
+        int xZone() { return xzone; }
 	protected:
 		//all for getting the widget to look right:
 		void drawBox( int x, int width );
@@ -63,13 +69,13 @@ class JoySlider : public QWidget
 		int valueFrom( int point );
 		
 		//the current drag and drop state
-		int dragging;
+        DragState dragState;
 		
 		//the axis' position
-		int JoyVal;
+        int joyval;
 		//the dead and extreme zone values
-		int DeadZone;
-		int XZone;
+        int deadzone;
+        int xzone;
 };
 
 

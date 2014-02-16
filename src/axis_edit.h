@@ -1,5 +1,5 @@
-#ifndef AXIS_EDIT_H
-#define AXIS_EDIT_H
+#ifndef QJOYPAD_AXIS_EDIT_H
+#define QJOYPAD_AXIS_EDIT_H
 //to refer to the axis we're editing
 //for building up the dialog we need
 #include "axis.h"

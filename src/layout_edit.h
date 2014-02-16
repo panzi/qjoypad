@@ -1,5 +1,5 @@
-#ifndef LAYOUT_EDIT_H
-#define LAYOUT_EDIT_H
+#ifndef QJOYPAD_LAYOUT_EDIT_H
+#define QJOYPAD_LAYOUT_EDIT_H
 
 #include <QStackedWidget>
 
@@ -8,8 +8,6 @@
 //this is a front end for the non-GUI LayoutManager
 class LayoutEdit;
 #include "layout.h"
-//so we can see the available devices
-#include "device.h"
 //so we can use the LayoutEditer to edit key layouts  :)
 #include "joypadw.h"
 
@@ -33,11 +31,11 @@ class LayoutEdit : public QWidget {
 		LayoutManager* lm;		
 		virtual void closeEvent(QCloseEvent *event);
 		//parts of the dialog:
-		QVBoxLayout *LMain;
-		QStackedWidget *PadStack;
-		FlashRadioArray *JoyButtons;
-		QComboBox* CLayouts;
-		QPushButton	*BAdd, *BRem, *BUpd, *BRev;
+        QVBoxLayout *mainLayout;
+        QStackedWidget *padStack;
+        FlashRadioArray *joyButtons;
+        QComboBox* cmbLayouts;
+        QPushButton	*btnAdd, *btnRem, *btnUpd, *btnRev;
 };
 
 #endif

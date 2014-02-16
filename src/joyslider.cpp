@@ -5,18 +5,32 @@ JoySlider::JoySlider( int dz, int xz, int val, QWidget* parent )
         :QWidget( parent )
 {
     //initialize  :)
-    JoyVal = val;
-    DeadZone = dz;
-    XZone = xz;
+
+    boxwidth = 0;
+    boxheight = 0;
+    rboxstart = 0;
+    rboxend = 0;
+    lboxstart = 0;
+    lboxend = 0;
+    twidth = 0;
+    tend = 0;
+
+    throttle = 0;
+    dragState = DragNone;
+
+    joyval = val;
+    deadzone = dz;
+    xzone = xz;
+
     setMinimumHeight(20);
 }
 
 void JoySlider::setValue( int newval )
 {
     //adjust the new position based on the throttle settings
-    if (throttle == 0) JoyVal = newval;
-    else if (throttle < 0) JoyVal = (newval + JOYMIN) / 2;
-    else JoyVal = (newval + JOYMAX) / 2;
+    if (throttle == 0) joyval = newval;
+    else if (throttle < 0) joyval = (newval + JOYMIN) / 2;
+    else joyval = (newval + JOYMAX) / 2;
     //then redraw!
     update();
 }
@@ -130,18 +144,18 @@ void JoySlider::paintEvent( QPaintEvent* )
 
     //prepare to draw a bar of the appropriate color
     QColor bar;
-    if (abs(JoyVal) < DeadZone) bar = Qt::gray;
-    else if (abs(JoyVal) < XZone) bar = Qt::blue;
+    if (abs(joyval) < deadzone) bar = Qt::gray;
+    else if (abs(joyval) < xzone) bar = Qt::blue;
     else bar = Qt::red;
     paint.setPen( bar );
     paint.setBrush( bar );
 
     //find out the dimensions of the bar, then draw it
     int width = (throttle == 0)?boxwidth:twidth;
-    int barlen = abs(((width - 4) * JoyVal) / JOYMAX);
-    if (JoyVal > 0)
+    int barlen = abs(((width - 4) * joyval) / JOYMAX);
+    if (joyval > 0)
         paint.drawRect( ((throttle == 0)?rboxstart:lboxstart) + 2, 3, barlen, boxheight - 3 );
-    else if (JoyVal < 0)
+    else if (joyval < 0)
         paint.drawRect( lboxstart + width - 2 - barlen, 3, barlen, boxheight - 3 );
 
 
@@ -154,7 +168,7 @@ void JoySlider::paintEvent( QPaintEvent* )
     paint.setPen( Qt::black );
     paint.setBrush( Qt::blue );
     if (throttle >= 0) {
-        point = pointFor(DeadZone, false);
+        point = pointFor(deadzone, false);
         shape.putPoints(0,5,
                         point, boxheight - 4,
                         point + 3, boxheight - 1,
@@ -165,7 +179,7 @@ void JoySlider::paintEvent( QPaintEvent* )
     }
 
     if (throttle <= 0) {
-        point = pointFor(DeadZone, true);
+        point = pointFor(deadzone, true);
         shape.putPoints(0,5,
                         point, boxheight - 4,
                         point + 3, boxheight - 1,
@@ -179,7 +193,7 @@ void JoySlider::paintEvent( QPaintEvent* )
 
     paint.setBrush( Qt::red );
     if (throttle >= 0) {
-        point = pointFor(XZone, false);
+        point = pointFor(xzone, false);
         shape.putPoints(0,5,
                         point, boxheight - 4,
                         point + 3, boxheight - 1,
@@ -190,7 +204,7 @@ void JoySlider::paintEvent( QPaintEvent* )
     }
 
     if (throttle <= 0) {
-        point = pointFor(XZone, true);
+        point = pointFor(xzone, true);
         shape.putPoints(0,5,
                         point, boxheight - 4,
                         point + 3, boxheight - 1,
@@ -205,19 +219,18 @@ void JoySlider::mousePressEvent( QMouseEvent* e )
 {
     //store the x coordinate.
     int xpt = e->x();
-    int result = 0;
     //see if this happened near one of the tabs. If so, start dragging that tab.
-    if (throttle <= 0 && abs( xpt - pointFor( XZone, true )) < 5) result = DRAG_XZ;
-    else if (throttle <= 0 && abs( xpt - pointFor( DeadZone, true )) < 5) result = DRAG_DZ;
-    else if (throttle >= 0 && abs( xpt - pointFor( XZone, false )) < 5) result = DRAG_XZ;
-    else if (throttle >= 0 && abs( xpt - pointFor( DeadZone, false )) < 5) result = DRAG_DZ;
-    dragging = result;
+    if (throttle <= 0 && abs( xpt - pointFor( xzone, true )) < 5) dragState = DragXZ;
+    else if (throttle <= 0 && abs( xpt - pointFor( deadzone, true )) < 5) dragState = DragDZ;
+    else if (throttle >= 0 && abs( xpt - pointFor( xzone, false )) < 5) dragState = DragXZ;
+    else if (throttle >= 0 && abs( xpt - pointFor( deadzone, false )) < 5) dragState = DragDZ;
+    else dragState = DragNone;
 }
 
 void JoySlider::mouseReleaseEvent( QMouseEvent* )
 {
     //when the mouse releases, all dragging stops.
-    dragging = 0;
+    dragState = DragNone;
 }
 
 void JoySlider::mouseMoveEvent( QMouseEvent* e )
@@ -225,15 +238,18 @@ void JoySlider::mouseMoveEvent( QMouseEvent* e )
     //get the x coordinate
     int xpt = e->x();
     //if we're dragging, move the appropriate tab!
-    if (dragging == DRAG_XZ)
-    {
-        XZone = valueFrom( xpt );
+    switch (dragState) {
+    case DragXZ:
+        xzone = valueFrom( xpt );
+        break;
+
+    case DragDZ:
+        deadzone = valueFrom( xpt );
+        break;
+
+    default:
+        return;
     }
-    else if (dragging == DRAG_DZ)
-    {
-        DeadZone = valueFrom( xpt );
-    }
-    else return;
     //if we moved a tab, redraw!
     update();
 }

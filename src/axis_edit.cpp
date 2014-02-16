@@ -178,7 +178,7 @@ void AxisEdit::accept() {
 	axis->transferCurve = (TransferCurve)CTransferCurve->currentIndex();
 	axis->sensitivity = SSensitivity->value();
     axis->throttle = CThrottle->currentIndex() - 1;
-    axis->dZone = Slider->dZone();
+    axis->dZone = Slider->deadZone();
     axis->xZone = Slider->xZone();
     axis->mode = (AxisMode) CMode->currentIndex();
     axis->pkeycode = BPos->getValue();

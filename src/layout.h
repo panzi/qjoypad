@@ -1,5 +1,5 @@
-#ifndef JOY_LAYOUT_H
-#define JOY_LAYOUT_H
+#ifndef QJOYPAD_LAYOUT_H
+#define QJOYPAD_LAYOUT_H
 
 
 //to allow for interprocess communications (ie, signaling a running instance of
@@ -21,8 +21,6 @@
 #include "joypad.h"
 //for errors
 #include "error.h"
-//so we know which joypads have RL equivalents
-#include "device.h"
 //For displaying a floating icon instead of a tray icon
 #include "icon.h"
 //So we can know if there is a graphical version of the Layout Manager displayed
@@ -85,6 +83,9 @@ class LayoutManager : public QObject {
 
 		//if there is a LayoutEdit open, this points to it. Otherwise, NULL.	
         LayoutEdit* le;
+
+        QHash<int, JoyPad*> available;
+        QHash<int, JoyPad*> joypads;
 };
 
 #endif

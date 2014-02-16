@@ -6,7 +6,7 @@
 #include <poll.h>
 #include <QApplication>
 
-JoyPad::JoyPad( int i, int dev ) {
+JoyPad::JoyPad( int i, int dev, QObject *parent ) : QObject(parent) {
     debug_mesg("Constructing the joypad device with index %d and fd %d\n", i, dev);
     //remember the index,
     index = i;

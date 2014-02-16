@@ -18,29 +18,27 @@ set(qjoypad_SOURCES
 	main.cpp
 	quickset.cpp)
 
-set(qjoypad_HEADERS
-	axis_edit.h
-	axis.h
-	axisw.h
-	button_edit.h
-	button.h
-	buttonw.h
-	constant.h
-	device.h
-	error.h
-	event.h
-	flash.h
-	getkey.h
-	icon.h
-	joypad.h
-	joypadw.h
-	joyslider.h
-	keycode.h
-	layout_edit.h
-	layout.h
-	quickset.h)
+set(qjoypad_QOBJECT_HEADERS
+        axis_edit.h
+        axis.h
+        axisw.h
+        button_edit.h
+        button.h
+        buttonw.h
+        flash.h
+        getkey.h
+        icon.h
+        joypad.h
+        joypadw.h
+        joyslider.h
+        keycode.h
+        layout_edit.h
+        layout.h
+        quickset.h)
 
-QT4_WRAP_CPP(qjoypad_HEADERS_MOC ${qjoypad_HEADERS})
+set(qjoypad_HEADERS ${qjoypad_QOBJECT_HEADERS} constant.h error.h event.h)
+
+QT4_WRAP_CPP(qjoypad_HEADERS_MOC ${qjoypad_QOBJECT_HEADERS})
 add_executable(qjoypad ${qjoypad_SOURCES} ${qjoypad_HEADERS_MOC})
 target_link_libraries(qjoypad ${QT_LIBRARIES} Xtst X11)
 

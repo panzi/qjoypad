@@ -1,5 +1,5 @@
-#ifndef AXIS_WIDGET_H
-#define AXIS_WIDGET_H
+#ifndef QJOYPAD_AXIS_WIDGET_H
+#define QJOYPAD_AXIS_WIDGET_H
 
 #include <QMouseEvent>
 //so we can interact with the axis this refers to
@@ -11,6 +11,8 @@
 #include "axis_edit.h"
 
 class AxisWidget : public FlashButton {
+    Q_OBJECT
+
 	public:
 		AxisWidget( Axis* a, QWidget* parent );
 		//this is notified on a jsevent so it can flash if necesary.

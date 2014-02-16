@@ -1,5 +1,5 @@
-#ifndef BUTTON_H
-#define BUTTON_H
+#ifndef QJOYPAD_BUTTON_H
+#define QJOYPAD_BUTTON_H
 
 #include <QTimer>
 #include <QTextStream>

@@ -1,5 +1,5 @@
-#ifndef FLASH_H
-#define FLASH_H
+#ifndef QJOYPAD_FLASH_H
+#define QJOYPAD_FLASH_H
 
 
 //The color the buttons flash! Feel free to change this.

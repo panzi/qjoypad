@@ -94,7 +94,7 @@ bool LayoutManager::load(const QString& name) {
             int index = num - 1;
             //if there was no joypad defined for this index before, make it now!
             if (joypads[index] == 0) {
-                joypads.insert(index, new JoyPad(index, -1));
+                joypads.insert(index, new JoyPad(index, -1, this));
             }
             //try to read the joypad, report error on fail.
             if (!joypads[index]->readConfig(stream)) {
@@ -363,7 +363,7 @@ void LayoutManager::updateJoyDevs() {
                     debug_mesg("reading junk data\n");
                     if (read(joydev, buf, 10) <= 0) break;
                 }
-                joypad = new JoyPad( index, joydev );
+                joypad = new JoyPad( index, joydev, this );
                 joypads.insert(index,joypad);
             }
             else {

@@ -1,5 +1,5 @@
-#ifndef AXIS_H
-#define AXIS_H
+#ifndef QJOYPAD_AXIS_H
+#define QJOYPAD_AXIS_H
 
 //abs()
 #include <stdlib.h>

@@ -1,5 +1,5 @@
-#ifndef KEYCODE_H
-#define KEYCODE_H
+#ifndef QJOYPAD_KEYCODE_H
+#define QJOYPAD_KEYCODE_H
 
 //To create the "press a key" dialog:
 #include <QPushButton>
@@ -22,8 +22,8 @@ class KeyButton : public QPushButton {
 	Q_OBJECT
 	public:
 		KeyButton(QString name, int val, QWidget* parent, bool m = false, bool nowMouse = false);
-		int getValue() {return value;};
-		int choseMouse() {return mouseClicked;};
+        int getValue() {return value;}
+        int choseMouse() {return mouseClicked;}
 	protected slots:
 		void onClick();
 	private:
