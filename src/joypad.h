@@ -11,14 +11,9 @@
 //for raising errors
 #include "error.h"
 
-//for actually interacting with the joystick devices
-#include <linux/joystick.h>
-#include <fcntl.h>
-#include <unistd.h>
 #include <QTextStream>
 #include <QHash>
 #include <QSocketNotifier>
-
 
 class JoyPadWidget;
 

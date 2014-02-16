@@ -1,12 +1,16 @@
-#include <unistd.h>
-#include <stdio.h>
-#include <errno.h>
-#include <string.h>
-#include <fcntl.h>
-#include <stdint.h>
 #include <QApplication>
 
 #include "joypad.h"
+
+//for actually interacting with the joystick devices
+#include <linux/joystick.h>
+#include <linux/input.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdint.h>
 
 JoyPad::JoyPad( int i, int dev, QObject *parent )
     : QObject(parent), joydev(-1), axisCount(0), buttonCount(0), jpw(0), readNotifier(0), errorNotifier(0) {

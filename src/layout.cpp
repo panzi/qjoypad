@@ -1,6 +1,10 @@
-#include <errno.h>
 #include "layout.h"
 #include "config.h"
+
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 //initialize things and set up an icon  :)
 LayoutManager::LayoutManager( bool useTrayIcon, const QString &devdir, const QString &settingsDir )
