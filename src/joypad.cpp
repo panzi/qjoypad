@@ -19,14 +19,6 @@ JoyPad::JoyPad( int i, int dev, QObject *parent )
         debug_mesg("Valid file handle, setting up handlers and reading axis configs...\n");
         open(dev);
         debug_mesg("done resetting and setting up device index %d\n", i);
-        char id[256];
-        memset(id, 0, sizeof(id));
-        if (ioctl(joydev, JSIOCGNAME(sizeof(id)), id) < 0) {
-            deviceId = "Unknown";
-        }
-        else {
-            deviceId = id;
-        }
     } else {
         debug_mesg("This joypad does not have a valid file handle, not setting up event listeners\n");
     }
@@ -69,6 +61,15 @@ void JoyPad::open(int dev) {
     //remember the device file descriptor
     close();
     joydev = dev;
+
+    char id[256];
+    memset(id, 0, sizeof(id));
+    if (ioctl(joydev, JSIOCGNAME(sizeof(id)), id) < 0) {
+        deviceId = "Unknown";
+    }
+    else {
+        deviceId = id;
+    }
 
     //read in the number of axes / buttons
     axisCount = 0;
@@ -176,7 +177,7 @@ bool JoyPad::readConfig( QTextStream &stream ) {
 //only actually writes something if this JoyPad is NON DEFAULT.
 void JoyPad::write( QTextStream &stream ) {
     if (!axes.empty() || !buttons.empty()) {
-        stream << getName() << " {\n";
+        stream << "Joystick " << index << " {\n";
         foreach (Axis *axis, axes) {
             axis->write(stream);
         }

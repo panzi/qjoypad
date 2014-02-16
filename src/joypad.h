@@ -46,8 +46,8 @@ class JoyPad : public QObject {
         bool isDefault();
 		//read the dimensions on the real joystick and use them
         void open( int dev );
-		//generates a name ("Joystick 1")
-        QString getName() const { return QString("Joystick %1").arg(index+1);}
+        const QString& getDeviceId() const { return deviceId; }
+        QString getName() const { return QString("Joystick %1 (%2)").arg(index+1).arg(deviceId); }
         int getIndex() const { return index; }
 		
     private:
