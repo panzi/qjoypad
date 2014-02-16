@@ -177,7 +177,7 @@ bool JoyPad::readConfig( QTextStream &stream ) {
 //only actually writes something if this JoyPad is NON DEFAULT.
 void JoyPad::write( QTextStream &stream ) {
     if (!axes.empty() || !buttons.empty()) {
-        stream << "Joystick " << index << " {\n";
+        stream << "Joystick " << (index+1) << " {\n";
         foreach (Axis *axis, axes) {
             axis->write(stream);
         }
