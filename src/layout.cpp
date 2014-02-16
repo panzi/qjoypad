@@ -383,7 +383,7 @@ void LayoutManager::updateJoyDevs() {
     //set all joydevs anew (create new JoyPad's if necesary)
     QDir deviceDir(devdir);
     QStringList devices = deviceDir.entryList(QStringList("js*"), QDir::System);
-    QRegExp devicename(".*\\js(\\d+)");
+    QRegExp devicename("js(\\d+)");
     int joydev = -1;
     int index = -1;
     //for every joystick device in the directory listing...
