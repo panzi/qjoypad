@@ -45,7 +45,7 @@ LayoutManager::~LayoutManager() {
     }
 }
 
-QString LayoutManager::getFileName( QString layoutname ) {
+QString LayoutManager::getFileName(const QString& layoutname ) {
     return QString("%1%2.lyt").arg(settingsDir, layoutname);
 }
 
@@ -230,8 +230,7 @@ void LayoutManager::saveAs() {
 void LayoutManager::saveDefault() {
     QFile file( settingsDir + "layout");
     if (file.open(QIODevice::WriteOnly)) {
-        QTextStream stream(&file);
-        stream << currentLayout;
+        QTextStream(&file) << currentLayout;
         file.close();
     }
 }
@@ -265,9 +264,19 @@ QStringList LayoutManager::getLayoutNames() const {
     return result;
 }
 
-void LayoutManager::setLayoutName(QString name) {
-    currentLayout = name;
-    fillPopup();
+void LayoutManager::setLayoutName(const QString& name) {
+    QList<QAction*> actions = layoutGroup->actions();
+    bool found = false;
+    for (int i = 0; i < actions.size(); ++ i) {
+        QAction* action = actions[i];
+        if (action->data().toString() == name) {
+            action->setChecked(true);
+            found = true;
+            break;
+        }
+    }
+
+    currentLayout = found ? name : NL;
 
     if (le) {
         le->setLayout(name);

@@ -84,7 +84,7 @@ LayoutEdit::LayoutEdit( LayoutManager* l ): QWidget(NULL) {
     this->show();
 }
 
-void LayoutEdit::setLayout(QString layout) {
+void LayoutEdit::setLayout(const QString &layout) {
     //change the text,
     cmbLayouts->setCurrentIndex(lm->getLayoutNames().indexOf(layout));
     //update all the JoyPadWidgets.

@@ -71,9 +71,9 @@ class LayoutManager : public QObject {
         void layoutTriggered();
 	private:
 		//change to the given layout name and make all the necesary adjustments
-		void setLayoutName(QString name);
+        void setLayoutName(const QString& name);
 		//get the file name for a layout name
-		QString getFileName( QString layoutname );
+        QString getFileName(const QString& layoutname);
         //the directory in wich the joystick devices are (e.g. "/dev/input")
         QString devdir;
         QString settingsDir;

@@ -18,7 +18,7 @@ class LayoutEdit : public QWidget {
 	public:
         LayoutEdit( LayoutManager* l );
 		//swap to a new layout
-		void setLayout(QString layout);
+        void setLayout(const QString& layout);
 		//update the list of available layouts
 		void updateLayoutList();
         void updateJoypadWidgets();
