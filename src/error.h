@@ -3,10 +3,12 @@
 
 #include <qmessagebox.h>
 #include <stdarg.h>
+#include "config.h"
+
 //a nice simple way of throwing up an error message if something goes wrong.
 
 inline void errorBox(const QString &type, const QString &message, QWidget *parent = 0) {
-    QMessageBox::warning(parent, QString("%1 - %2").arg(NAME, type),
+    QMessageBox::warning(parent, QString("%1 - %2").arg(QJOYPAD_DEVDIR, type),
 		message, QMessageBox::Ok, Qt::NoButton);
 }
 

@@ -1,11 +1,12 @@
 #include "layout_edit.h"
+#include "config.h"
 
 //build the dialog
 LayoutEdit::LayoutEdit( LayoutManager* l ): QWidget(NULL) {
     lm = l;
     setAttribute(Qt::WA_DeleteOnClose);
-    setWindowTitle( NAME );
-    setWindowIcon(QPixmap(ICON24));
+    setWindowTitle( QJOYPAD_NAME );
+    setWindowIcon(QPixmap(QJOYPAD_ICON64));
 
     mainLayout = new QVBoxLayout( this);
     mainLayout->setSpacing(5);

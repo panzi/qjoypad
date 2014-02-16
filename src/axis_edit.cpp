@@ -1,3 +1,4 @@
+#include "config.h"
 #include "axis_edit.h"
 
 
@@ -6,7 +7,7 @@ AxisEdit::AxisEdit( Axis* ax )
     //build the dialog, display current axis settings  :)
     axis = ax;
     setWindowTitle("Set " + axis->getName());
-    setWindowIcon(QPixmap(ICON24));
+    setWindowIcon(QPixmap(QJOYPAD_ICON24));
 
     //h, v, and v2 are all references to layouts. They are used to refer to
     //various layouts as the dialog is built and are not pointing to the same

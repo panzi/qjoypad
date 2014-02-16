@@ -1,5 +1,6 @@
-#include "layout.h"
 #include <errno.h>
+#include "layout.h"
+#include "config.h"
 
 //initialize things and set up an icon  :)
 LayoutManager::LayoutManager( bool useTrayIcon, const QString &devdir, const QString &settingsDir )
@@ -18,13 +19,13 @@ LayoutManager::LayoutManager( bool useTrayIcon, const QString &devdir, const QSt
     if (useTrayIcon) {
         QSystemTrayIcon *tray = new QSystemTrayIcon(this);
         tray->setContextMenu(&trayMenu);
-        tray->setIcon(QIcon(ICON24));
+        tray->setIcon(QIcon(QJOYPAD_ICON24));
         tray->show();
         connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayClick(QSystemTrayIcon::ActivationReason)));
     }
     //or make a floating icon
     else {
-        FloatingIcon* icon = new FloatingIcon(QPixmap(ICON64),&trayMenu,0,"tray");
+        FloatingIcon* icon = new FloatingIcon(QPixmap(QJOYPAD_ICON64),&trayMenu,0,"tray");
         connect(icon, SIGNAL( clicked()), this, SLOT( iconClick()));
         connect(icon, SIGNAL( closed()), qApp, SLOT( quit()));
         icon->show();
@@ -188,7 +189,7 @@ void LayoutManager::save() {
     //if it's good, start writing the file
     if (file.open(QIODevice::WriteOnly)) {
         QTextStream stream( &file );
-        stream << "# " NAME " Layout File\n\n";
+        stream << "# " QJOYPAD_NAME " Layout File\n\n";
         foreach (JoyPad *joypad, joypads) {
             joypad->write( stream );
         }
@@ -203,7 +204,7 @@ void LayoutManager::save() {
 void LayoutManager::saveAs() {
     bool ok;
     //request a new name!
-    QString name = QInputDialog::getText(0, NAME" - Name new layout","Enter a name for the new layout:", QLineEdit::Normal, QString::null, &ok );
+    QString name = QInputDialog::getText(0, QJOYPAD_NAME" - Name new layout","Enter a name for the new layout:", QLineEdit::Normal, QString::null, &ok );
     if (!ok) {
         return;
     }
@@ -237,7 +238,7 @@ void LayoutManager::saveDefault() {
 
 void LayoutManager::remove() {
     if (currentLayout == NL) return;
-    if (QMessageBox::warning( 0, NAME" - Delete layout?","Remove layout permanently from your hard drive?", "Yes", "No", 0, 0, 1 ) == 1) return;
+    if (QMessageBox::warning( 0, QJOYPAD_NAME" - Delete layout?","Remove layout permanently from your hard drive?", "Yes", "No", 0, 0, 1 ) == 1) return;
     QString filename = getFileName( currentLayout );
     if (!QFile(filename).remove()) {
         errorBox("Remove error", "Could not remove file " + filename);

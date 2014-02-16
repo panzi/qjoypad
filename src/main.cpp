@@ -1,12 +1,14 @@
-#define MAIN
-
-//to create a qapplication
-#include <QFile>
 //for ouput when there is no GUI going
 #include <stdio.h>
 #include <unistd.h>
 //to create and handle signals for various events
 #include <signal.h>
+#include <getopt.h>
+
+//to create a qapplication
+#include <QFile>
+#include <QSystemTrayIcon>
+#include <QPointer>
 
 //to load layouts
 #include "layout.h"
@@ -14,9 +16,7 @@
 #include "event.h"
 //to produce errors!
 #include "error.h"
-#include <QSystemTrayIcon>
-#include <QPointer>
-#include <getopt.h>
+#include "config.h"
 
 //variables needed in various functions in this file
 QPointer<LayoutManager> layoutManagerPtr;
@@ -58,7 +58,7 @@ int main( int argc, char **argv )
     QDir dir(settingsDir);
 
     //the directory in wich the joystick devices are (e.g. "/dev/input")
-    QString devdir = DEVDIR;
+    QString devdir = QJOYPAD_DEVDIR;
 
     //if there is no new directory and we can't make it, complain
     if (!dir.exists() && !dir.mkdir(settingsDir)) {
@@ -108,7 +108,7 @@ int main( int argc, char **argv )
                     "                        list of devices and layouts.\n"
                     "  \"layout name\"         Load the given layout in an already running\n"
                     "                        instance of QJoyPad, or start QJoyPad using the\n"
-                    "                        given layout.\n", NAME, argc > 0 ? argv[0] : "qjoypad");
+                    "                        given layout.\n", QJOYPAD_NAME, argc > 0 ? argv[0] : "qjoypad");
                 return 0;
 
             case 'd':

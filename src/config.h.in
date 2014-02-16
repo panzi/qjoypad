@@ -1,0 +1,15 @@
+#ifndef QJOYPAD_CONFIG_H_IN
+#define QJOYPAD_CONFIG_H_IN
+
+#cmakedefine QJOYPAD_MAJOR
+#cmakedefine QJOYPAD_MINOR
+#cmakedefine QJOYPAD_PATCH
+
+#define QJOYPAD_VERSION "@QJOYPAD_MAJOR@.@QJOYPAD_MINOR@.@QJOYPAD_PATCH@"
+#define QJOYPAD_NAME "QJoyPad @QJOYPAD_MAJOR@.@QJOYPAD_MINOR@"
+#define QJOYPAD_DEVDIR "@DEVICE_DIR@"
+
+#define QJOYPAD_ICON24 "@CMAKE_INSTALL_PREFIX@/share/icons/hicolor/24x24/apps/qjoypad.png"
+#define QJOYPAD_ICON64 "@CMAKE_INSTALL_PREFIX@/share/icons/hicolor/64x64/apps/qjoypad.png"
+
+#endif

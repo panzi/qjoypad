@@ -1,3 +1,4 @@
+#include "config.h"
 #include "button_edit.h"
 
 #include <QHBoxLayout>
@@ -9,7 +10,7 @@ ButtonEdit::ButtonEdit(Button* butt)
     //build the dialog!
     button = butt;
     setWindowTitle("Set " + button->getName());
-    setWindowIcon(QPixmap(ICON24));
+    setWindowIcon(QPixmap(QJOYPAD_ICON24));
 
     QVBoxLayout* v = new QVBoxLayout(this);
     v->setMargin(5);

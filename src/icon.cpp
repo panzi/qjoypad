@@ -1,10 +1,10 @@
 #include "icon.h"
-
+#include "config.h"
 
 FloatingIcon::FloatingIcon( const QPixmap &icon, QMenu *popup, QWidget *parent, const char *name)
         : QDialog( parent ) {
     this->setObjectName(name);
-    setWindowTitle(NAME);
+    setWindowTitle(QJOYPAD_NAME);
     QPalette palette;
     palette.setBrush(backgroundRole(), QBrush(icon));
     setPalette(palette);

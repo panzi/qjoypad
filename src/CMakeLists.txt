@@ -1,3 +1,7 @@
+include(GenerateExportHeader)
+
+configure_file(config.h.in "${CMAKE_CURRENT_BINARY_DIR}/config.h" @ONLY)
+
 set(qjoypad_SOURCES 
 	axis.cpp
 	axis_edit.cpp
@@ -35,8 +39,6 @@ set(qjoypad_QOBJECT_HEADERS
         layout_edit.h
         layout.h
         quickset.h)
-
-set(qjoypad_HEADERS ${qjoypad_QOBJECT_HEADERS} constant.h error.h event.h)
 
 QT4_WRAP_CPP(qjoypad_HEADERS_MOC ${qjoypad_QOBJECT_HEADERS})
 add_executable(qjoypad ${qjoypad_SOURCES} ${qjoypad_HEADERS_MOC})

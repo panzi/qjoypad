@@ -1,4 +1,5 @@
 #include <QX11Info>
+#include "config.h"
 #include "getkey.h"
 
 GetKey::GetKey( QString button, bool m )
@@ -7,7 +8,7 @@ GetKey::GetKey( QString button, bool m )
     //prepare the dialog
     mouse = m;
     setWindowTitle( "Choose a key" );
-    setWindowIcon(QIcon(ICON24));
+    setWindowIcon(QIcon(QJOYPAD_ICON24));
 
     //I'd use a QLabel, but that steals x11Events!
     //So, I'll draw the text directly. That means
