@@ -36,7 +36,7 @@ LayoutManager::LayoutManager( bool useTrayIcon, const QString &devdir, const QSt
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 
     //no layout loaded at start.
-    setLayoutName(NL);
+    setLayoutName(QString::null);
 }
 
 LayoutManager::~LayoutManager() {
@@ -52,7 +52,7 @@ QString LayoutManager::getFileName(const QString& layoutname ) {
 
 bool LayoutManager::load(const QString& name) {
     //it's VERY easy to load NL  :)
-    if (name == NL) {
+    if (name.isNull()) {
         clear();
         return true;
     }
@@ -174,11 +174,11 @@ void LayoutManager::clear() {
         joypad->toDefault();
     }
     //and call our layout NL
-    setLayoutName(NL);
+    setLayoutName(QString::null);
 }
 
 void LayoutManager::save() {
-    if (currentLayout == NL) {
+    if (currentLayout.isNull()) {
         saveAs();
         return;
     }
@@ -237,8 +237,10 @@ void LayoutManager::saveDefault() {
 }
 
 void LayoutManager::remove() {
-    if (currentLayout == NL) return;
-    if (QMessageBox::warning( 0, QJOYPAD_NAME" - Delete layout?","Remove layout permanently from your hard drive?", "Yes", "No", 0, 0, 1 ) == 1) return;
+    if (currentLayout.isNull()) return;
+    if (QMessageBox::warning(0, QJOYPAD_NAME" - Delete layout?",
+        QString("Remove layout %1 permanently from your hard drive?").arg(currentLayout), "Delete", "Cancel", 0, 0, 1 ) == 1)
+        return;
     QString filename = getFileName( currentLayout );
     if (!QFile(filename).remove()) {
         errorBox("Remove error", "Could not remove file " + filename);
@@ -259,25 +261,20 @@ QStringList LayoutManager::getLayoutNames() const {
         QString& name = result[i];
         name.truncate(name.length() - 4);
     }
-    //and, of course, there's always NL.
-    result.prepend(NL);
 
     return result;
 }
 
 void LayoutManager::setLayoutName(const QString& name) {
     QList<QAction*> actions = layoutGroup->actions();
-    bool found = false;
     for (int i = 0; i < actions.size(); ++ i) {
         QAction* action = actions[i];
         if (action->data().toString() == name) {
             action->setChecked(true);
-            found = true;
             break;
         }
     }
-
-    currentLayout = found ? name : NL;
+    currentLayout = name;
 
     if (le) {
         le->setLayout(name);
@@ -338,12 +335,21 @@ void LayoutManager::fillPopup() {
     trayMenu.addAction(updateDevicesAction);
     trayMenu.addSeparator();
 
+    //add null layout
+    QAction *action = trayMenu.addAction("[NO LAYOUT]");
+    action->setCheckable(true);
+    action->setActionGroup(layoutGroup);
+    //put a check by the current one  ;)
+    if (currentLayout.isNull()) {
+        action->setChecked(true);
+    }
+    connect(action, SIGNAL(triggered()), this, SLOT(layoutTriggered()));
+
     //then add all the layout names
-    QStringList names = getLayoutNames();
-    foreach (const QString &name, names) {
+    foreach (const QString &name, getLayoutNames()) {
         QString title = name;
         title.replace('&',"&&");
-        QAction *action = trayMenu.addAction(title);
+        action = trayMenu.addAction(title);
         action->setData(name);
         action->setCheckable(true);
         action->setActionGroup(layoutGroup);

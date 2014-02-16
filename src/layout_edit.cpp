@@ -18,20 +18,20 @@ LayoutEdit::LayoutEdit( LayoutManager* l ): QWidget(NULL) {
     g->setMargin(5);
     g->setSpacing(5);
     cmbLayouts = new QComboBox(frame);
-    connect( cmbLayouts, SIGNAL(activated( const QString& )), lm, SLOT(load(const QString&)));
+    connect(cmbLayouts, SIGNAL(activated(int)), this, SLOT(load(int)));
     g->addWidget(cmbLayouts,0,0,1,4);
 
     //most of these buttons can link directly into slots in the LayoutManager
-    btnAdd = new QPushButton("Add", frame);
+    btnAdd = new QPushButton("&Add", frame);
     connect(btnAdd, SIGNAL(clicked()), lm, SLOT(saveAs()));
     g->addWidget(btnAdd,1,0);
-    btnRem = new QPushButton("Remove", frame);
+    btnRem = new QPushButton("&Remove", frame);
     connect(btnRem, SIGNAL(clicked()), lm, SLOT(remove()));
     g->addWidget(btnRem,1,1);
-    btnUpd = new QPushButton("Update", frame);
+    btnUpd = new QPushButton("&Save", frame);
     connect(btnUpd, SIGNAL(clicked()), lm, SLOT(save()));
     g->addWidget(btnUpd,1,2);
-    btnRev = new QPushButton("Revert", frame);
+    btnRev = new QPushButton("Re&vert", frame);
     connect(btnRev, SIGNAL(clicked()), lm, SLOT(reload()));
     g->addWidget(btnRev,1,3);
     mainLayout->addWidget( frame );
@@ -73,10 +73,10 @@ LayoutEdit::LayoutEdit( LayoutManager* l ): QWidget(NULL) {
     QHBoxLayout* h = new QHBoxLayout(0);
     h->setMargin(0);
     h->setSpacing(5);
-    QPushButton* close = new QPushButton( "-- Close Dialog --", this );
+    QPushButton* close = new QPushButton( "-- &Close Dialog --", this );
     connect(close, SIGNAL(clicked()), this, SLOT(close()));
     h->addWidget(close);
-    QPushButton* quit = new QPushButton( "-- Quit --", this );
+    QPushButton* quit = new QPushButton( "-- &Quit --", this );
     connect( quit, SIGNAL( clicked() ), qApp, SLOT(quit()));
     h->addWidget(quit);
     mainLayout->addLayout(h);
@@ -86,8 +86,14 @@ LayoutEdit::LayoutEdit( LayoutManager* l ): QWidget(NULL) {
 }
 
 void LayoutEdit::setLayout(const QString &layout) {
-    //change the text,
-    cmbLayouts->setCurrentIndex(lm->getLayoutNames().indexOf(layout));
+    //change the selection
+    for (int i = 0; i < cmbLayouts->count(); ++ i) {
+        if (cmbLayouts->itemData(i).toString() == layout) {
+            cmbLayouts->setCurrentIndex(i);
+            break;
+        }
+    }
+
     //update all the JoyPadWidgets.
     for (int i = 0, n = lm->available.count(); i < n; i++) {
         ((JoyPadWidget*)padStack->widget(i))->update();
@@ -97,9 +103,16 @@ void LayoutEdit::setLayout(const QString &layout) {
 void LayoutEdit::updateLayoutList() {
     //blank the list, then load in new names from the LayoutManager.
     cmbLayouts->clear();
-    QStringList layouts = lm->getLayoutNames();
-    cmbLayouts->insertItems(-1, layouts);
-    cmbLayouts->setCurrentIndex(layouts.indexOf(lm->currentLayout));
+    cmbLayouts->addItem("[NO LAYOUT]", QVariant(QString::null));
+    if (lm->currentLayout.isNull()) {
+        cmbLayouts->setCurrentIndex(0);
+    }
+    foreach (const QString& layout, lm->getLayoutNames()) {
+        cmbLayouts->addItem(layout, layout);
+        if (layout == lm->currentLayout) {
+            cmbLayouts->setCurrentIndex(cmbLayouts->count() - 1);
+        }
+    }
 }
 
 void LayoutEdit::updateJoypadWidgets() {
@@ -142,4 +155,8 @@ void LayoutEdit::appFocusChanged(QWidget *old, QWidget *now) {
         }
         debug_mesg("done releasing!\n");
     }
+}
+
+void LayoutEdit::load(int index) {
+    lm->load(cmbLayouts->itemData(index).toString());
 }

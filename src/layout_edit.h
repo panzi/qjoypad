@@ -26,6 +26,8 @@ class LayoutEdit : public QWidget {
 		void focusStateChanged(bool);
     public slots:
         void appFocusChanged(QWidget *old, QWidget *now);
+    private slots:
+        void load(int index);
 	protected:
 		//the layout manager this represents
         LayoutManager* lm;

@@ -26,9 +26,6 @@
 //So we can know if there is a graphical version of the Layout Manager displayed
 #include "layout_edit.h"
 
-//for recognizing when the special empty layout is in use
-#define NL "[NO LAYOUT]"
-
 //handles loading, saving, and changing of layouts
 class LayoutManager : public QObject {
 	friend class LayoutEdit;
