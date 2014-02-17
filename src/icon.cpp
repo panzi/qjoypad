@@ -1,25 +1,26 @@
+#include <QPainter>
+
 #include "icon.h"
 #include "config.h"
 
-FloatingIcon::FloatingIcon( const QPixmap &icon, QMenu *popup, QWidget *parent, const char *name)
-        : QDialog( parent ) {
+FloatingIcon::FloatingIcon( const QString &icon, QMenu *popup, QWidget *parent, const char *name)
+        : QDialog( parent ), icon(icon) {
     this->setObjectName(name);
+    setAttribute(Qt::WA_QuitOnClose);
+    setAttribute(Qt::WA_TranslucentBackground);
+    setWindowFlags(Qt::FramelessWindowHint);
     setWindowTitle(QJOYPAD_NAME);
-    QPalette palette;
-    palette.setBrush(backgroundRole(), QBrush(icon));
-    setPalette(palette);
-    //setPaletteBackgroundPixmap(icon);
     pop = popup;
 
     setFixedSize(64,64);
 }
 
-void FloatingIcon::mousePressEvent( QMouseEvent* e ) {
+void FloatingIcon::mousePressEvent( QMouseEvent* event ) {
     //if it was the right mouse button,
-    if (e->button() == Qt::RightButton) {
+    if (event->button() == Qt::RightButton) {
         //bring up the popup menu.
-        pop->popup( e->globalPos() );
-        e->accept();
+        pop->popup( event->globalPos() );
+        event->accept();
     }
     else {
         //otherwise, treat it as a regular click.
@@ -27,7 +28,8 @@ void FloatingIcon::mousePressEvent( QMouseEvent* e ) {
     }
 }
 
-void FloatingIcon::closeEvent( QCloseEvent* e ) {
-    emit closed();
-    e->accept();
+void FloatingIcon::paintEvent( QPaintEvent* event ) {
+    Q_UNUSED(event);
+    QPainter painter(this);
+    painter.drawPixmap(0, 0, icon);
 }

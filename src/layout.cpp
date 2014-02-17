@@ -29,9 +29,10 @@ LayoutManager::LayoutManager( bool useTrayIcon, const QString &devdir, const QSt
     }
     //or make a floating icon
     else {
-        FloatingIcon* icon = new FloatingIcon(QPixmap(QJOYPAD_ICON64),&trayMenu,0,"tray");
-        connect(icon, SIGNAL( clicked()), this, SLOT( iconClick()));
-        connect(icon, SIGNAL( closed()), qApp, SLOT( quit()));
+        FloatingIcon* icon = new FloatingIcon(QJOYPAD_ICON64,&trayMenu,0,"tray");
+        connect(icon, SIGNAL(clicked()), this, SLOT(iconClick()));
+        connect(icon, SIGNAL(rejected()), qApp, SLOT(quit()));
+        connect(icon, SIGNAL(accepted()), qApp, SLOT(quit()));
         icon->show();
     }
 

@@ -12,14 +12,15 @@
 class FloatingIcon : public QDialog {
 	Q_OBJECT
 	public:
-		FloatingIcon( const QPixmap &icon, QMenu *popup = 0, QWidget *parent = 0, const char *name = 0);
-	signals:
-		void closed();
+        FloatingIcon( const QString &icon, QMenu *popup = 0, QWidget *parent = 0, const char *name = 0);
+    signals:
 		void clicked();
 	protected:
-		void mousePressEvent( QMouseEvent* e );
-		void closeEvent( QCloseEvent* e );
+        void paintEvent(QPaintEvent* event);
+        void mousePressEvent(QMouseEvent* event);
+    private:
 		QMenu* pop;
+        QPixmap icon;
 };
 
 #endif
