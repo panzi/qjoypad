@@ -5,22 +5,17 @@
 //This caused an error with a development version of g++ on a Mandrake system
 //in Sweden.
 FlashButton::FlashButton( QString text, QString name, QWidget* parent )
-        :QPushButton( text, parent )
+        : QPushButton( text, parent )
 {
     this->setObjectName(name);
     //record the base palette for posterity.
-    Normal = palette();
+    flashPalette = normalPalette = palette();
 
     //define the palette the button will have when it flashes.
-    QPalette cg = this->palette();
-    cg.setCurrentColorGroup(QPalette::Inactive);
-    cg.setColor(QPalette::Button, HIGHLIGHT);
-    cg.setColor(QPalette::Light, HIGHLIGHT.light(150));
-    cg.setColor(QPalette::Midlight, HIGHLIGHT.light(125));
-    cg.setColor(QPalette::Dark, HIGHLIGHT.dark(200));
-    cg.setColor(QPalette::Mid, HIGHLIGHT.dark(150));
-    Flash = cg;
-    isflash=false;
+    flashPalette.setCurrentColorGroup(QPalette::Inactive);
+    flashPalette.setColor(QPalette::Button, flashPalette.color(QPalette::Highlight));
+    flashPalette.setColor(QPalette::ButtonText, flashPalette.color(QPalette::HighlightedText));
+    flashing = false;
 
     setAutoDefault( false );
     setFocusPolicy(Qt::NoFocus);
@@ -29,22 +24,22 @@ FlashButton::FlashButton( QString text, QString name, QWidget* parent )
 
 void FlashButton::flash()
 {
-    emit( flashed( !isflash ) );
-    if (isflash)
+    emit( flashed( !flashing ) );
+    if (flashing)
     {
-        setPalette( Normal );
-        isflash = false;
+        setPalette( normalPalette );
+        flashing = false;
     }
     else
     {
-        setPalette( Flash );
-        isflash = true;
+        setPalette( flashPalette );
+        flashing = true;
     }
 }
 
 
 FlashRadioArray::FlashRadioArray( const QStringList &names, bool horizontal, QWidget* parent)
-        :QWidget( parent )
+        : QWidget( parent )
 {
     if (horizontal) {
         mainLayout = new QHBoxLayout( this);

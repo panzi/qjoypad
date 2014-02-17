@@ -1,20 +1,6 @@
 #ifndef QJOYPAD_FLASH_H
 #define QJOYPAD_FLASH_H
 
-
-//The color the buttons flash! Feel free to change this.
-//The three numbers are all you need to touch, and they
-//represent the red, green, and blue values of the color,
-//respectively.
-
-#define HIGHLIGHT QColor( 0,0,255 )
-
-
-//--- --- --- --- End of editable code.
-
-
-
-
 #include <QPushButton>
 #include <QPalette>
 #include <QBoxLayout>
@@ -39,11 +25,11 @@ class FlashButton : public QPushButton
 		void flashed( bool on );
 	private:
 		//is this currently "flashed" (ie, colored blue)?
-		bool isflash;
+		bool flashing;
 		//the normal, unflashed palette
-		QPalette Normal;
+		QPalette normalPalette;
 		//the colorful flashed palette
-		QPalette Flash;
+		QPalette flashPalette;
 };
 
 //An array of flashing mutually-exclusive toggle buttons.
