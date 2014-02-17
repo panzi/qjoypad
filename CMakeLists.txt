@@ -27,9 +27,7 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 	endif()
 endif()
 
-if(NOT(CMAKE_BUILD_TYPE STREQUAL "Debug"))
-	add_definitions(-D_DEBUG)
-endif()
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 
 include(${QT_USE_FILE})
 add_definitions(${QT_DEFINITIONS})
