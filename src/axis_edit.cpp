@@ -29,20 +29,20 @@ AxisEdit::AxisEdit( Axis* ax )
     v2->addWidget(CGradient);
 
     CMode = new QComboBox(this);
-    CMode->insertItem((int)keybd, QString("Keyboard/Mouse Button"), Qt::DisplayRole);
-    CMode->insertItem((int) mousepv,QString("Mouse (Vert.)"),Qt::DisplayRole);
-    CMode->insertItem((int) mousenv, QString("Mouse (Vert. Rev.)"), Qt::DisplayRole);
-    CMode->insertItem((int) mouseph, "Mouse (Hor.)", Qt::DisplayRole);
-    CMode->insertItem((int)mousenh, QString("Mouse (Hor. Rev.)"), Qt::DisplayRole);
+    CMode->insertItem((int) Axis::Keyboard, QString("Keyboard/Mouse Button"), Qt::DisplayRole);
+    CMode->insertItem((int) Axis::MousePosVert,QString("Mouse (Vert.)"),Qt::DisplayRole);
+    CMode->insertItem((int) Axis::MouseNegVert, QString("Mouse (Vert. Rev.)"), Qt::DisplayRole);
+    CMode->insertItem((int) Axis::MousePosHor, "Mouse (Hor.)", Qt::DisplayRole);
+    CMode->insertItem((int) Axis::MouseNegHor, QString("Mouse (Hor. Rev.)"), Qt::DisplayRole);
     CMode->setCurrentIndex( axis->mode );
     connect(CMode, SIGNAL(activated(int)), this, SLOT( CModeChanged( int )));
     v2->addWidget(CMode);
 	CTransferCurve = new QComboBox(this);
-	CTransferCurve->insertItem(linear, QString("Linear"), Qt::DisplayRole);
-    CTransferCurve->insertItem(quadratic, QString("Quadratic"),Qt::DisplayRole );
-	CTransferCurve->insertItem(cubic, QString("Cubic"),Qt::DisplayRole );
-	CTransferCurve->insertItem(quadratic_extreme, QString("Quadratic Extreme"), Qt::DisplayRole);
-	CTransferCurve->insertItem(power_function, QString("Power Function"), Qt::DisplayRole);
+    CTransferCurve->insertItem(Axis::Linear, QString("Linear"), Qt::DisplayRole);
+    CTransferCurve->insertItem(Axis::Quadratic, QString("Quadratic"),Qt::DisplayRole );
+    CTransferCurve->insertItem(Axis::Cubic, QString("Cubic"),Qt::DisplayRole );
+    CTransferCurve->insertItem(Axis::QuadraticExtreme, QString("Quadratic Extreme"), Qt::DisplayRole);
+    CTransferCurve->insertItem(Axis::PowerFunction, QString("Power Function"), Qt::DisplayRole);
     CTransferCurve->setCurrentIndex( axis->transferCurve );
     CTransferCurve->setEnabled(axis->gradient);
 	connect(CTransferCurve, SIGNAL(activated(int)), this, SLOT( CTransferCurveChanged( int )));
@@ -132,7 +132,7 @@ void AxisEdit::CGradientChanged( bool on ) {
 }
 
 void AxisEdit::CModeChanged( int index ) {
-    if (index == keybd) {
+    if (index == Axis::Keyboard) {
         MouseBox->setEnabled(false);
         KeyBox->setEnabled(true);
     }
@@ -147,7 +147,7 @@ void AxisEdit::CModeChanged( int index ) {
 }
 
 void AxisEdit::CTransferCurveChanged( int index ) {
-	if (index == power_function) {
+    if (index == Axis::PowerFunction) {
 		LSensitivity->setEnabled(true);
 		SSensitivity->setEnabled(true);
 	}
@@ -178,12 +178,12 @@ void AxisEdit::CThrottleChanged( int index ) {
 void AxisEdit::accept() {
     axis->gradient = CGradient->isChecked();
     axis->maxSpeed = SSpeed->value();
-	axis->transferCurve = (TransferCurve)CTransferCurve->currentIndex();
+    axis->transferCurve = (Axis::TransferCurve)CTransferCurve->currentIndex();
 	axis->sensitivity = SSensitivity->value();
     axis->throttle = CThrottle->currentIndex() - 1;
     axis->dZone = Slider->deadZone();
     axis->xZone = Slider->xZone();
-    axis->mode = (AxisMode) CMode->currentIndex();
+    axis->mode = (Axis::Mode) CMode->currentIndex();
     axis->pkeycode = BPos->getValue();
     axis->nkeycode = BNeg->getValue();
 	axis->puseMouse = BPos->choseMouse();

@@ -4,18 +4,23 @@
 //for the functions we need to generate keypresses / mouse actions
 #include <X11/extensions/XTest.h>
 
-//types of events QJoyPad can create.
-//KeyRelease, KeyPress, ButtonRelease, ButtonPress, and MouseMove
-enum eventType {KREL, KPRESS, BREL, BPRESS, WARP};
-
-
 //a simplified event structure that can handle buttons and mouse movements
-struct xevent {
-	eventType type;
-	int value1;	//button, keycode, or x
-	int value2; //y
+struct FakeEvent {
+    //types of events QJoyPad can create.
+    //KeyRelease, KeyPress, ButtonRelease, ButtonPress, and MouseMove
+    enum EventType {KeyUp, KeyDown, MouseUp, MouseDown, MouseMove};
+
+    EventType type;
+    union {
+        int keycode;
+
+        struct {
+            int x;
+            int y;
+        } move;
+    };
 };
 
-void sendevent( Display* display, const xevent& e );
+void sendevent(const FakeEvent& e);
 
 #endif

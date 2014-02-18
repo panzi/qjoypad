@@ -16,14 +16,16 @@
 #define DZONE 3000
 #define XZONE 30000
 
-//each axis can create a key press or move the mouse in one of four directions.
-enum AxisMode {keybd, mousepv, mousenv, mouseph, mousenh};
-enum TransferCurve {linear, quadratic, cubic, quadratic_extreme,
-					power_function};
 
 //represents one joystick axis
 class Axis : public QObject {
-	Q_OBJECT
+    Q_OBJECT
+
+    //each axis can create a key press or move the mouse in one of four directions.
+    enum Mode {Keyboard, MousePosVert, MouseNegVert, MousePosHor, MouseNegHor};
+    enum TransferCurve {Linear, Quadratic, Cubic, QuadraticExtreme,
+                        PowerFunction};
+
     //so AxisEdit can manipulate fields directly.
 	friend class AxisEdit;
 	public:
@@ -80,7 +82,7 @@ class Axis : public QObject {
  		int dZone;//-32767 .. 32767
  		int xZone;//-32767 .. 32767
 		double sumDist;
-		AxisMode mode;
+		Mode mode;
 		//positive keycode
 		int pkeycode;
 		//negative keycode

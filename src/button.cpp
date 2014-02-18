@@ -1,4 +1,3 @@
-#include <QX11Info>
 #include "button.h"
 #include "event.h"
 
@@ -154,15 +153,14 @@ void Button::timerTick( int tick ) {
 void Button::click( bool press ) {
     if (isDown == press) return;
     isDown = press;
-    xevent click;
+    FakeEvent click;
     //determine which of the four possible events we're sending.
-    if (press) click.type = useMouse?BPRESS:KPRESS;
-    else click.type = useMouse?BREL:KREL;
+    if (press) click.type = useMouse ? FakeEvent::MouseDown : FakeEvent::KeyDown;
+    else click.type = useMouse ? FakeEvent::MouseUp : FakeEvent::KeyUp;
     //set up the event,
-    click.value1 = keycode;
-    click.value2 = 0;
+    click.keycode = keycode;
     //and send it.
-    sendevent( QX11Info::display(), click );
+    sendevent(click);
 }
 
 void Button::timerCalled() {

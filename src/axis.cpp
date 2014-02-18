@@ -1,7 +1,7 @@
-#include <QX11Info>
 #include "axis.h"
 #include "event.h"
 #include "time.h"
+
 #define sqr(a) ((a)*(a))
 #define cub(a)	((a)*(a)*(a))
 #define clamp(a, a_low, a_high)	\
@@ -69,7 +69,7 @@ bool Axis::read( QTextStream &stream ) {
 			++it;
 			if (it == words.end()) return false;
 			val = (*it).toInt(&ok);
-			if (ok && val >= 0 && val <= power_function) transferCurve = val;
+            if (ok && val >= 0 && val <= PowerFunction) transferCurve = val;
 			else return false;
 		}
 		else if (*it == "sens") {
@@ -127,16 +127,16 @@ bool Axis::read( QTextStream &stream ) {
             throttle = -1;
         }
         else if (*it == "mouse+v") {
-            mode = mousepv;
+            mode = MousePosVert;
         }
         else if (*it == "mouse-v") {
-            mode = mousenv;
+            mode = MouseNegVert;
         }
         else if (*it == "mouse+h") {
-            mode = mouseph;
+            mode = MousePosHor;
         }
         else if (*it == "mouse-h") {
-            mode = mousenh;
+            mode = MouseNegHor;
         }
         //we ignore unrecognized words to be friendly and allow for additions to
         //the format in later versions. Note, this means that typos will not get
@@ -162,25 +162,25 @@ void Axis::write( QTextStream &stream ) {
     else if (throttle < 0) stream << "throttle-, ";
     if (dZone != DZONE) stream << "dZone " << dZone << ", ";
     if (xZone != XZONE) stream << "xZone " << xZone << ", ";
-    if (mode == keybd) {
+    if (mode == Keyboard) {
         stream
             << (puseMouse ? "+mouse " : "+key ") << pkeycode << ", "
             << (nuseMouse ? "-mouse " : "-key ") << nkeycode << "\n";
     }
     else {
         if (gradient) stream << "maxSpeed " << maxSpeed << ", ";
-		if (transferCurve != quadratic)
+        if (transferCurve != Quadratic)
 			stream << "tCurve " << transferCurve << ", ";
 		if (sensitivity != 1.0F)
 			stream << "sens " << sensitivity << ", ";
         stream << "mouse";
-        if (mode == mousepv)
+        if (mode == MousePosVert)
             stream << "+v\n";
-        else if (mode == mousenv)
+        else if (mode == MouseNegVert)
             stream << "-v\n";
-        else if (mode == mouseph)
+        else if (mode == MousePosHor)
             stream << "+h\n";
-        else if (mode == mousenh)
+        else if (mode == MouseNegHor)
             stream << "-h\n";
     }
 
@@ -238,12 +238,12 @@ void Axis::toDefault() {
     gradient = false;
     throttle = 0;
     maxSpeed = 100;
-	transferCurve = quadratic;
+    transferCurve = Quadratic;
 	sensitivity = 1.0F;
     dZone = DZONE;
     tick = 0;
     xZone = XZONE;
-    mode = keybd;
+    mode = Keyboard;
     pkeycode = 0;
     nkeycode = 0;
     puseMouse = false;
@@ -259,7 +259,7 @@ bool Axis::isDefault() {
            (maxSpeed == 100) &&
            (dZone == DZONE) &&
            (xZone == XZONE) &&
-           (mode == keybd) &&
+           (mode == Keyboard) &&
            (pkeycode == 0) &&
            (nkeycode == 0) &&
            (puseMouse == false) &&
@@ -279,7 +279,7 @@ bool Axis::inDeadZone( int val ) {
 
 QString Axis::status() {
     QString result = getName() + " : [";
-    if (mode == keybd) {
+    if (mode == Keyboard) {
         if (throttle == 0) {
             if (puseMouse != nuseMouse) {
                 result += "KEYBOARD/MOUSE";
@@ -312,7 +312,7 @@ void Axis::setKey(bool positive, int value) {
 
 void Axis::timerTick( int tick ) {
     if (isOn) {
-        if (mode == keybd) {
+        if (mode == Keyboard) {
             if (tick % FREQ == 0)
             {
                 if (duration == FREQ)
@@ -342,8 +342,8 @@ void Axis::adjustGradient() {
 }
 
 void Axis::move( bool press ) {
-    xevent e;
-    if (mode == keybd) {
+    FakeEvent e;
+    if (mode == Keyboard) {
         //prevent KeyPress-KeyPress and KeyRelease-KeyRelease pairs.
         //this would only happen in odd circumstances involving the setup
         //dialog being open and blocking events from happening.
@@ -351,14 +351,13 @@ void Axis::move( bool press ) {
         isDown = press;
         bool useMouse = (state > 0)?puseMouse:nuseMouse;
         if (press) {
-            e.type = useMouse?BPRESS:KPRESS;
+            e.type = useMouse ? FakeEvent::MouseDown : FakeEvent::KeyDown;
             downkey = (state > 0)?pkeycode:nkeycode;
         }
         else {
-            e.type = useMouse?BREL:KREL;
+            e.type = useMouse ? FakeEvent::MouseUp : FakeEvent::KeyUp;
         }
-        e.value1 = downkey;
-        e.value2 = 0;
+        e.keycode = downkey;
     }
     //if using the mouse
     else if (press) {
@@ -374,19 +373,19 @@ void Axis::move( bool press ) {
 				const float u = inverseRange * (absState - dZone);
 
 				switch(transferCurve) {
-				case quadratic:
+				case Quadratic:
 					fdist = sqr(u);
 					break;
-				case cubic:
+				case Cubic:
 					fdist = cub(u);
 					break;
-				case quadratic_extreme:
+				case QuadraticExtreme:
 					fdist = sqr(u);
 					if(u >= 0.95F) {
 						fdist *= 1.5F;
 					}
 					break;
-				case power_function:
+				case PowerFunction:
 					fdist = clamp(powf(u, 1.0F / clamp(
 						sensitivity, 1e-8F, 1e+3F)), 0.0F, 1.0F);
 					break;
@@ -405,24 +404,24 @@ void Axis::move( bool press ) {
  		//if not gradient, always go full speed.
  		else dist = maxSpeed;
  
- 		e.type = WARP;
- 		if (mode == mousepv) {
- 			e.value1 = 0;
-            e.value2 = dist;
-        }
-        else if (mode == mousenv) {
-            e.value1 = 0;
-            e.value2 = -dist;
-        }
-        else if (mode == mouseph) {
-            e.value1 = dist;
-            e.value2 = 0;
-        }
-        else if (mode == mousenh) {
-            e.value1 = -dist;
-            e.value2 = 0;
-        }
+ 		e.type = FakeEvent::MouseMove;
+ 		if (mode == MousePosVert) {
+ 			e.move.x = 0;
+ 			e.move.y = dist;
+ 		}
+ 		else if (mode == MouseNegVert) {
+ 			e.move.x = 0;
+ 			e.move.y = -dist;
+ 		}
+ 		else if (mode == MousePosHor) {
+ 			e.move.x = dist;
+			e.move.y = 0;
+ 		}
+ 		else if (mode == MouseNegHor) {
+ 			e.move.x = -dist;
+			e.move.y = 0;
+		}
     }
     //actually create the event
-    sendevent(QX11Info::display(), e);
+	sendevent(e);
 }
