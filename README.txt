@@ -879,7 +879,7 @@ Up?
 
 Chapter 6. Credits
 
-   Thank  you  to  Erich  Kitzmlüller,  author of xjoypad for the
+   Thank  you  to  Erich  KitzmÃ¼ller,  author  of xjoypad for the
    inspiration  to write QJoyPad and for the code that started me
    off.
 
