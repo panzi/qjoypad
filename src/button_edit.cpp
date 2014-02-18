@@ -20,19 +20,19 @@ ButtonEdit::ButtonEdit(Button* butt)
     v->addWidget(BKKey);
 
     QHBoxLayout* h = new QHBoxLayout();
-    CSticky = new QCheckBox("Sticky", this);
+    CSticky = new QCheckBox("&Sticky", this);
     CSticky->setChecked(button->sticky);
     h->addWidget(CSticky);
-    CRapid = new QCheckBox("Rapid Fire", this);
+    CRapid = new QCheckBox("&Rapid Fire", this);
     CRapid->setChecked(button->rapidfire);
     h->addWidget(CRapid);
     v->addLayout(h);
 
     h = new QHBoxLayout();
-    BOkay = new QPushButton("Okay", this);
+    BOkay = new QPushButton("&Okay", this);
     connect(BOkay, SIGNAL( clicked() ), this, SLOT( accept()));
     h->addWidget(BOkay);
-    BCancel = new QPushButton("Cancel", this);
+    BCancel = new QPushButton("&Cancel", this);
     connect(BCancel, SIGNAL( clicked() ), this, SLOT( reject()));
     h->addWidget(BCancel);
     v->addLayout(h);

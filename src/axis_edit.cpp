@@ -23,7 +23,7 @@ AxisEdit::AxisEdit( Axis* ax )
     QVBoxLayout* v2 = new QVBoxLayout();
     v2->setMargin(5);
     v2->setSpacing(5);
-    CGradient = new QCheckBox("Gradient", this);
+    CGradient = new QCheckBox("&Gradient", this);
     CGradient->setChecked(axis->gradient);
     connect(CGradient, SIGNAL(toggled(bool)), this, SLOT( CGradientChanged( bool )));
     v2->addWidget(CGradient);
@@ -55,14 +55,14 @@ AxisEdit::AxisEdit( Axis* ax )
     v2->setSpacing(5);
     v2->setMargin(5);
     //v2->setAutoAdd(true);
-    QLabel *mouseLabel = new QLabel("Mouse Speed", MouseBox);
+    QLabel *mouseLabel = new QLabel("&Mouse Speed", MouseBox);
     v2->addWidget(mouseLabel);
     SSpeed = new QSpinBox(MouseBox);
     SSpeed->setRange(0,MAXMOUSESPEED);
     SSpeed->setSingleStep(1);
     SSpeed->setValue(axis->maxSpeed);
     v2->addWidget(SSpeed);
-	LSensitivity = new QLabel("Sensitivity", MouseBox);
+    LSensitivity = new QLabel("&Sensitivity", MouseBox);
     v2->addWidget(LSensitivity);
 	SSensitivity = new QDoubleSpinBox(MouseBox);
     SSensitivity->setRange(1e-3F, 1e+3F);
@@ -70,6 +70,8 @@ AxisEdit::AxisEdit( Axis* ax )
 	SSensitivity->setValue(axis->sensitivity);
     v2->addWidget(SSensitivity);
     h->addWidget(MouseBox);
+    mouseLabel->setBuddy(SSpeed);
+    LSensitivity->setBuddy(SSensitivity);
     v->addLayout(h);
 
     Slider = new JoySlider(axis->dZone, axis->xZone, axis->state, this);
@@ -97,10 +99,10 @@ AxisEdit::AxisEdit( Axis* ax )
     v->addWidget( KeyBox );
 
     h = new QHBoxLayout();
-    BOkay = new QPushButton("Okay", this);
+    BOkay = new QPushButton("&Okay", this);
     connect(BOkay, SIGNAL( clicked() ), this, SLOT( accept()));
     h->addWidget(BOkay);
-    BCancel = new QPushButton("Cancel", this);
+    BCancel = new QPushButton("&Cancel", this);
     connect(BCancel, SIGNAL( clicked() ), this, SLOT( reject()));
     h->addWidget(BCancel);
     v->addLayout(h);
