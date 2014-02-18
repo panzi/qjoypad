@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QPixmap>
 #include <QIcon>
+#include <QCloseEvent>
 #include "constant.h"
 #include <X11/Xlib.h>
 //The KeySym for "x"
@@ -21,6 +22,7 @@ class GetKey : public QDialog {
 		//to avoid focus issues, there is only the dialog widget, all the
 		//rest is painted on. So, I need to know when to repaint.
 		void paintEvent ( QPaintEvent * );
+		void closeEvent (QCloseEvent *);
 	private:
 		//the dialog's message
 		QString Text;

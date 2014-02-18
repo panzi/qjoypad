@@ -90,7 +90,14 @@ KeyButton::KeyButton( QString name, int val, QWidget* parent, bool m, bool nowMo
 
 void KeyButton::onClick() {
     //when clicked, ask for a key!
-    value = GetKey( buttonname, mouse ).exec();
+    int retValue = GetKey( buttonname, mouse ).exec();
+    // -1 is a special value meaning that the window was simply
+    // closed so we can ignore this
+    if(retValue == -1) {
+	return;
+    } else {
+	value = retValue;
+    }
     //if the return value was a mouse click...
     if (value > MOUSE_OFFSET) {
         mouseClicked = true;
