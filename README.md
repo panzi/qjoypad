@@ -629,8 +629,11 @@ something else. If you really must find a way,
 program that is similar to QJoyPad but without a graphical
 interface or many of the fancier features, but which doesn't
 have that limitation. Another alternative is
-[Jojsticken](http://jojsticken.sourceforge.net/). See the
-links section there to find even more alternatives.
+[Jojsticken](http://jojsticken.sourceforge.net/). (See the
+links section there to find even more alternatives.)
+Finally there is [AntiMicro](http://ryochan7.com/projects/antimicro/),
+which seems to have even more features and supported platforms
+than QJoyPad.
 
 ### But my window manager doesn't HAVE a system tray!
 
