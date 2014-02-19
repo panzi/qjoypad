@@ -755,7 +755,7 @@ request](https://github.com/panzi/qjoypad/issues) on github.
 
 Thank you to
 [Erich Kitzmüller](http://members.chello.at/erich.kitzmueller/ammoq/main.html),
-author of xjoypad for theinspiration to write QJoyPad and
+author of xjoypad for the inspiration to write QJoyPad and
 for the code that started Nathan Gaylinn off.
 
 The development team for Psi, the Jabber client, also get a
