@@ -23,24 +23,24 @@ class AxisEdit : public QDialog {
 		void setState( int val );
 	protected slots:
 		//slots for GUI events
-		void CGradientChanged( bool on );
- 		void CModeChanged( int index );
-		void CTransferCurveChanged( int index );
-		void CThrottleChanged( int index );
+		void gradientChanged( bool on );
+		void modeChanged( int index );
+		void transferCurveChanged( int index );
+		void throttleChanged( int index );
 		void accept();
 	protected:
 		//the associated Axis that needs to be set.
 		Axis *axis;
 		//the important parts of the dialog:
-		QCheckBox *CGradient;
-		QComboBox *CMode, *CThrottle, *CTransferCurve;
-		QFrame *MouseBox, *KeyBox;
-		QSpinBox *SSpeed;
-		QLabel *LSensitivity;
-		QDoubleSpinBox *SSensitivity;
-		KeyButton *BNeg, *BPos;
-		JoySlider *Slider;
-		QPushButton *BOkay, *BCancel;
+		QCheckBox *chkGradient;
+		QComboBox *cmbMode, *cmbThrottle, *cmbTransferCurve;
+		QFrame *mouseBox, *keyBox;
+		QSpinBox *spinSpeed;
+		QLabel *lblSensitivity;
+		QDoubleSpinBox *spinSensitivity;
+		KeyButton *btnNeg, *btnPos;
+		JoySlider *slider;
+		QPushButton *btnOkay, *btnCancel;
 };
 
 #endif

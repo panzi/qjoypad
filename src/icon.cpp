@@ -9,10 +9,10 @@ FloatingIcon::FloatingIcon( const QString &icon, QMenu *popup, QWidget *parent, 
     setAttribute(Qt::WA_QuitOnClose);
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::FramelessWindowHint);
-    setWindowTitle(QJOYPAD_NAME);
+    setWindowTitle(QJOYPAD_NAME " Floating Icon");
     pop = popup;
 
-    setFixedSize(64,64);
+    setFixedSize(this->icon.width(),this->icon.height());
 }
 
 void FloatingIcon::mousePressEvent( QMouseEvent* event ) {
@@ -28,8 +28,7 @@ void FloatingIcon::mousePressEvent( QMouseEvent* event ) {
     }
 }
 
-void FloatingIcon::paintEvent( QPaintEvent* event ) {
-    Q_UNUSED(event);
+void FloatingIcon::paintEvent( QPaintEvent* ) {
     QPainter painter(this);
     painter.drawPixmap(0, 0, icon);
 }

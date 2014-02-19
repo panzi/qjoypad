@@ -25,7 +25,7 @@ class GetKey : public QDialog {
 		void closeEvent (QCloseEvent *);
 	private:
 		//the dialog's message
-		QString Text;
+        QString text;
 		//does this dialog accept mouse clicks?
 		bool mouse;
 };

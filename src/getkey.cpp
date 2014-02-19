@@ -13,15 +13,15 @@ GetKey::GetKey( QString button, bool m )
     //I'd use a QLabel, but that steals x11Events!
     //So, I'll draw the text directly. That means
     //I need to resolve the size of the dialog by hand:
-    Text = "Choose a new key ";
-    if (mouse) Text += "or mouse button ";
-    Text += "for " + button;
-    QRect rect = fontMetrics().boundingRect( Text );
+    text = "Choose a new key ";
+    if (mouse) text += "or mouse button ";
+    text += "for " + button;
+    QRect rect = fontMetrics().boundingRect( text );
     //I calculate the size based on the first line of text, which is longer.
     //The fontMetrics function is dumb and would treat the string with a
     //newline in it as a continues flow of characters if I did the whole string
     //at once.
-    Text += "\n(Ctrl-X for no key)";
+    text += "\n(Ctrl-X for no key)";
     //now I add 20 pixels of padding and double the height to make room for
     //two lines.
     setFixedSize( QSize( rect.width() + 20, rect.height()*2 + 20 ) );
@@ -60,5 +60,5 @@ void GetKey::closeEvent(QCloseEvent *e) {
 void GetKey::paintEvent ( QPaintEvent * ) {
     //whenever we need to repaint, draw in our text.
     QPainter paint( this );
-    paint.drawText( rect(), Qt::AlignCenter, Text );
+    paint.drawText( rect(), Qt::AlignCenter, text );
 }
