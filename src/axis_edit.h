@@ -25,7 +25,7 @@ class AxisEdit : public QDialog {
 	protected slots:
 		//slots for GUI events
 		void gradientChanged( bool on );
-		void modeChanged( Axis::Mode mode );
+		void modeChanged( int index );
 		void transferCurveChanged( int index );
 		void throttleChanged( int index );
 		void accept();

@@ -127,8 +127,8 @@ void AxisEdit::gradientChanged( bool on ) {
 	}
 }
 
-void AxisEdit::modeChanged( Axis::Mode mode ) {
-    if (mode == Axis::Keyboard) {
+void AxisEdit::modeChanged( int index ) {
+    if (index == Axis::Keyboard) {
         mouseBox->setEnabled(false);
         keyBox->setEnabled(true);
     }
