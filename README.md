@@ -2,7 +2,7 @@ QJoyPad 4
 =========
 
 This is a fork of [QJoyPad](http://qjoypad.sourceforge.net/) with some small additional
-features and some bug/memory leak fixes. OJoyPad was developed by Nathan Gaylinn 
+features and some bug/memory leak fixes. QJoyPad was originally developed by Nathan Gaylinn
 <wren42@users.sourceforge.net> and John Toman <virtuoussin13@users.sourceforge.net>.
 This fork is maintained by Mathias Panzenböck <grosser.meister.morti@gmx.net>.
 
