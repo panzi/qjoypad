@@ -8,6 +8,7 @@
 #include <QCheckBox>
 #include <QDoubleSpinBox>
 #include <QLabel>
+#include <QDialogButtonBox>
 //for my home-brewed widgets
 #include "joyslider.h"
 #include "keycode.h"
@@ -24,7 +25,7 @@ class AxisEdit : public QDialog {
 	protected slots:
 		//slots for GUI events
 		void gradientChanged( bool on );
-		void modeChanged( int index );
+		void modeChanged( Axis::Mode mode );
 		void transferCurveChanged( int index );
 		void throttleChanged( int index );
 		void accept();
@@ -40,7 +41,6 @@ class AxisEdit : public QDialog {
 		QDoubleSpinBox *spinSensitivity;
 		KeyButton *btnNeg, *btnPos;
 		JoySlider *slider;
-		QPushButton *btnOkay, *btnCancel;
 };
 
 #endif

@@ -98,14 +98,10 @@ AxisEdit::AxisEdit( Axis* ax )
     h->addWidget(btnPos);
     v->addWidget( keyBox );
 
-    h = new QHBoxLayout();
-    btnOkay = new QPushButton("&Okay", this);
-    connect(btnOkay, SIGNAL( clicked() ), this, SLOT( accept()));
-    h->addWidget(btnOkay);
-    btnCancel = new QPushButton("&Cancel", this);
-    connect(btnCancel, SIGNAL( clicked() ), this, SLOT( reject()));
-    h->addWidget(btnCancel);
-    v->addLayout(h);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this);
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+    v->addWidget(buttonBox);
 
     modeChanged( axis->mode );
     transferCurveChanged( axis->transferCurve );
@@ -131,8 +127,8 @@ void AxisEdit::gradientChanged( bool on ) {
 	}
 }
 
-void AxisEdit::modeChanged( int index ) {
-    if (index == Axis::Keyboard) {
+void AxisEdit::modeChanged( Axis::Mode mode ) {
+    if (mode == Axis::Keyboard) {
         mouseBox->setEnabled(false);
         keyBox->setEnabled(true);
     }

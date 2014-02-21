@@ -3,6 +3,7 @@
 
 #include <QPushButton>
 #include <QCheckBox>
+#include <QDialogButtonBox>
 
 //we need to edit a Button
 #include "button.h"
@@ -20,10 +21,8 @@ class ButtonEdit : public QDialog {
 		void accept();
 	protected:
 		Button *button;
-		KeyButton *BKKey;
-		QPushButton *BKey, *BMouse, *BOkay, *BCancel;
-		QPushButton **BMKey;
-		QCheckBox *CSticky, *CRapid;
+		KeyButton *btnKey;
+		QCheckBox *chkSticky, *chkRapid;
 };
 
 

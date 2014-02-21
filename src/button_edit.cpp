@@ -5,7 +5,7 @@
 #include <QVBoxLayout>
 
 ButtonEdit::ButtonEdit(Button* butt)
-        :QDialog(0) {
+        : QDialog(0) {
     setModal(true);
     //build the dialog!
     button = butt;
@@ -16,26 +16,22 @@ ButtonEdit::ButtonEdit(Button* butt)
     v->setMargin(5);
     v->setSpacing(5);
 
-    BKKey = new KeyButton( button->getName(), button->keycode, this, true, button->useMouse);
-    v->addWidget(BKKey);
+    btnKey = new KeyButton( button->getName(), button->keycode, this, true, button->useMouse);
+    v->addWidget(btnKey);
 
     QHBoxLayout* h = new QHBoxLayout();
-    CSticky = new QCheckBox("&Sticky", this);
-    CSticky->setChecked(button->sticky);
-    h->addWidget(CSticky);
-    CRapid = new QCheckBox("&Rapid Fire", this);
-    CRapid->setChecked(button->rapidfire);
-    h->addWidget(CRapid);
+    chkSticky = new QCheckBox("&Sticky", this);
+    chkSticky->setChecked(button->sticky);
+    h->addWidget(chkSticky);
+    chkRapid = new QCheckBox("&Rapid Fire", this);
+    chkRapid->setChecked(button->rapidfire);
+    h->addWidget(chkRapid);
     v->addLayout(h);
 
-    h = new QHBoxLayout();
-    BOkay = new QPushButton("&Okay", this);
-    connect(BOkay, SIGNAL( clicked() ), this, SLOT( accept()));
-    h->addWidget(BOkay);
-    BCancel = new QPushButton("&Cancel", this);
-    connect(BCancel, SIGNAL( clicked() ), this, SLOT( reject()));
-    h->addWidget(BCancel);
-    v->addLayout(h);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this);
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+    v->addWidget(buttonBox);
 }
 
 void ButtonEdit::show() {
@@ -51,11 +47,11 @@ void ButtonEdit::accept() {
     else {
     	if (CRapid->isChecked()) takeTimer(button);
     }*/
-    button->rapidfire = CRapid->isChecked();
-    button->sticky = (CSticky->isChecked());
+    button->rapidfire = chkRapid->isChecked();
+    button->sticky = chkSticky->isChecked();
     //if the user chose a mouse button...
-    button->useMouse = BKKey->choseMouse();
-    button->keycode = BKKey->getValue();
+    button->useMouse = btnKey->choseMouse();
+    button->keycode = btnKey->getValue();
 
     QDialog::accept();
 }
