@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8.8)
 project(qjoypad)
 
 set(QJOYPAD_MAJOR 4)
-set(QJOYPAD_MINOR 1)
+set(QJOYPAD_MINOR 2)
 set(QJOYPAD_PATCH 0)
 
 find_package(Qt4 REQUIRED)
