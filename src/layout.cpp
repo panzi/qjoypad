@@ -11,9 +11,9 @@ LayoutManager::LayoutManager( bool useTrayIcon, const QString &devdir, const QSt
     : devdir(devdir), settingsDir(settingsDir),
       layoutGroup(new QActionGroup(this)),
       titleAction(new QAction(this)),
-      updateDevicesAction(new QAction("Update &Joystick Devices",this)),
-      updateLayoutsAction(new QAction("Update &Layout List",this)),
-      quitAction(new QAction("&Quit",this)),
+      updateDevicesAction(new QAction(QIcon::fromTheme("view-refresh"),"Update &Joystick Devices",this)),
+      updateLayoutsAction(new QAction(QIcon::fromTheme("view-refresh"),"Update &Layout List",this)),
+      quitAction(new QAction(QIcon::fromTheme("application-exit"),"&Quit",this)),
       le(0) {
     //prepare the popup first.
     titleAction->setEnabled(false);
@@ -326,8 +326,13 @@ void LayoutManager::fillPopup() {
 
     //make a list of joystick devices
     QString title = "Joysticks: ";
-    foreach (JoyPad *joypad, available) {
-        title += QString("%1 ").arg(joypad->getIndex() + 1);
+    if (available.isEmpty()) {
+        title += "(none)";
+    }
+    else {
+        foreach (JoyPad *joypad, available) {
+            title += QString("%1 ").arg(joypad->getIndex() + 1);
+        }
     }
 
     trayMenu.setTitle(title);

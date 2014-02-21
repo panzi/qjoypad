@@ -22,16 +22,16 @@ LayoutEdit::LayoutEdit( LayoutManager* l ): QWidget(NULL) {
     g->addWidget(cmbLayouts,0,0,1,4);
 
     //most of these buttons can link directly into slots in the LayoutManager
-    btnAdd = new QPushButton("&Add", frame);
+    btnAdd = new QPushButton(QIcon::fromTheme("list-add"), "&Add", frame);
     connect(btnAdd, SIGNAL(clicked()), lm, SLOT(saveAs()));
     g->addWidget(btnAdd,1,0);
-    btnRem = new QPushButton("&Remove", frame);
+    btnRem = new QPushButton(QIcon::fromTheme("list-remove"), "&Remove", frame);
     connect(btnRem, SIGNAL(clicked()), lm, SLOT(remove()));
     g->addWidget(btnRem,1,1);
-    btnUpd = new QPushButton("&Save", frame);
+    btnUpd = new QPushButton(QIcon::fromTheme("document-save"), "&Save", frame);
     connect(btnUpd, SIGNAL(clicked()), lm, SLOT(save()));
     g->addWidget(btnUpd,1,2);
-    btnRev = new QPushButton("Re&vert", frame);
+    btnRev = new QPushButton(QIcon::fromTheme("document-revert"), "Re&vert", frame);
     connect(btnRev, SIGNAL(clicked()), lm, SLOT(reload()));
     g->addWidget(btnRev,1,3);
     mainLayout->addWidget( frame );
@@ -73,10 +73,10 @@ LayoutEdit::LayoutEdit( LayoutManager* l ): QWidget(NULL) {
     QHBoxLayout* h = new QHBoxLayout(0);
     h->setMargin(0);
     h->setSpacing(5);
-    QPushButton* close = new QPushButton( "-- &Close Dialog --", this );
+    QPushButton* close = new QPushButton(QIcon::fromTheme("window-close"), "&Close Dialog", this );
     connect(close, SIGNAL(clicked()), this, SLOT(close()));
     h->addWidget(close);
-    QPushButton* quit = new QPushButton( "-- &Quit --", this );
+    QPushButton* quit = new QPushButton(QIcon::fromTheme("application-exit"), "&Quit", this );
     connect( quit, SIGNAL( clicked() ), qApp, SLOT(quit()));
     h->addWidget(quit);
     mainLayout->addLayout(h);

@@ -35,7 +35,7 @@ JoyPadWidget::JoyPadWidget( JoyPad* jp, int i, QWidget* parent )
         insertCounter ++;
     }
     insertCounter += 2;
-    btnClear = new QPushButton("Clear", this);
+    btnClear = new QPushButton(QIcon::fromTheme("edit-clear"), "Clear", this);
     connect(btnClear, SIGNAL(clicked()), this, SLOT(clear()));
     layoutMain->addWidget(btnClear, insertCounter / 2, insertCounter % 2);
     insertCounter++;
