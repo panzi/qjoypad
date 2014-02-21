@@ -6,6 +6,8 @@ features and some bug/memory leak fixes. OJoyPad was developed by Nathan Gaylinn
 <wren42@users.sourceforge.net> and John Toman <virtuoussin13@users.sourceforge.net>.
 This fork is maintained by Mathias Panzenböck <grosser.meister.morti@gmx.net>.
 
+![Screenshot](http://i.imgur.com/Cuql4Mr.png)
+
 Quick Installation
 ------------------
 
@@ -140,6 +142,8 @@ changed.
 
 #### The Tray Icon
 
+![Tray Icon and Popup Menu](http://i.imgur.com/8kc0CQ6.png)
+
 QJoyPad is centered around the idea of a "tray icon", a
 little icon that usually sits on your taskbar, out of the way;
 when you first run QJoyPad, this is how it will be, just an
@@ -171,6 +175,8 @@ you've plugged in a new joystick device. Below even farther is
 a list of the available layouts and the option to quit.
 
 #### The Setup Dialog
+
+![Setup Dialog](http://i.imgur.com/f3TxINW.png)
 
 The following sections describe the parts of the Setup Dialog
 going from the top down and from left to right.
@@ -249,6 +255,8 @@ options this way, but it's much faster than going through all
 the dialogs!
 
 ### Configuring axes
+
+![Axis Edit](http://i.imgur.com/CPcyuq2.png)
 
 In QJoyPad 2, you were allowed one key to be assigned to each
 of four directions, Up, Down, Left, and Right. In version 3,
@@ -355,6 +363,8 @@ one of the throttle modes, the axis will be considered
 centered when it is all the way to one direction or the other.
 
 ### Configuring buttons
+
+![BUtton Edit](http://i.imgur.com/Grwrunu.png)
 
 Similarly to the buttons corresponding to axes in the Setup
 Dialog, the ones corresponding to the buttons on your
