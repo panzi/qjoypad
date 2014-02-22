@@ -120,7 +120,7 @@ changed.
    joystick devices in `/dev/input`, but if your system puts
    them somewhere else, you'll need to run cmake like this:
 
-       cmake .. -DDEVICE_DIR=/dev
+   `cmake .. -DDEVICE_DIR=/dev`
    
    Do this if your joystick devices are `/dev/js0`, `/dev/js1`
    etc.
@@ -128,7 +128,7 @@ changed.
 2. Install prefix: The default install prefix is `/usr`. To
    change this invoke cmake like this:
 
-       cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+   `cmake .. -DCMAKE_INSTALL_PREFIX=/usr`
 
 3. Use Plain Keys: Normally, QJoyPad doesn't use standard
    XWindows key names to describe your keyboard, but instead
@@ -143,7 +143,7 @@ changed.
 4. Disable libudev support: If you don't have libudev you can
    disable libudev support like this:
 
-       cmake .. -DWITH_LIBUDEV=OFF
+   `cmake .. -DWITH_LIBUDEV=OFF`
 
 
 ### Using QJoyPad
