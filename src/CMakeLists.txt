@@ -23,25 +23,25 @@ set(qjoypad_SOURCES
 	quickset.cpp)
 
 set(qjoypad_QOBJECT_HEADERS
-        axis_edit.h
-        axis.h
-        axisw.h
-        button_edit.h
-        button.h
-        buttonw.h
-        flash.h
-        getkey.h
-        icon.h
-        joypad.h
-        joypadw.h
-        joyslider.h
-        keycode.h
-        layout_edit.h
-        layout.h
-        quickset.h)
+	axis_edit.h
+	axis.h
+	axisw.h
+	button_edit.h
+	button.h
+	buttonw.h
+	flash.h
+	getkey.h
+	icon.h
+	joypad.h
+	joypadw.h
+	joyslider.h
+	keycode.h
+	layout_edit.h
+	layout.h
+	quickset.h)
 
 QT4_WRAP_CPP(qjoypad_HEADERS_MOC ${qjoypad_QOBJECT_HEADERS})
 add_executable(qjoypad ${qjoypad_SOURCES} ${qjoypad_HEADERS_MOC})
-target_link_libraries(qjoypad ${QT_LIBRARIES} Xtst X11)
+target_link_libraries(qjoypad ${QT_LIBRARIES} Xtst X11 ${LIBUDEV_LIBRARIES})
 
 install(TARGETS qjoypad RUNTIME DESTINATION "bin")

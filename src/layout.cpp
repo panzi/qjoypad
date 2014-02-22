@@ -15,6 +15,18 @@ LayoutManager::LayoutManager( bool useTrayIcon, const QString &devdir, const QSt
       updateLayoutsAction(new QAction(QIcon::fromTheme("view-refresh"),"Update &Layout List",this)),
       quitAction(new QAction(QIcon::fromTheme("application-exit"),"&Quit",this)),
       le(0) {
+
+#ifdef WITH_LIBUDEV
+    udevNotifier = 0;
+    udev = 0;
+    monitor = 0;
+
+    if (!initUDev()) {
+        errorBox("UDev Error", "Error creating udev monitor. "
+                 "QJoyPad will still work, but it won't automatically update the joypad device list.");
+    }
+#endif
+
     //prepare the popup first.
     titleAction->setEnabled(false);
     fillPopup();
@@ -49,7 +61,98 @@ LayoutManager::~LayoutManager() {
         le->close();
         le = 0;
     }
+#ifdef WITH_LIBUDEV
+    if (udevNotifier) {
+        udevNotifier->blockSignals(true);
+    }
+    if (monitor) {
+        udev_monitor_unref(monitor);
+        monitor = 0;
+    }
+    if (udev) {
+        udev_unref(udev);
+        udev = 0;
+    }
+#endif
 }
+
+#ifdef WITH_LIBUDEV
+bool LayoutManager::initUDev() {
+    udev = udev_new();
+    debug_mesg("init udev\n");
+
+    if (udev) {
+        debug_mesg("udev ok\n");
+        monitor = udev_monitor_new_from_netlink(udev, "udev");
+
+        if (monitor) {
+            debug_mesg("monitor ok\n");
+            int errnum = udev_monitor_filter_add_match_subsystem_devtype(
+                        monitor, "input", NULL);
+            if (errnum != 0) {
+                debug_mesg("udev_monitor_filter_add_match_subsystem_devtype: %s\n",
+                           strerror(errnum));
+                udev_monitor_unref(monitor);
+                udev_unref(udev);
+                monitor = 0;
+                udev = 0;
+                return false;
+            }
+
+            errnum = udev_monitor_enable_receiving(monitor);
+            if (errnum != 0) {
+                debug_mesg("udev_monitor_enable_receiving: %s\n",
+                           strerror(errnum));
+                udev_monitor_unref(monitor);
+                udev_unref(udev);
+                monitor = 0;
+                udev = 0;
+                return false;
+            }
+
+            udevNotifier = new QSocketNotifier(udev_monitor_get_fd(monitor), QSocketNotifier::Read, this);
+            connect(udevNotifier, SIGNAL(activated(int)), this, SLOT(udevUpdate()));
+            debug_mesg("notifier ok\n");
+        }
+        else {
+            udev_unref(udev);
+            udev = 0;
+        }
+    }
+
+    return udev != 0;
+}
+
+void LayoutManager::udevUpdate() {
+    struct udev_device *dev = udev_monitor_receive_device(monitor);
+    if (dev) {
+        QRegExp devicename("/js(\\d+)$");
+        QString path = QString("/sys%1").arg(udev_device_get_devpath(dev));
+        const char *action = udev_device_get_action(dev);
+
+        if (devicename.indexIn(path) >= 0) {
+            int index = devicename.cap(1).toInt();
+
+            if (strcmp(action,"add") == 0 || strcmp(action,"online") == 0) {
+                addJoyPad(index, path);
+            }
+            else if (strcmp(action,"remove") == 0 || strcmp(action,"offline") == 0) {
+                removeJoyPad(index);
+            }
+            else if (strcmp(action,"change") == 0) {
+                removeJoyPad(index);
+                addJoyPad(index, path);
+            }
+
+            fillPopup();
+            if (le) {
+                le->updateJoypadWidgets();
+            }
+        }
+        udev_device_unref(dev);
+    }
+}
+#endif
 
 QString LayoutManager::getFileName(const QString& layoutname ) {
     return QString("%1%2.lyt").arg(settingsDir, layoutname);
@@ -390,42 +493,57 @@ void LayoutManager::updateJoyDevs() {
     QDir deviceDir(devdir);
     QStringList devices = deviceDir.entryList(QStringList("js*"), QDir::System);
     QRegExp devicename("js(\\d+)");
-    int joydev = -1;
-    int index = -1;
     //for every joystick device in the directory listing...
     //(note, with devfs, only available devices are listed)
     foreach (const QString &device, devices) {
-        QString devpath = QString("%1/%2").arg(devdir, device);
-        debug_mesg("found a device file, %s\n", qPrintable(devpath));
-        //try opening the device.
-        joydev = open( qPrintable(devpath), O_RDONLY | O_NONBLOCK);
-        //if it worked, then we have a live joystick! Make sure it's properly
-        //setup.
-        if (joydev >= 0) {
-            devicename.indexIn(device);
-            index = devicename.cap(1).toInt();
-            JoyPad* joypad = joypads[index];
-            //if we've never seen this device before, make a new one!
-            if (joypad == 0) {
-                joypad = new JoyPad( index, joydev, this );
-                joypads.insert(index,joypad);
-            }
-            else {
-                debug_mesg("found previously open joypad with index %d, ignoring", index);
-                joypad->open(joydev);
-            }
-            //make this joystick device available.
-            available.insert(index,joypad);
-        }
-        else {
-            perror(qPrintable(devpath));
+        if (devicename.indexIn(device) >= 0) {
+            int index = devicename.cap(1).toInt();
+            QString devpath = QString("%1/%2").arg(devdir, device);
+            addJoyPad(index, devpath);
         }
     }
     //when it's all done, rebuild the popup menu so it displays the correct
     //information.
     fillPopup();
-    if(le) {
+    if (le) {
         le->updateJoypadWidgets();
     }
     debug_mesg("done updating joydevs\n");
+}
+
+void LayoutManager::addJoyPad(int index) {
+    addJoyPad(index, QString("%1/js%2").arg(devdir, index));
+}
+
+void LayoutManager::addJoyPad(int index, const QString& devpath) {
+    debug_mesg("opening %s\n", qPrintable(devpath));
+    //try opening the device.
+    int joydev = open(qPrintable(devpath), O_RDONLY | O_NONBLOCK);
+    //if it worked, then we have a live joystick! Make sure it's properly
+    //setup.
+    if (joydev >= 0) {
+        JoyPad* joypad = joypads[index];
+        //if we've never seen this device before, make a new one!
+        if (joypad == 0) {
+            joypad = new JoyPad( index, joydev, this );
+            joypads.insert(index,joypad);
+        }
+        else {
+            debug_mesg("found previously open joypad with index %d, ignoring", index);
+            joypad->open(joydev);
+        }
+        //make this joystick device available.
+        available.insert(index,joypad);
+    }
+    else {
+        perror(qPrintable(devpath));
+    }
+}
+
+void LayoutManager::removeJoyPad(int index) {
+    JoyPad *joypad = available[index];
+    if (joypad) {
+        joypad->close();
+        available.remove(index);
+    }
 }

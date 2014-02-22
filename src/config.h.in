@@ -12,4 +12,6 @@
 #define QJOYPAD_ICON24 "@CMAKE_INSTALL_PREFIX@/share/icons/hicolor/24x24/apps/qjoypad.png"
 #define QJOYPAD_ICON64 "@CMAKE_INSTALL_PREFIX@/share/icons/hicolor/64x64/apps/qjoypad.png"
 
+#cmakedefine WITH_LIBUDEV
+
 #endif

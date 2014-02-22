@@ -8,14 +8,31 @@ set(QJOYPAD_PATCH 0)
 
 find_package(Qt4 REQUIRED)
 
+set(WITH_LIBUDEV ON CACHE PATH "Use libudev for automatically updating joypad devices.")
+
+if(WITH_LIBUDEV)
+	find_package(PkgConfig REQUIRED)
+
+	pkg_check_modules(LIBUDEV libudev)
+
+	if(LIBUDEV_FOUND)
+		message(STATUS "libudev found")
+	else()
+		message(ERROR "libudev not found. If you don't want to compile with libudev support use -DWITH_LIBUDEV=OFF")
+	endif()
+
+	link_directories(${LIBUDEV_LIBRARY_DIRS})
+	include_directories(${LIBUDEV_INCLUDE_DIRS})
+endif()
+
 set(DEVICE_DIR "/dev/input" CACHE PATH "Set the path where QJoyPad will look for your joystick devices. If your devices are /dev/js0, /dev/js1, etc., this should be just \"/dev\". By default, this is /dev/input.")
 
 set(PLAIN_KEYS OFF CACHE BOOL "Force QJoyPad to use standard XWindows keynames without filtering them for appearance. This will make displays less attractive and readable, but will save processor power and ensure that you see the right names for keys you press.")
 
-message("-- Using device directory: ${DEVICE_DIR}")
+message(STATUS "Using device directory: ${DEVICE_DIR}")
 
 if(PLAIN_KEYS)
-	message("-- Using regular XWindows key names.")
+	message(STATUS "Using regular XWindows key names.")
 	add_definitions(-DPLAIN_KEYS)
 endif()
 

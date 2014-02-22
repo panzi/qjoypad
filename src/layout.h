@@ -17,6 +17,12 @@
 #include <QInputDialog>
 #include <QSystemTrayIcon>
 
+#include "config.h"
+
+#ifdef WITH_LIBUDEV
+#include <libudev.h>
+#endif
+
 //a layout handles several joypads
 #include "joypad.h"
 //for errors
@@ -66,7 +72,10 @@ class LayoutManager : public QObject {
     private slots:
         //when the user selects an item on the tray's popup menu
         void layoutTriggered();
-	private:
+    private:
+        void addJoyPad(int index);
+        void addJoyPad(int index, const QString& devpath);
+        void removeJoyPad(int index);
 		//change to the given layout name and make all the necesary adjustments
         void setLayoutName(const QString& name);
 		//get the file name for a layout name
@@ -90,6 +99,15 @@ class LayoutManager : public QObject {
 
         QHash<int, JoyPad*> available;
         QHash<int, JoyPad*> joypads;
+
+#ifdef WITH_LIBUDEV
+        bool initUDev();
+        QSocketNotifier *udevNotifier;
+        struct udev *udev;
+        struct udev_monitor *monitor;
+    private slots:
+        void udevUpdate();
+#endif
 };
 
 #endif
