@@ -140,6 +140,11 @@ changed.
 
        cmake .. -DPLAIN_KEYS=ON
 
+4. Disable libudev support: If you don't have libudev you can
+   disable libudev support like this:
+
+       cmake .. -DWITH_LIBUDEV=OFF
+
 
 ### Using QJoyPad
 
