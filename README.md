@@ -83,6 +83,8 @@ purpose.
 - Make a button "Sticky" if you don't feel like holding it
   down all the time
 - Turn on Rapid Fire so you don't wear out your gamepad!
+- If libudev is availabe the joypad list will automatically
+  udpated.
 
 
 ### Getting Started
@@ -96,6 +98,7 @@ purpose.
   [joystick-parport.txt](https://www.kernel.org/doc/Documentation/input/joystick-parport.txt))
 - [XWindows](http://x.org/)
 - [Qt 4](http://qt-project.org/)
+- [libudev](http://www.freedesktop.org/software/systemd/libudev/) (optional)
 
 
 #### Installation
