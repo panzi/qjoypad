@@ -138,7 +138,7 @@ changed.
    If you would rather like the original X11 key names you can
    invoke cmake like this:
 
-       cmake .. -DPLAIN_KEYS=ON
+   `cmake .. -DPLAIN_KEYS=ON`
 
 4. Disable libudev support: If you don't have libudev you can
    disable libudev support like this:
