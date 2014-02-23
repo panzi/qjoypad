@@ -9,7 +9,7 @@ FloatingIcon::FloatingIcon( const QString &icon, QMenu *popup, QWidget *parent, 
     setAttribute(Qt::WA_QuitOnClose);
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::FramelessWindowHint);
-    setWindowTitle(QJOYPAD_NAME " Floating Icon");
+    setWindowTitle(tr("%1 Floating Icon").arg(QJOYPAD_NAME));
     pop = popup;
 
     setFixedSize(this->icon.width(),this->icon.height());

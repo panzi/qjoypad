@@ -9,7 +9,7 @@ ButtonEdit::ButtonEdit(Button* butt)
     setModal(true);
     //build the dialog!
     button = butt;
-    setWindowTitle("Set " + button->getName());
+    setWindowTitle(tr("Set %1").arg(button->getName()));
     setWindowIcon(QPixmap(QJOYPAD_ICON24));
 
     QVBoxLayout* v = new QVBoxLayout(this);
@@ -20,10 +20,10 @@ ButtonEdit::ButtonEdit(Button* butt)
     v->addWidget(btnKey);
 
     QHBoxLayout* h = new QHBoxLayout();
-    chkSticky = new QCheckBox("&Sticky", this);
+    chkSticky = new QCheckBox(tr("&Sticky"), this);
     chkSticky->setChecked(button->sticky);
     h->addWidget(chkSticky);
-    chkRapid = new QCheckBox("&Rapid Fire", this);
+    chkRapid = new QCheckBox(tr("&Rapid Fire"), this);
     chkRapid->setChecked(button->rapidfire);
     h->addWidget(chkRapid);
     v->addLayout(h);

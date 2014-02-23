@@ -23,26 +23,26 @@ AxisEdit::AxisEdit( Axis* ax )
     QVBoxLayout* v2 = new QVBoxLayout();
     v2->setMargin(5);
     v2->setSpacing(5);
-    chkGradient = new QCheckBox("&Gradient", this);
+    chkGradient = new QCheckBox(tr("&Gradient"), this);
     chkGradient->setChecked(axis->gradient);
     connect(chkGradient, SIGNAL(toggled(bool)), this, SLOT( gradientChanged( bool )));
     v2->addWidget(chkGradient);
 
     cmbMode = new QComboBox(this);
-    cmbMode->insertItem((int) Axis::Keyboard, QString("Keyboard/Mouse Button"), Qt::DisplayRole);
-    cmbMode->insertItem((int) Axis::MousePosVert,QString("Mouse (Vert.)"),Qt::DisplayRole);
-    cmbMode->insertItem((int) Axis::MouseNegVert, QString("Mouse (Vert. Rev.)"), Qt::DisplayRole);
-    cmbMode->insertItem((int) Axis::MousePosHor, "Mouse (Hor.)", Qt::DisplayRole);
-    cmbMode->insertItem((int) Axis::MouseNegHor, QString("Mouse (Hor. Rev.)"), Qt::DisplayRole);
+    cmbMode->insertItem((int) Axis::Keyboard, tr("Keyboard/Mouse Button"), Qt::DisplayRole);
+    cmbMode->insertItem((int) Axis::MousePosVert, tr("Mouse (Vert.)"),Qt::DisplayRole);
+    cmbMode->insertItem((int) Axis::MouseNegVert, tr("Mouse (Vert. Rev.)"), Qt::DisplayRole);
+    cmbMode->insertItem((int) Axis::MousePosHor, tr("Mouse (Hor.)"), Qt::DisplayRole);
+    cmbMode->insertItem((int) Axis::MouseNegHor, tr("Mouse (Hor. Rev.)"), Qt::DisplayRole);
     cmbMode->setCurrentIndex( axis->mode );
     connect(cmbMode, SIGNAL(activated(int)), this, SLOT( modeChanged( int )));
     v2->addWidget(cmbMode);
     cmbTransferCurve = new QComboBox(this);
-    cmbTransferCurve->insertItem(Axis::Linear, QString("Linear"), Qt::DisplayRole);
-    cmbTransferCurve->insertItem(Axis::Quadratic, QString("Quadratic"),Qt::DisplayRole );
-    cmbTransferCurve->insertItem(Axis::Cubic, QString("Cubic"),Qt::DisplayRole );
-    cmbTransferCurve->insertItem(Axis::QuadraticExtreme, QString("Quadratic Extreme"), Qt::DisplayRole);
-    cmbTransferCurve->insertItem(Axis::PowerFunction, QString("Power Function"), Qt::DisplayRole);
+    cmbTransferCurve->insertItem(Axis::Linear, tr("Linear"), Qt::DisplayRole);
+    cmbTransferCurve->insertItem(Axis::Quadratic, tr("Quadratic"), Qt::DisplayRole );
+    cmbTransferCurve->insertItem(Axis::Cubic, tr("Cubic"), Qt::DisplayRole );
+    cmbTransferCurve->insertItem(Axis::QuadraticExtreme, tr("Quadratic Extreme"), Qt::DisplayRole);
+    cmbTransferCurve->insertItem(Axis::PowerFunction, tr("Power Function"), Qt::DisplayRole);
     cmbTransferCurve->setCurrentIndex( axis->transferCurve );
     cmbTransferCurve->setEnabled(axis->gradient);
     connect(cmbTransferCurve, SIGNAL(activated(int)), this, SLOT( transferCurveChanged( int )));
@@ -55,14 +55,14 @@ AxisEdit::AxisEdit( Axis* ax )
     v2->setSpacing(5);
     v2->setMargin(5);
     //v2->setAutoAdd(true);
-    QLabel *mouseLabel = new QLabel("&Mouse Speed", mouseBox);
+    QLabel *mouseLabel = new QLabel(tr("&Mouse Speed"), mouseBox);
     v2->addWidget(mouseLabel);
     spinSpeed = new QSpinBox(mouseBox);
     spinSpeed->setRange(0,MAXMOUSESPEED);
     spinSpeed->setSingleStep(1);
     spinSpeed->setValue(axis->maxSpeed);
     v2->addWidget(spinSpeed);
-    lblSensitivity = new QLabel("&Sensitivity", mouseBox);
+    lblSensitivity = new QLabel(tr("&Sensitivity"), mouseBox);
     v2->addWidget(lblSensitivity);
     spinSensitivity = new QDoubleSpinBox(mouseBox);
     spinSensitivity->setRange(1e-3F, 1e+3F);
@@ -86,9 +86,9 @@ AxisEdit::AxisEdit( Axis* ax )
     btnNeg = new KeyButton(axis->getName(),axis->nkeycode,keyBox,true,axis->nuseMouse);
 
     cmbThrottle = new QComboBox(keyBox);
-    cmbThrottle->insertItem(0,"Neg. Throttle",Qt::DisplayRole);
-    cmbThrottle->insertItem(1,"No Throttle",Qt::DisplayRole);
-    cmbThrottle->insertItem(2,"Pos. Throttle",Qt::DisplayRole);
+    cmbThrottle->insertItem(0, tr("Neg. Throttle"), Qt::DisplayRole);
+    cmbThrottle->insertItem(1, tr("No Throttle"), Qt::DisplayRole);
+    cmbThrottle->insertItem(2, tr("Pos. Throttle"), Qt::DisplayRole);
     cmbThrottle->setCurrentIndex(axis->throttle + 1);
     connect( cmbThrottle, SIGNAL( activated( int )), this, SLOT( throttleChanged( int )));
 

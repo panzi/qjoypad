@@ -125,10 +125,10 @@ bool Button::isDefault() {
 
 QString Button::status() {
     if (useMouse) {
-        return QString("%1 : Mouse %2").arg(getName()).arg(keycode);
+        return tr("%1 : Mouse %2").arg(getName()).arg(keycode);
     }
     else {
-        return QString("%1 : %2").arg(getName(), ktos(keycode));
+        return tr("%1 : %2").arg(getName(), ktos(keycode));
     }
 }
 

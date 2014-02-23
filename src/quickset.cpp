@@ -6,15 +6,15 @@ QuickSet::QuickSet( JoyPad* jp, QWidget *parent)
         : QDialog(parent) {
     setting = false;
     joypad = jp;
-    setWindowTitle("Set " + jp->getName());
+    setWindowTitle(tr("Set %1").arg(jp->getName()));
     QVBoxLayout* LMain = new QVBoxLayout(this);
     LMain->setMargin(5);
     LMain->setSpacing(5);
     //LMain->setAutoAdd(true);
 
-    QLabel *temp = new QLabel("Press any button or axis and\nyou will be prompted for a key.",this);
+    QLabel *temp = new QLabel(tr("Press any button or axis and\nyou will be prompted for a key."),this);
     LMain->addWidget(temp);
-    QPushButton* button = new QPushButton("Done",this);
+    QPushButton* button = new QPushButton(tr("Done"),this);
     LMain->addWidget(button);
     connect( button, SIGNAL(clicked()), this, SLOT(accept()));
 }
@@ -35,12 +35,14 @@ void QuickSet::jsevent(const js_event &msg ) {
         setting = false;
 
         //if a mouse button was used,
-        if (code > MOUSE_OFFSET)
+        if (code > MOUSE_OFFSET) {
             //then tell it to the Button a mouse button
             button->setKey(true, code - MOUSE_OFFSET);
-        else
+        }
+        else {
             //otherwise, tell it to use a keycode.
             button->setKey(false, code);
+        }
     }
     else if (type == JS_EVENT_AXIS) {
         //require a signal strength of at least 5000 to consider an axis moved.
@@ -51,7 +53,7 @@ void QuickSet::jsevent(const js_event &msg ) {
 
         //grab a keycode for that axis and that direction
         setting = true;
-        int code = GetKey(QString("%1, %2").arg(axis->getName(), msg.value > 0 ? "positive" : "negative"), false).exec();
+        int code = GetKey((msg.value >= 0 ? tr("%1, positive") : tr("%1, negative")).arg(axis->getName()), false).exec();
         setting = false;
 
         //assign the key to the axis.

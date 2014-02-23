@@ -22,16 +22,16 @@ LayoutEdit::LayoutEdit( LayoutManager* l ): QWidget(NULL) {
     g->addWidget(cmbLayouts,0,0,1,4);
 
     //most of these buttons can link directly into slots in the LayoutManager
-    btnAdd = new QPushButton(QIcon::fromTheme("list-add"), "&Add", frame);
+    btnAdd = new QPushButton(QIcon::fromTheme("list-add"), tr("&Add"), frame);
     connect(btnAdd, SIGNAL(clicked()), lm, SLOT(saveAs()));
     g->addWidget(btnAdd,1,0);
-    btnRem = new QPushButton(QIcon::fromTheme("list-remove"), "&Remove", frame);
+    btnRem = new QPushButton(QIcon::fromTheme("list-remove"), tr("&Remove"), frame);
     connect(btnRem, SIGNAL(clicked()), lm, SLOT(remove()));
     g->addWidget(btnRem,1,1);
-    btnUpd = new QPushButton(QIcon::fromTheme("document-save"), "&Save", frame);
+    btnUpd = new QPushButton(QIcon::fromTheme("document-save"), tr("&Save"), frame);
     connect(btnUpd, SIGNAL(clicked()), lm, SLOT(save()));
     g->addWidget(btnUpd,1,2);
-    btnRev = new QPushButton(QIcon::fromTheme("document-revert"), "Re&vert", frame);
+    btnRev = new QPushButton(QIcon::fromTheme("document-revert"), tr("Re&vert"), frame);
     connect(btnRev, SIGNAL(clicked()), lm, SLOT(reload()));
     g->addWidget(btnRev,1,3);
     mainLayout->addWidget( frame );
@@ -73,10 +73,10 @@ LayoutEdit::LayoutEdit( LayoutManager* l ): QWidget(NULL) {
     QHBoxLayout* h = new QHBoxLayout(0);
     h->setMargin(0);
     h->setSpacing(5);
-    QPushButton* close = new QPushButton(QIcon::fromTheme("window-close"), "&Close Dialog", this );
+    QPushButton* close = new QPushButton(QIcon::fromTheme("window-close"), tr("&Close Dialog"), this );
     connect(close, SIGNAL(clicked()), this, SLOT(close()));
     h->addWidget(close);
-    QPushButton* quit = new QPushButton(QIcon::fromTheme("application-exit"), "&Quit", this );
+    QPushButton* quit = new QPushButton(QIcon::fromTheme("application-exit"), tr("&Quit"), this );
     connect( quit, SIGNAL( clicked() ), qApp, SLOT(quit()));
     h->addWidget(quit);
     mainLayout->addLayout(h);
@@ -103,7 +103,7 @@ void LayoutEdit::setLayout(const QString &layout) {
 void LayoutEdit::updateLayoutList() {
     //blank the list, then load in new names from the LayoutManager.
     cmbLayouts->clear();
-    cmbLayouts->addItem("[NO LAYOUT]", QVariant(QString::null));
+    cmbLayouts->addItem(tr("[NO LAYOUT]"), QVariant(QString::null));
     if (lm->currentLayout.isNull()) {
         cmbLayouts->setCurrentIndex(0);
     }

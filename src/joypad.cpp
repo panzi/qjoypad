@@ -137,14 +137,14 @@ bool JoyPad::readConfig( QTextStream &stream ) {
             if (num > 0) {
                 stream >> ch;
                 if (ch != ':') {
-                    errorBox("Layout file error", QString("Expected ':', found '%1'.").arg(ch));
+                    errorBox(tr("Layout file error"), tr("Expected ':', found '%1'.").arg(ch));
                     return false;
                 }
                 if (buttons[num-1] == 0) {
                     buttons.insert(num-1,new Button(num-1,this));
                 }
                 if (!buttons[num-1]->read( stream )) {
-                    errorBox("Layout file error", QString("Error reading Button %1").arg(num));
+                    errorBox(tr("Layout file error"), tr("Error reading Button %1").arg(num));
                     return false;
                 }
             }
@@ -157,20 +157,20 @@ bool JoyPad::readConfig( QTextStream &stream ) {
             if (num > 0) {
                 stream >> ch;
                 if (ch != ':') {
-                    errorBox("Layout file error", QString("Expected ':', found '%1'.").arg(ch));
+                    errorBox(tr("Layout file error"), tr("Expected ':', found '%1'.").arg(ch));
                     return false;
                 }
                 if (axes[num-1] == 0) {
                     axes.insert(num-1,new Axis(num-1,this));
                 }
                 if (!axes[num-1]->read(stream)) {
-                    errorBox("Layout file error", QString("Error reading Axis %1").arg(num));
+                    errorBox(tr("Layout file error"), tr("Error reading Axis %1").arg(num));
                     return false;
                 }
             }
         }
         else {
-            errorBox( "Layout file error", QString("Error while reading layout. Unrecognized word: %1").arg(word) );
+            errorBox(tr("Layout file error"), tr("Error while reading layout. Unrecognized word: %1").arg(word));
             return false;
         }
         stream >> word;
@@ -248,7 +248,7 @@ void JoyPad::handleJoyEvents() {
 
 void JoyPad::releaseWidget() {
     //this is how we know that there is no longer a JoyPadWidget around.
-    jpw = NULL;
+    jpw = 0;
 }
 
 void JoyPad::errorRead() {

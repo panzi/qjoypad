@@ -80,7 +80,7 @@ const QString ktos( int keycode )
 
 
 KeyButton::KeyButton( QString name, int val, QWidget* parent, bool m, bool nowMouse)
-        :QPushButton(nowMouse?"Mouse " + QString::number(val):QString(ktos(val)), parent) {
+        :QPushButton(nowMouse?tr("Mouse %1").arg(val):ktos(val), parent) {
     mouse = m;
     mouseClicked = nowMouse;
     buttonname = name;
@@ -94,19 +94,19 @@ void KeyButton::onClick() {
     // -1 is a special value meaning that the window was simply
     // closed so we can ignore this
     if(retValue == -1) {
-	return;
+        return;
     } else {
-	value = retValue;
+        value = retValue;
     }
     //if the return value was a mouse click...
     if (value > MOUSE_OFFSET) {
         mouseClicked = true;
         value -= MOUSE_OFFSET;
-        setText( "Mouse " + QString::number(value));
+        setText(tr("Mouse %1").arg(value));
     }
     //otherwise, it was a key press!
     else {
         mouseClicked = false;
-        setText( ktos(value));
+        setText(ktos(value));
     }
 }

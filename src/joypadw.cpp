@@ -35,11 +35,11 @@ JoyPadWidget::JoyPadWidget( JoyPad* jp, int i, QWidget* parent )
         insertCounter ++;
     }
     insertCounter += 2;
-    btnClear = new QPushButton(QIcon::fromTheme("edit-clear"), "Clear", this);
+    btnClear = new QPushButton(QIcon::fromTheme("edit-clear"), tr("Clear"), this);
     connect(btnClear, SIGNAL(clicked()), this, SLOT(clear()));
     layoutMain->addWidget(btnClear, insertCounter / 2, insertCounter % 2);
     insertCounter++;
-    btnAll = new QPushButton("Quick Set", this);
+    btnAll = new QPushButton(tr("Quick Set"), this);
     layoutMain->addWidget(btnAll, insertCounter / 2, insertCounter % 2);
     connect(btnAll, SIGNAL(clicked()), this, SLOT(setAll()));
 }
@@ -57,8 +57,9 @@ void JoyPadWidget::flash( bool on ) {
     flashcount += (on?1:-1);
 
     //if we were on and should now be off, or visa versa, flash the whole widget
-    if (wasOn != (flashcount != 0))
+    if (wasOn != (flashcount != 0)) {
         emit flashed(index);
+    }
 }
 
 void JoyPadWidget::update() {

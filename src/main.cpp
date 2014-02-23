@@ -9,6 +9,7 @@
 #include <QFile>
 #include <QSystemTrayIcon>
 #include <QPointer>
+#include <QFileInfo>
 
 //to load layouts
 #include "layout.h"
@@ -24,8 +25,7 @@ QPointer<LayoutManager> layoutManagerPtr;
 //signal handler for SIGUSR2
 //SIGUSR2 means that a new layout should be loaded. It is saved in
 // ~/.qjoypad/layout, where the last used layout is put.
-void catchSIGUSR2( int sig )
-{
+void catchSIGUSR2( int sig ) {
     if (layoutManagerPtr) layoutManagerPtr->load();
     //remember to catch this signal again next time.
     signal( sig, catchSIGUSR2 );
@@ -62,7 +62,8 @@ int main( int argc, char **argv )
 
     //if there is no new directory and we can't make it, complain
     if (!dir.exists() && !dir.mkdir(settingsDir)) {
-        printf("Couldn't create the QJoyPad save directory (%s)!", settingsDir.toStdString().c_str());
+        errorBox(app.tr("Couldn't create the QJoyPad save directory"),
+                 app.tr("Couldn't create the QJoyPad save directory: %s").arg(settingsDir));
         return 1;
     }
 
@@ -93,8 +94,8 @@ int main( int argc, char **argv )
 
         switch (c) {
             case 'h':
-                printf("%s\n"
-                    "Usage: %s [--device=\"/device/path\"] [--notray|--force-tray] [\"layout name\"]\n"
+                printf("%s", qPrintable(app.tr("%1\n"
+                    "Usage: %2 [--device=\"/device/path\"] [--notray|--force-tray] [\"layout name\"]\n"
                     "\n"
                     "Options:\n"
                     "  -h, --help            Print this help message.\n"
@@ -108,15 +109,16 @@ int main( int argc, char **argv )
                     "                        list of devices and layouts.\n"
                     "  \"layout name\"         Load the given layout in an already running\n"
                     "                        instance of QJoyPad, or start QJoyPad using the\n"
-                    "                        given layout.\n", QJOYPAD_NAME, argc > 0 ? argv[0] : "qjoypad");
+                    "                        given layout.\n").arg(QJOYPAD_NAME, argc > 0 ? argv[0] : "qjoypad")));
                 return 0;
 
             case 'd':
-                if (QFile::exists(optarg)) {
+                if (QFileInfo(optarg).isDir()) {
                     devdir = optarg;
                 }
                 else {
-                    fprintf(stderr, "No such file or directory: %s\n", optarg);
+                    errorBox(app.tr("Not a directory"),
+                             app.tr("Path is not a directory: %1").arg(optarg));
                     return 1;
                 }
                 break;
@@ -188,14 +190,17 @@ int main( int argc, char **argv )
                 //then prevent two instances from running at once.
                 //however, if we are setting the layout or updating the device
                 //list, this is not an error and we shouldn't make one!
-                if (layout.isEmpty() && update == false)
-                    errorBox("Instance Error","There is already a running instance of QJoyPad; please close\nthe old instance before starting a new one.");
+                if (layout.isEmpty() && !update)
+                    errorBox(app.tr("Instance Error"),
+                             app.tr("There is already a running instance of QJoyPad; please close\nthe old instance before starting a new one."));
                 else {
                     //if one of these is the case, send the approrpriate signal!
-                    if (update == true)
+                    if (update) {
                         kill(pid,SIGUSR1);
-                    if (!layout.isEmpty())
+                    }
+                    if (!layout.isEmpty()) {
                         kill(pid,SIGUSR2);
+                    }
                 }
                 //and quit. We don't need two instances.
                 return 0;
@@ -211,12 +216,13 @@ int main( int argc, char **argv )
 
     if (forceTrayIcon) {
         int sleepCounter = 0;
-        while(!QSystemTrayIcon::isSystemTrayAvailable()) {
+        while (!QSystemTrayIcon::isSystemTrayAvailable()) {
             sleep(1);
             sleepCounter++;
-            if(sleepCounter > 20) {
-                printf("Error, we've waited more than 20 seconds, your sys tray probably isn't loading\n");
-                exit(1);
+            if (sleepCounter > 20) {
+                errorBox(app.tr("System tray isn't loading"),
+                         app.tr("Waited more than 20 seconds for the system tray to load. Giving up."));
+                return 1;
             }
         }
     }

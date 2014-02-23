@@ -282,20 +282,20 @@ QString Axis::status() {
     if (mode == Keyboard) {
         if (throttle == 0) {
             if (puseMouse != nuseMouse) {
-                result += "KEYBOARD/MOUSE";
+                result += tr("KEYBOARD/MOUSE");
             }
             else if (puseMouse) {
-                result += "MOUSE";
+                result += tr("MOUSE");
             }
             else {
-                result += "KEYBOARD";
+                result += tr("KEYBOARD");
             }
         }
         else {
-            result += "THROTTLE";
+            result += tr("THROTTLE");
     }
     }
-    else result += "MOUSE";
+    else result += tr("MOUSE");
     return result + "]";
 }
 

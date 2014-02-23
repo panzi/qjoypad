@@ -7,21 +7,19 @@ GetKey::GetKey( QString button, bool m )
 {
     //prepare the dialog
     mouse = m;
-    setWindowTitle( "Choose a key" );
+    setWindowTitle( tr("Choose a key") );
     setWindowIcon(QIcon(QJOYPAD_ICON24));
 
     //I'd use a QLabel, but that steals x11Events!
     //So, I'll draw the text directly. That means
     //I need to resolve the size of the dialog by hand:
-    text = "Choose a new key ";
-    if (mouse) text += "or mouse button ";
-    text += "for " + button;
+    text = (mouse ? tr("Choose a new key or mouse button for %1") : tr("Choose a new key for %1")).arg(button);
     QRect rect = fontMetrics().boundingRect( text );
     //I calculate the size based on the first line of text, which is longer.
     //The fontMetrics function is dumb and would treat the string with a
     //newline in it as a continues flow of characters if I did the whole string
     //at once.
-    text += "\n(Ctrl-X for no key)";
+    text += tr("\n(Ctrl-X for no key)");
     //now I add 20 pixels of padding and double the height to make room for
     //two lines.
     setFixedSize( QSize( rect.width() + 20, rect.height()*2 + 20 ) );
