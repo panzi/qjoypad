@@ -686,14 +686,14 @@ Just replace these files and restart QJoyPad.
 
 ### Why do I have to tell QJoyPad to "update joystick devices"? Why can't it do that on its own?
 
-Supporting on the fly detection of new gamepads using
-[libudev](http://www.signal11.us/oss/udev/) is on the TODO list.
-However, this would mean yet another dependency and then QJoyPad
-won't run on distributions without UDev anymore. I don't know
-if such distributions even exist, though.
+If you compile with `-DWITH_LIBUDEV=ON` (the default) then UDev
+is used to automatically update the joypad list. If automatically
+updating of the joypad list still does not work compile with
+`-DCMAKE_BUILD_TYPE=Debug` and post the output on the [GitHub
+bug tracker](https://github.com/panzi/qjoypad/issues).
 	
-Currently you can let QJoyPad rescan your joypads using the menu
-or by running `qjoypad --update`.
+You can force QJoyPad to rescan your joypads at any time using the
+menu or by running `qjoypad --update`.
 
 ### When QJoyPad checks for new joysticks, it doesn't find mine!
 

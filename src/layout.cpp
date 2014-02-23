@@ -22,7 +22,7 @@ LayoutManager::LayoutManager( bool useTrayIcon, const QString &devdir, const QSt
     monitor = 0;
 
     if (!initUDev()) {
-        errorBox("UDev Error", "Error creating udev monitor. "
+        errorBox("UDev Error", "Error creating UDev monitor. "
                  "QJoyPad will still work, but it won't automatically update the joypad device list.");
     }
 #endif
@@ -91,7 +91,7 @@ bool LayoutManager::initUDev() {
                         monitor, "input", NULL);
             if (errnum != 0) {
                 debug_mesg("udev_monitor_filter_add_match_subsystem_devtype: %s\n",
-                           strerror(errnum));
+                           strerror(-errnum));
                 udev_monitor_unref(monitor);
                 udev_unref(udev);
                 monitor = 0;
@@ -102,7 +102,7 @@ bool LayoutManager::initUDev() {
             errnum = udev_monitor_enable_receiving(monitor);
             if (errnum != 0) {
                 debug_mesg("udev_monitor_enable_receiving: %s\n",
-                           strerror(errnum));
+                           strerror(-errnum));
                 udev_monitor_unref(monitor);
                 udev_unref(udev);
                 monitor = 0;
@@ -489,10 +489,56 @@ void LayoutManager::updateJoyDevs() {
     //clear out the list of previously available joysticks
     available.clear();
 
+    QRegExp devicename("/js(\\d+)$");
+
+#ifdef WITH_LIBUDEV
+    // try to enumerate devices using udev, if compiled with udev support
+    bool udev_ok = false;
+    if (udev) {
+        struct udev_enumerate *enumerate = udev_enumerate_new(udev);
+
+        if (enumerate) {
+            int errnum = udev_enumerate_add_match_subsystem(enumerate, "input");
+
+            if (errnum == 0) {
+                errnum = udev_enumerate_scan_devices(enumerate);
+
+                if (errnum == 0) {
+                    struct udev_list_entry *devices, *dev_list_entry;
+                    devices = udev_enumerate_get_list_entry(enumerate);
+
+                    udev_list_entry_foreach(dev_list_entry, devices) {
+                        QString devpath = udev_list_entry_get_name(dev_list_entry);
+                        if (devicename.indexIn(devpath) >= 0) {
+                            int index = devicename.cap(1).toInt();
+                            addJoyPad(index, devpath);
+                        }
+                    }
+
+                    udev_ok = true;
+                }
+                else {
+                    debug_mesg("udev_enumerate_scan_devices: %s\n",
+                               strerror(-errnum));
+                }
+            }
+            else {
+                debug_mesg("udev_enumerate_add_match_subsystem: %s\n",
+                           strerror(-errnum));
+            }
+
+            udev_enumerate_unref(enumerate);
+        }
+    }
+
+    // but if udev failed still try "ls $devdir/js*"
+    if (!udev_ok) {
+        debug_mesg("udev enumeration failed. retry with \"ls $devdir/js*\"\n");
+#endif
+
     //set all joydevs anew (create new JoyPad's if necesary)
     QDir deviceDir(devdir);
     QStringList devices = deviceDir.entryList(QStringList("js*"), QDir::System);
-    QRegExp devicename("js(\\d+)");
     //for every joystick device in the directory listing...
     //(note, with devfs, only available devices are listed)
     foreach (const QString &device, devices) {
@@ -502,6 +548,10 @@ void LayoutManager::updateJoyDevs() {
             addJoyPad(index, devpath);
         }
     }
+
+#ifdef WITH_LIBUDEV
+    }
+#endif
     //when it's all done, rebuild the popup menu so it displays the correct
     //information.
     fillPopup();
