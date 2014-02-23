@@ -137,9 +137,9 @@ int main( int argc, char **argv )
                 break;
 
             case '?':
-                fprintf(stderr,
-                    "See `%s --help` for more information\n",
-                    argc > 0 ? argv[0] : "qjoypad");
+                fprintf(stderr, "%s", qPrintable(app.tr(
+                    "Illeagal argument.\n"
+                    "See `%1 --help` for more information\n").arg(argc > 0 ? argv[0] : "qjoypad")));
                 return 1;
         }
     }
@@ -148,10 +148,9 @@ int main( int argc, char **argv )
         layout = argv[optind ++];
 
         if (optind < argc) {
-            fprintf(stderr,
+            fprintf(stderr, "%s", qPrintable(app.tr(
                 "Too many arguments.\n"
-                "See `%s --help` for more information\n",
-                argc > 0 ? argv[0] : "qjoypad");
+                "See `%1 --help` for more information\n").arg(argc > 0 ? argv[0] : "qjoypad")));
             return 1;
         }
     }
@@ -161,7 +160,7 @@ int main( int argc, char **argv )
     {
         //then we try to store that layout in the last-used layout spot, to be
         //loaded by default.
-        QFile file( settingsDir + "layout");
+        QFile file(settingsDir + "layout");
         if (file.open(QIODevice::WriteOnly))
         {
             QTextStream( &file ) << layout;
