@@ -12,11 +12,13 @@ inline void errorBox(const QString &type, const QString &message, QWidget *paren
 		message, QMessageBox::Ok, Qt::NoButton);
 }
 
+inline void debug_mesg(const char *fmt, ...) __attribute__((format(printf,1,2)));
+
 #ifdef _DEBUG
 inline void debug_mesg(const char *fmt, ...) {
     va_list ap;
-    va_start(ap, NULL);
-    vprintf(fmt, ap);
+    va_start(ap, fmt);
+    vfprintf(stderr, fmt, ap);
     va_end(ap);
 }
 #else

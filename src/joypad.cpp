@@ -101,6 +101,18 @@ void JoyPad::open(int dev) {
     debug_mesg("done resetting to dev\n");
 }
 
+const QString &JoyPad::getDeviceId() const {
+    return deviceId;
+}
+
+QString JoyPad::getName() const {
+    return tr("Joystick %1 (%2)").arg(index+1).arg(deviceId);
+}
+
+int JoyPad::getIndex() const {
+    return index;
+}
+
 void JoyPad::toDefault() {
     //to reset the whole, reset all the parts.
     foreach (Axis *axis, axes) {

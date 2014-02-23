@@ -123,6 +123,10 @@ bool Button::isDefault() {
            (keycode == 0);
 }
 
+QString Button::getName() {
+    return tr("Button %1").arg(index+1);
+}
+
 QString Button::status() {
     if (useMouse) {
         return tr("%1 : Mouse %2").arg(getName()).arg(keycode);

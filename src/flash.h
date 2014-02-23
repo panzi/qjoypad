@@ -16,7 +16,7 @@ class FlashButton : public QPushButton
 {
 	Q_OBJECT
 	public:
-        FlashButton(QString text, QString name = "" , QWidget* parent = 0);
+        FlashButton(const QString& text, const QString& name = "" , QWidget* parent = 0);
 	public slots:
 		//make the button turn blue if it was gray, or visa versa.
 		void flash();

@@ -8,17 +8,15 @@ set(QJOYPAD_PATCH 0)
 
 find_package(Qt4 REQUIRED)
 
-set(WITH_LIBUDEV ON CACHE PATH "Use libudev for automatically updating joypad devices.")
+option(WITH_LIBUDEV "Use libudev for automatically updating joypad devices." ON)
 
 if(WITH_LIBUDEV)
 	find_package(PkgConfig REQUIRED)
 
 	pkg_check_modules(LIBUDEV libudev)
 
-	if(LIBUDEV_FOUND)
-		message(STATUS "libudev found")
-	else()
-		message(ERROR "libudev not found. If you don't want to compile with libudev support use -DWITH_LIBUDEV=OFF")
+	if(NOT(LIBUDEV_FOUND))
+		message(FATAL_ERROR "libudev not found. If you don't want to compile with libudev support use -DWITH_LIBUDEV=OFF")
 	endif()
 
 	link_directories(${LIBUDEV_LIBRARY_DIRS})
@@ -27,7 +25,10 @@ endif()
 
 set(DEVICE_DIR "/dev/input" CACHE PATH "Set the path where QJoyPad will look for your joystick devices. If your devices are /dev/js0, /dev/js1, etc., this should be just \"/dev\". By default, this is /dev/input.")
 
-set(PLAIN_KEYS OFF CACHE BOOL "Force QJoyPad to use standard XWindows keynames without filtering them for appearance. This will make displays less attractive and readable, but will save processor power and ensure that you see the right names for keys you press.")
+option(PLAIN_KEYS "Force QJoyPad to use standard XWindows keynames without filtering them for appearance. This will make displays less attractive and readable, but will save processor power and ensure that you see the right names for keys you press." OFF)
+
+option(UPDATE_TRANSLATIONS "Update source translation locale/*.ts
+files (WARNING: make clean will delete the source .ts files! Danger!)")
 
 message(STATUS "Using device directory: ${DEVICE_DIR}")
 
@@ -49,10 +50,22 @@ add_definitions(${QT_DEFINITIONS})
 # for config.h
 include_directories("${PROJECT_BINARY_DIR}/src")
 
+file(GLOB qjoypad_TRANS_SOURCES translations/qjoypad_*.ts)
+
+if(UPDATE_TRANSLATIONS)
+	file(GLOB_RECURSE qjoypad_TRANS_FILES *.cpp *.h)
+	qt4_create_translation(qjoypad_TRANS ${qjoypad_TRANS_SOURCES} ${qjoypad_TRANS_FILES})
+else()
+	qt4_add_translation(qjoypad_TRANS ${qjoypad_TRANS_SOURCES})
+endif()
+
 add_subdirectory(icons)
 add_subdirectory(src)
 
+add_custom_target(translations_target DEPENDS ${qjoypad_TRANS})
+
 install(PROGRAMS qjoypad.desktop DESTINATION "share/applications")
+install(FILES ${qjoypad_TRANS} DESTINATION "share/qjoypad/translations")
 
 # uninstall target
 configure_file(

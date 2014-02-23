@@ -4,7 +4,7 @@
 //Modified here (and in .h) to not have default arguments for 2 and 3.
 //This caused an error with a development version of g++ on a Mandrake system
 //in Sweden.
-FlashButton::FlashButton( QString text, QString name, QWidget* parent )
+FlashButton::FlashButton(const QString &text, const QString &name, QWidget* parent )
         : QPushButton( text, parent )
 {
     this->setObjectName(name);

@@ -40,8 +40,8 @@ set(qjoypad_QOBJECT_HEADERS
 	layout.h
 	quickset.h)
 
-QT4_WRAP_CPP(qjoypad_HEADERS_MOC ${qjoypad_QOBJECT_HEADERS})
-add_executable(qjoypad ${qjoypad_SOURCES} ${qjoypad_HEADERS_MOC})
+qt4_wrap_cpp(qjoypad_HEADERS_MOC ${qjoypad_QOBJECT_HEADERS})
+add_executable(qjoypad ${qjoypad_SOURCES} ${qjoypad_HEADERS_MOC}) # ${qjoypad_TRANS})
 target_link_libraries(qjoypad ${QT_LIBRARIES} Xtst X11 ${LIBUDEV_LIBRARIES})
 
 install(TARGETS qjoypad RUNTIME DESTINATION "bin")

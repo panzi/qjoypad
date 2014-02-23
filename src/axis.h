@@ -43,7 +43,7 @@ class Axis : public QObject {
 		void toDefault();
 		//True iff currently at defaults
 		bool isDefault();
-		QString getName() { return tr("Axis %1").arg(index+1);}
+		QString getName();
 		//true iff the given value is in the dead zone for this axis.
 		bool inDeadZone( int val );
 		//a descriptive string used as a label for the button representing this axis

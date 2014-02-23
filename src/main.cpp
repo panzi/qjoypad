@@ -62,8 +62,8 @@ int main( int argc, char **argv )
 
     //if there is no new directory and we can't make it, complain
     if (!dir.exists() && !dir.mkdir(settingsDir)) {
-        errorBox(app.tr("Couldn't create the QJoyPad save directory"),
-                 app.tr("Couldn't create the QJoyPad save directory: %s").arg(settingsDir));
+        errorBox(app.translate("main","Couldn't create the QJoyPad save directory"),
+                 app.translate("main","Couldn't create the QJoyPad save directory: %s").arg(settingsDir));
         return 1;
     }
 
@@ -94,7 +94,7 @@ int main( int argc, char **argv )
 
         switch (c) {
             case 'h':
-                printf("%s", qPrintable(app.tr("%1\n"
+                printf("%s", qPrintable(app.translate("main","%1\n"
                     "Usage: %2 [--device=\"/device/path\"] [--notray|--force-tray] [\"layout name\"]\n"
                     "\n"
                     "Options:\n"
@@ -102,7 +102,7 @@ int main( int argc, char **argv )
                     "  -d, --device=PATH     Look for joystick devices in PATH. This should\n"
                     "                        be something like \"/dev/input\" if your game\n"
                     "                        devices are in /dev/input/js0, /dev/input/js1, etc.\n"
-                    "  -t, --force-tray      Forece to use a system tray icon.\n"
+                    "  -t, --force-tray      Force to use a system tray icon.\n"
                     "  -T, --notray          Do not use a system tray icon. This is useful for\n"
                     "                        window managers that don't support this feature.\n"
                     "  -u, --update          Force a running instance of QJoyPad to update its\n"
@@ -117,8 +117,8 @@ int main( int argc, char **argv )
                     devdir = optarg;
                 }
                 else {
-                    errorBox(app.tr("Not a directory"),
-                             app.tr("Path is not a directory: %1").arg(optarg));
+                    errorBox(app.translate("main","Not a directory"),
+                             app.translate("main","Path is not a directory: %1").arg(optarg));
                     return 1;
                 }
                 break;
@@ -137,7 +137,7 @@ int main( int argc, char **argv )
                 break;
 
             case '?':
-                fprintf(stderr, "%s", qPrintable(app.tr(
+                fprintf(stderr, "%s", qPrintable(app.translate("main",
                     "Illeagal argument.\n"
                     "See `%1 --help` for more information\n").arg(argc > 0 ? argv[0] : "qjoypad")));
                 return 1;
@@ -148,7 +148,7 @@ int main( int argc, char **argv )
         layout = argv[optind ++];
 
         if (optind < argc) {
-            fprintf(stderr, "%s", qPrintable(app.tr(
+            fprintf(stderr, "%s", qPrintable(app.translate("main",
                 "Too many arguments.\n"
                 "See `%1 --help` for more information\n").arg(argc > 0 ? argv[0] : "qjoypad")));
             return 1;
@@ -190,8 +190,8 @@ int main( int argc, char **argv )
                 //however, if we are setting the layout or updating the device
                 //list, this is not an error and we shouldn't make one!
                 if (layout.isEmpty() && !update)
-                    errorBox(app.tr("Instance Error"),
-                             app.tr("There is already a running instance of QJoyPad; please close\nthe old instance before starting a new one."));
+                    errorBox(app.translate("main","Instance Error"),
+                             app.translate("main","There is already a running instance of QJoyPad; please close\nthe old instance before starting a new one."));
                 else {
                     //if one of these is the case, send the approrpriate signal!
                     if (update) {
@@ -219,8 +219,8 @@ int main( int argc, char **argv )
             sleep(1);
             sleepCounter++;
             if (sleepCounter > 20) {
-                errorBox(app.tr("System tray isn't loading"),
-                         app.tr("Waited more than 20 seconds for the system tray to load. Giving up."));
+                errorBox(app.translate("main","System tray isn't loading"),
+                         app.translate("main","Waited more than 20 seconds for the system tray to load. Giving up."));
                 return 1;
             }
         }

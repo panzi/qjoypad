@@ -266,6 +266,10 @@ bool Axis::isDefault() {
            (nuseMouse == false) ;
 }
 
+QString Axis::getName() {
+    return tr("Axis %1").arg(index+1);
+}
+
 bool Axis::inDeadZone( int val ) {
     int value;
     if (throttle == 0)
