@@ -2,10 +2,8 @@
 
 
 ButtonWidget::ButtonWidget( Button* b, QWidget* parent )
-        : FlashButton(QString::null, QString::null, parent) {
-    button = b;
+        : FlashButton(QString::null, QString::null, parent), on(false), button(b) {
     update();
-    on = false;
 }
 
 void ButtonWidget::jsevent( int val ) {
@@ -17,7 +15,7 @@ void ButtonWidget::jsevent( int val ) {
 }
 
 void ButtonWidget::update() {
-    setText( button->status());
+    setText(button->status());
 }
 
 void ButtonWidget::mouseReleaseEvent( QMouseEvent* e ) {

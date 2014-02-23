@@ -43,13 +43,14 @@ class Axis : public QObject {
 		void toDefault();
 		//True iff currently at defaults
 		bool isDefault();
-		QString getName() { return QString("Axis %1").arg(index+1);}
+		QString getName() { return tr("Axis %1").arg(index+1);}
 		//true iff the given value is in the dead zone for this axis.
 		bool inDeadZone( int val );
 		//a descriptive string used as a label for the button representing this axis
 		QString status();
 		//set the key code for this axis. Used by quickset.
 		void setKey(bool positive, int value);
+		void setKey(bool useMouse, bool positive, int value);
 		//happens every MSEC milliseconds (constant.h)
 		//uses tick to decide if key events should be generated
 		void timerTick( int tick );

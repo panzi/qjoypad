@@ -15,19 +15,25 @@
 class GetKey : public QDialog {
 	Q_OBJECT
 	public:
-		GetKey( QString button, bool m = false );
+        GetKey(const QString& button, bool useMouse = false, QWidget *parent = 0);
+
+        static int getKey(const QString& button, bool useMouse, bool *choseMouse, QWidget *parent = 0);
+
+        int getValue() const { return value; }
+        bool choseMouse() const { return wasMouse; }
 	protected:
-		//to filter through every event this thing sees, before QT does.
+        //to filter through every event this thing sees, before Qt does.
 		bool x11Event( XEvent* e );
 		//to avoid focus issues, there is only the dialog widget, all the
 		//rest is painted on. So, I need to know when to repaint.
-		void paintEvent ( QPaintEvent * );
-		void closeEvent (QCloseEvent *);
+        void paintEvent (QPaintEvent *);
 	private:
 		//the dialog's message
         QString text;
 		//does this dialog accept mouse clicks?
-		bool mouse;
+        bool useMouse;
+        bool wasMouse;
+        int  value;
 };
 
 #endif

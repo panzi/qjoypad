@@ -127,7 +127,7 @@ void LayoutManager::udevUpdate() {
     struct udev_device *dev = udev_monitor_receive_device(monitor);
     if (dev) {
         QRegExp devicename("/js(\\d+)$");
-        QString path = QString("/sys%1").arg(udev_device_get_devpath(dev));
+        QString path = udev_device_get_devnode(dev);
         const char *action = udev_device_get_action(dev);
 
         if (devicename.indexIn(path) >= 0) {
@@ -515,10 +515,18 @@ void LayoutManager::updateJoyDevs() {
                     devices = udev_enumerate_get_list_entry(enumerate);
 
                     udev_list_entry_foreach(dev_list_entry, devices) {
-                        QString devpath = udev_list_entry_get_name(dev_list_entry);
-                        if (devicename.indexIn(devpath) >= 0) {
-                            int index = devicename.cap(1).toInt();
-                            addJoyPad(index, devpath);
+                        const char *path = udev_list_entry_get_name(dev_list_entry);
+                        struct udev_device *dev = udev_device_new_from_syspath(udev, path);
+
+                        if (dev) {
+                            QString devpath = udev_device_get_devnode(dev);
+
+                            if (devicename.indexIn(devpath) >= 0) {
+                                int index = devicename.cap(1).toInt();
+                                addJoyPad(index, devpath);
+                            }
+
+                            udev_device_unref(dev);
                         }
                     }
 

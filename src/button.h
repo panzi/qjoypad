@@ -29,7 +29,7 @@ class Button : public QObject {
 		//True iff is currently using default settings
 		bool isDefault();
 		//returns a string representation of this button.
-        QString getName() { return QString("Button %1").arg(index+1); }
+		QString getName() { return tr("Button %1").arg(index+1); }
 		//a descriptive string used as a label for the button representing this axis
 		QString status();
 		//set the key code for this axis. Used by quickset.

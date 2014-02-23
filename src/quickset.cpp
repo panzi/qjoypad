@@ -3,9 +3,7 @@
 
 //build the dialog
 QuickSet::QuickSet( JoyPad* jp, QWidget *parent)
-        : QDialog(parent) {
-    setting = false;
-    joypad = jp;
+        : QDialog(parent), joypad(jp), setting(false) {
     setWindowTitle(tr("Set %1").arg(jp->getName()));
     QVBoxLayout* LMain = new QVBoxLayout(this);
     LMain->setMargin(5);
@@ -29,19 +27,16 @@ void QuickSet::jsevent(const js_event &msg ) {
         //capture that button.
         Button* button = joypad->buttons[msg.number];
 
-        //go into setting mode and request a key/mousebutton
-        setting = true;
-        int code = GetKey(button->getName(), true).exec();
-        setting = false;
+        if (button) {
+            //go into setting mode and request a key/mousebutton
+            setting = true;
+            bool isMouse = false;
+            int code = GetKey::getKey(button->getName(), true, &isMouse, this);
+            setting = false;
 
-        //if a mouse button was used,
-        if (code > MOUSE_OFFSET) {
-            //then tell it to the Button a mouse button
-            button->setKey(true, code - MOUSE_OFFSET);
-        }
-        else {
-            //otherwise, tell it to use a keycode.
-            button->setKey(false, code);
+            if (code >= 0) {
+                button->setKey(isMouse, code);
+            }
         }
     }
     else if (type == JS_EVENT_AXIS) {
@@ -53,10 +48,13 @@ void QuickSet::jsevent(const js_event &msg ) {
 
         //grab a keycode for that axis and that direction
         setting = true;
-        int code = GetKey((msg.value >= 0 ? tr("%1, positive") : tr("%1, negative")).arg(axis->getName()), false).exec();
+        bool isMouse = false;
+        int code = GetKey::getKey((msg.value >= 0 ? tr("%1, positive") : tr("%1, negative")).arg(axis->getName()), true, &isMouse, this);
         setting = false;
 
         //assign the key to the axis.
-        axis->setKey((msg.value > 0),code);
+        if (code >= 0) {
+            axis->setKey(isMouse, (msg.value > 0), code);
+        }
     }
 }

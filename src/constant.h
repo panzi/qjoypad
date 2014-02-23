@@ -25,6 +25,4 @@
 #define SENSITIVITY_MIN	1e-8F
 #define SENSITIVITY_MAX	1e+8F
 
-#define MOUSE_OFFSET 400
-
 #endif

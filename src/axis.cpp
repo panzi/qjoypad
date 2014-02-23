@@ -278,35 +278,41 @@ bool Axis::inDeadZone( int val ) {
 }
 
 QString Axis::status() {
-    QString result = getName() + " : [";
+    QString label;
     if (mode == Keyboard) {
         if (throttle == 0) {
             if (puseMouse != nuseMouse) {
-                result += tr("KEYBOARD/MOUSE");
+                label = tr("KEYBOARD/MOUSE");
             }
             else if (puseMouse) {
-                result += tr("MOUSE");
+                label = tr("MOUSE");
             }
             else {
-                result += tr("KEYBOARD");
+                label = tr("KEYBOARD");
             }
         }
         else {
-            result += tr("THROTTLE");
+            label = tr("THROTTLE");
+        }
     }
+    else {
+        label = tr("MOUSE");
     }
-    else result += tr("MOUSE");
-    return result + "]";
+    return QString("%1 : [%2]").arg(getName(), label);
 }
 
 void Axis::setKey(bool positive, int value) {
+    setKey(false, positive, value);
+}
+
+void Axis::setKey(bool useMouse, bool positive, int value) {
     if (positive) {
         pkeycode = value;
-        puseMouse = false;
+        puseMouse = useMouse;
     }
     else {
         nkeycode = value;
-        nuseMouse = false;
+        nuseMouse = useMouse;
     }
 }
 
