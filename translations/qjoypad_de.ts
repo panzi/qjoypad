@@ -146,7 +146,7 @@
     <message>
         <location filename="../src/button_edit.cpp" line="26"/>
         <source>&amp;Rapid Fire</source>
-        <translation type="unfinished">Schnellfeue&amp;r</translation>
+        <translation type="unfinished">&amp;Schnellfeuer</translation>
     </message>
 </context>
 <context>

@@ -50,7 +50,7 @@ add_definitions(${QT_DEFINITIONS})
 # for config.h
 include_directories("${PROJECT_BINARY_DIR}/src")
 
-file(GLOB qjoypad_TRANS_SOURCES translations/qjoypad_*.ts)
+file(GLOB qjoypad_TRANS_SOURCES translations/qjoypad*.ts)
 
 if(UPDATE_TRANSLATIONS)
 	file(GLOB_RECURSE qjoypad_TRANS_FILES *.cpp *.h)
@@ -63,6 +63,7 @@ add_subdirectory(icons)
 add_subdirectory(src)
 
 add_custom_target(translations_target DEPENDS ${qjoypad_TRANS})
+add_dependencies(qjoypad translations_target)
 
 install(PROGRAMS qjoypad.desktop DESTINATION "share/applications")
 install(FILES ${qjoypad_TRANS} DESTINATION "share/qjoypad/translations")

@@ -10,6 +10,7 @@
 #include <QSystemTrayIcon>
 #include <QPointer>
 #include <QFileInfo>
+#include <QTranslator>
 
 //to load layouts
 #include "layout.h"
@@ -48,7 +49,15 @@ int main( int argc, char **argv )
     //create a new event loop. This will be captured by the QApplication
     //when it gets created
     QApplication app( argc, argv );
+    QTranslator translator;
     app.setQuitOnLastWindowClosed(false);
+
+    if (translator.load(QLocale::system(), "qjoypad", "_", QJOYPAD_L10N_DIR)) {
+        app.installTranslator(&translator);
+    }
+    else {
+        debug_mesg("no translation for locale: %s\n", qPrintable(QLocale::system().name()));
+    }
 
 
     //where QJoyPad saves its settings!
