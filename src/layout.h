@@ -54,13 +54,19 @@ class LayoutManager : public QObject {
 		
 		//save the current layout with its current name
 		void save();
+		void save(const QString& filename);
+		void save(QFile& file);
 		//save the current layout with a new name
 		void saveAs();
+		void exportLayout();
+		void importLayout();
 		//save the currently loaded layout so it can be recalled later
 		void saveDefault();
 
 		//get rid of a layout
 		void remove();
+		//rename current layout
+		void rename();
 		
 		//when the tray icon is clicked
 		void iconClick();

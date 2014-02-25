@@ -2,35 +2,80 @@
 #include "config.h"
 
 //build the dialog
-LayoutEdit::LayoutEdit( LayoutManager* l ): QWidget(NULL) {
-    lm = l;
+LayoutEdit::LayoutEdit( LayoutManager* l )
+    : QWidget(0),
+      lm(l),
+      mainLayout(0),
+      padStack(0),
+      joyButtons(0),
+      cmbLayouts(0),
+      btnAdd(0),
+      btnRem(0),
+      btnUpd(0),
+      btnRev(0),
+      btnExport(0),
+      btnImport(0),
+      btnRename(0) {
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle( QJOYPAD_NAME );
     setWindowIcon(QPixmap(QJOYPAD_ICON64));
 
-    mainLayout = new QVBoxLayout( this);
+    mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(5);
     mainLayout->setMargin(5);
 
     QFrame* frame = new QFrame(this);
-    frame->setFrameStyle(QFrame::Box | QFrame::Sunken );
+    frame->setFrameStyle(QFrame::Box | QFrame::Sunken);
     QGridLayout* g = new QGridLayout(frame);
     g->setMargin(5);
     g->setSpacing(5);
     cmbLayouts = new QComboBox(frame);
     connect(cmbLayouts, SIGNAL(activated(int)), this, SLOT(load(int)));
-    g->addWidget(cmbLayouts,0,0,1,4);
+
+    QHBoxLayout *layoutLayout = new QHBoxLayout(this);
 
     //most of these buttons can link directly into slots in the LayoutManager
-    btnAdd = new QPushButton(QIcon::fromTheme("list-add"), tr("&Add"), frame);
+    btnAdd = new QPushButton(frame);
+    btnAdd->setIcon(QIcon::fromTheme("list-add"));
+    btnAdd->setToolTip(tr("Add Layout"));
+    if (btnAdd->icon().isNull()) {
+        btnAdd->setText("+");
+    }
+    btnAdd->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(btnAdd, SIGNAL(clicked()), lm, SLOT(saveAs()));
-    g->addWidget(btnAdd,1,0);
-    btnRem = new QPushButton(QIcon::fromTheme("list-remove"), tr("&Remove"), frame);
+
+    btnRem = new QPushButton(frame);
+    btnRem->setIcon(QIcon::fromTheme("list-remove"));
+    if (btnRem->icon().isNull()) {
+        btnRem->setText("-");
+    }
+    btnRem->setToolTip(tr("Remove Layout"));
+    btnRem->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(btnRem, SIGNAL(clicked()), lm, SLOT(remove()));
-    g->addWidget(btnRem,1,1);
+
+    btnRename = new QPushButton(tr("&Rename"), frame);
+    btnRename->setToolTip(tr("Rename Layout"));
+    btnRename->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(btnRename, SIGNAL(clicked()), lm, SLOT(rename()));
+
+    layoutLayout->addWidget(cmbLayouts);
+    layoutLayout->addWidget(btnAdd);
+    layoutLayout->addWidget(btnRem);
+    layoutLayout->addWidget(btnRename);
+    mainLayout->addLayout(layoutLayout);
+
+    btnImport = new QPushButton(QIcon::fromTheme("document-open"), tr("&Import"), frame);
+    connect(btnImport, SIGNAL(clicked()), lm, SLOT(importLayout()));
+    g->addWidget(btnImport,1,0);
+
+    btnExport = new QPushButton(QIcon::fromTheme("document-save-as"), tr("E&xport"), frame);
+    connect(btnExport, SIGNAL(clicked()), lm, SLOT(exportLayout()));
+    g->addWidget(btnExport,1,1);
+
     btnUpd = new QPushButton(QIcon::fromTheme("document-save"), tr("&Save"), frame);
     connect(btnUpd, SIGNAL(clicked()), lm, SLOT(save()));
     g->addWidget(btnUpd,1,2);
+
     btnRev = new QPushButton(QIcon::fromTheme("document-revert"), tr("Re&vert"), frame);
     connect(btnRev, SIGNAL(clicked()), lm, SLOT(reload()));
     g->addWidget(btnRev,1,3);
@@ -70,7 +115,7 @@ LayoutEdit::LayoutEdit( LayoutManager* l ): QWidget(NULL) {
     updateLayoutList();
 
     //add the buttons at the bottom.
-    QHBoxLayout* h = new QHBoxLayout(0);
+    QHBoxLayout* h = new QHBoxLayout(this);
     h->setMargin(0);
     h->setSpacing(5);
     QPushButton* close = new QPushButton(QIcon::fromTheme("window-close"), tr("&Close Dialog"), this );
@@ -93,6 +138,10 @@ void LayoutEdit::setLayout(const QString &layout) {
             break;
         }
     }
+
+    bool hasLayout = !layout.isNull();
+    btnRem->setEnabled(hasLayout);
+    btnRename->setEnabled(hasLayout);
 
     //update all the JoyPadWidgets.
     for (int i = 0, n = lm->available.count(); i < n; i++) {

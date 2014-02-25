@@ -7,8 +7,8 @@
 
 //a nice simple way of throwing up an error message if something goes wrong.
 
-inline void errorBox(const QString &type, const QString &message, QWidget *parent = 0) {
-    QMessageBox::warning(parent, QString("%1 - %2").arg(QJOYPAD_DEVDIR, type),
+inline void errorBox(const QString &title, const QString &message, QWidget *parent = 0) {
+    QMessageBox::warning(parent, QString("%1 - %2").arg(title, QJOYPAD_NAME),
 		message, QMessageBox::Ok, Qt::NoButton);
 }
 

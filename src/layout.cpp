@@ -1,10 +1,13 @@
-#include "layout.h"
-#include "config.h"
-
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
+#include <QFileDialog>
+
+#include "layout.h"
+#include "config.h"
+
 
 //initialize things and set up an icon  :)
 LayoutManager::LayoutManager( bool useTrayIcon, const QString &devdir, const QString &settingsDir )
@@ -168,13 +171,13 @@ bool LayoutManager::load(const QString& name) {
 
     //if the file isn't available,
     if (!file.exists()) {
-        errorBox("Load error","Failed to find a layout named " + name);
+        errorBox(tr("Load error"), tr("Failed to find a layout named %1.").arg(name), le);
         return false;
     }
 
     //if the file isn't readable,
     if (!file.open(QIODevice::ReadOnly)) {
-        errorBox("Load error","Error reading from file " + file.fileName());
+        errorBox(tr("Load error"), tr("Error reading from file: %1").arg(file.fileName()), le);
         return false;
     }
 
@@ -205,7 +208,9 @@ bool LayoutManager::load(const QString& name) {
             num = word.toInt(&okay);
             //make sure the number of the joystick is valid
             if (!okay || num < 1) {
-                errorBox( tr("Load error"), tr("Error reading joystick definition. Unexpected token \"%1\". Expected a positive number.").arg(word));
+                errorBox(tr("Load error"),
+                         tr("Error reading joystick definition. Unexpected token \"%1\". Expected a positive number.").arg(word),
+                         le);
                 if (name != currentLayout) reload();
                 else clear();
                 return false;
@@ -213,7 +218,9 @@ bool LayoutManager::load(const QString& name) {
             stream.skipWhiteSpace();
             stream >> ch;
             if (ch != QChar('{')) {
-                errorBox( tr("Load error"), tr("Error reading joystick definition. Unexpected character \"%1\". Expected '{'.").arg(ch));
+                errorBox(tr("Load error"),
+                         tr("Error reading joystick definition. Unexpected character \"%1\". Expected '{'.").arg(ch),
+                         le);
                 if (name != currentLayout) reload();
                 else clear();
                 return false;
@@ -225,7 +232,7 @@ bool LayoutManager::load(const QString& name) {
             }
             //try to read the joypad, report error on fail.
             if (!joypads[index]->readConfig(stream)) {
-                errorBox( tr("Load error"), tr("Error reading definition for joystick %1.").arg(index));
+                errorBox(tr("Load error"), tr("Error reading definition for joystick %1.").arg(index), le);
                 //if this was attempting to change to a new layout and it failed,
                 //revert back to the old layout.
                 if (name != currentLayout) reload();
@@ -240,7 +247,9 @@ bool LayoutManager::load(const QString& name) {
             stream.readLine();
         }
         else {
-            errorBox(tr("Load error"), tr("Error reading joystick definition. Unexpected token \"%1\". Expected \"Joystick\".").arg(word));
+            errorBox(tr("Load error"),
+                     tr("Error reading joystick definition. Unexpected token \"%1\". Expected \"Joystick\".").arg(word),
+                     le);
             if (name != currentLayout) reload();
             else clear();
             return false;
@@ -288,12 +297,18 @@ void LayoutManager::clear() {
 void LayoutManager::save() {
     if (currentLayout.isNull()) {
         saveAs();
-        return;
     }
+    else {
+        save(getFileName(currentLayout));
+    }
+}
 
-    //get a filename
-    QString filename = getFileName( currentLayout );
+void LayoutManager::save(const QString &filename) {
     QFile file(filename);
+    save(file);
+}
+
+void LayoutManager::save(QFile &file) {
     //if it's good, start writing the file
     if (file.open(QIODevice::WriteOnly)) {
         QTextStream stream( &file );
@@ -305,25 +320,32 @@ void LayoutManager::save() {
     }
     //if it's not, error.
     else {
-        errorBox(tr("Save error"), tr("Could not open file %1, layout not saved.").arg(filename));
+        errorBox(tr("Save error"), tr("Could not open file %1, layout not saved.").arg(file.fileName()), le);
     }
 }
 
-
 void LayoutManager::saveAs() {
-    bool ok;
+    bool ok = false;
     //request a new name!
     QString name = QInputDialog::getText(le,
-                                         tr("%1 - Name new layout").arg(QJOYPAD_NAME),
+                                         tr("Name new layout - %1").arg(QJOYPAD_NAME),
                                          tr("Enter a name for the new layout:"),
-                                         QLineEdit::Normal, QString::null, &ok );
+                                         QLineEdit::Normal, QString::null, &ok);
     if (!ok) {
         return;
     }
-    QFile file(settingsDir + name + ".lyt");
+    else if (name.isEmpty()) {
+        errorBox(tr("Save error"), tr("Layout name cannot be empty."), le);
+        return;
+    }
+    else if (name.contains('/')) {
+        errorBox(tr("Save error"), tr("Layout name may not contain a '/' (slash)."), le);
+        return;
+    }
+    QFile file(getFileName(name));
     //don't overwrite an existing layout.
     if (file.exists()) {
-        errorBox(tr("Save error"), tr("That name's already taken!"));
+        errorBox(tr("Save error"), tr("That name's already taken!"), le);
         return;
     }
 
@@ -331,12 +353,73 @@ void LayoutManager::saveAs() {
     setLayoutName(name);
 
     //since we have a new name for this layout now, we can save it normally  :)
-    save();
+    save(file);
 
     //add the new name to our lists
     fillPopup();
     if (le) {
         le->updateLayoutList();
+    }
+}
+
+void LayoutManager::importLayout() {
+    QFileDialog dialog(le);
+    dialog.setWindowTitle(tr("Import layout - %1").arg(QJOYPAD_NAME));
+    dialog.setFileMode(QFileDialog::ExistingFile);
+    dialog.setAcceptMode(QFileDialog::AcceptOpen);
+    QStringList filters;
+    filters.append(tr("QJoyPad layout files (*.lyt)"));
+    filters.append(tr("Any files (*)"));
+    dialog.setNameFilters(filters);
+    dialog.setDefaultSuffix("lyt");
+    if (dialog.exec() && !dialog.selectedFiles().isEmpty()) {
+        QString sourceFile = dialog.selectedFiles()[0];
+        QFileInfo info(sourceFile);
+        QString layoutName = info.baseName();
+
+        if (layoutName.endsWith(".lyt",Qt::CaseInsensitive)) {
+           layoutName.truncate(layoutName.size() - 4);
+        }
+
+        QString filename = getFileName(layoutName);
+
+        if (info == QFileInfo(filename)) {
+            errorBox(tr("Import error"), tr("Cannot import file from QJoyPad settings directory."));
+            return;
+        }
+
+        if (QFile::exists(filename)) {
+            if (QMessageBox::warning(le,
+                                     QString("%1 - %2").arg(tr("Layout exists"), QJOYPAD_NAME),
+                                     tr("Layout %1 exists. Do you want to overwrite it?"),
+                                     tr("Over&write"), tr("&Cancel"), QString::null, 0, 1) == 1) {
+                return;
+            }
+            QFile::remove(filename);
+        }
+        QFile::copy(sourceFile, filename);
+
+        fillPopup();
+        if (le) {
+            le->updateLayoutList();
+        }
+
+        load(layoutName);
+    }
+}
+
+void LayoutManager::exportLayout() {
+    QFileDialog dialog(le);
+    dialog.setWindowTitle(tr("Export layout - %1").arg(QJOYPAD_NAME));
+    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+    QStringList filters;
+    filters.append(tr("QJoyPad layout files (*.lyt)"));
+    filters.append(tr("Any files (*)"));
+    dialog.setNameFilters(filters);
+    dialog.setDefaultSuffix("lyt");
+    if (dialog.exec() && !dialog.selectedFiles().isEmpty()) {
+        save(dialog.selectedFiles()[0]);
     }
 }
 
@@ -350,12 +433,13 @@ void LayoutManager::saveDefault() {
 
 void LayoutManager::remove() {
     if (currentLayout.isNull()) return;
-    if (QMessageBox::warning(le, tr("%1 - Delete layout?").arg(QJOYPAD_NAME),
-        tr("Remove layout %1 permanently from your hard drive?").arg(currentLayout), tr("Delete"), tr("Cancel"), 0, 0, 1 ) == 1)
+    if (QMessageBox::warning(le, tr("Delete layout? - %1").arg(QJOYPAD_NAME),
+        tr("Remove layout %1 permanently from your hard drive?").arg(currentLayout), tr("&Delete"), tr("&Cancel"), QString::null, 0, 1 ) == 1) {
         return;
+    }
     QString filename = getFileName( currentLayout );
     if (!QFile(filename).remove()) {
-        errorBox(tr("Remove error"), tr("Could not remove file %1").arg(filename));
+        errorBox(tr("Remove error"), tr("Could not remove file %1").arg(filename), le);
     }
     fillPopup();
 
@@ -363,6 +447,45 @@ void LayoutManager::remove() {
         le->updateLayoutList();
     }
     clear();
+}
+
+void LayoutManager::rename() {
+    if (currentLayout.isNull()) return;
+    bool ok = false;
+    QString name = QInputDialog::getText(le,
+                                         tr("Rename layout - %1").arg(QJOYPAD_NAME),
+                                         tr("Enter a new name for the layout:"),
+                                         QLineEdit::Normal, currentLayout, &ok);
+    if (!ok) {
+        return;
+    }
+    else if (name.isEmpty()) {
+        errorBox(tr("Rename error"), tr("Layout name cannot be empty."), le);
+        return;
+    }
+    else if (name.contains('/')) {
+        errorBox(tr("Rename error"), tr("Layout name may not contain a '/' (slash)."), le);
+        return;
+    }
+
+    QString filename = getFileName(name);
+
+    if (QFile::exists(filename)) {
+        errorBox(tr("Rename error"), tr("Layout with name %1 already exists.").arg(name), le);
+        return;
+    }
+
+    if (!QFile::rename(getFileName(currentLayout), filename)) {
+        errorBox(tr("Rename error"), tr("Error renaming layout."), le);
+        return;
+    }
+
+    fillPopup();
+    if (le) {
+        le->updateLayoutList();
+    }
+
+    load(name);
 }
 
 QStringList LayoutManager::getLayoutNames() const {
@@ -397,7 +520,8 @@ void LayoutManager::iconClick() {
     //don't show the dialog if there aren't any joystick devices plugged in
     if (available.isEmpty()) {
         errorBox(tr("No joystick devices available"),
-                 tr("No joystick devices are currently available to configure.\nPlease plug in a gaming device and select\n\"Update Joystick Devices\" from the popup menu."));
+                 tr("No joystick devices are currently available to configure.\nPlease plug in a gaming device and select\n\"Update Joystick Devices\" from the popup menu."),
+                 le);
         return;
     }
     if (le) {

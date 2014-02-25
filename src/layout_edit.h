@@ -36,7 +36,7 @@ class LayoutEdit : public QWidget {
         QStackedWidget *padStack;
         FlashRadioArray *joyButtons;
         QComboBox* cmbLayouts;
-        QPushButton	*btnAdd, *btnRem, *btnUpd, *btnRev;
+        QPushButton *btnAdd, *btnRem, *btnUpd, *btnRev, *btnExport, *btnImport, *btnRename;
 };
 
 #endif
