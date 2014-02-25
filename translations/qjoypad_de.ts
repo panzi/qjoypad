@@ -245,37 +245,57 @@
 <context>
     <name>LayoutEdit</name>
     <message>
-        <location filename="../src/layout_edit.cpp" line="25"/>
-        <source>&amp;Add</source>
-        <translation type="unfinished">&amp;Hinzufügen</translation>
+        <location filename="../src/layout_edit.cpp" line="40"/>
+        <source>Add Layout</source>
+        <translation type="unfinished">Belegung Hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/layout_edit.cpp" line="28"/>
-        <source>&amp;Remove</source>
-        <translation type="unfinished">&amp;Entfernen</translation>
+        <location filename="../src/layout_edit.cpp" line="52"/>
+        <source>Remove Layout</source>
+        <translation type="unfinished">Belegung Entfernen</translation>
     </message>
     <message>
-        <location filename="../src/layout_edit.cpp" line="31"/>
+        <location filename="../src/layout_edit.cpp" line="56"/>
+        <source>&amp;Rename</source>
+        <translation type="unfinished">&amp;Umbenennen</translation>
+    </message>
+    <message>
+        <location filename="../src/layout_edit.cpp" line="57"/>
+        <source>Rename Layout</source>
+        <translation type="unfinished">Belegung Umbenennen</translation>
+    </message>
+    <message>
+        <location filename="../src/layout_edit.cpp" line="67"/>
+        <source>&amp;Import</source>
+        <translation type="unfinished">&amp;Importieren</translation>
+    </message>
+    <message>
+        <location filename="../src/layout_edit.cpp" line="71"/>
+        <source>E&amp;xport</source>
+        <translation type="unfinished">E&amp;xportieren</translation>
+    </message>
+    <message>
+        <location filename="../src/layout_edit.cpp" line="75"/>
         <source>&amp;Save</source>
         <translation type="unfinished">&amp;Speichern</translation>
     </message>
     <message>
-        <location filename="../src/layout_edit.cpp" line="34"/>
+        <location filename="../src/layout_edit.cpp" line="79"/>
         <source>Re&amp;vert</source>
         <translation type="unfinished">&amp;Zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../src/layout_edit.cpp" line="76"/>
+        <location filename="../src/layout_edit.cpp" line="121"/>
         <source>&amp;Close Dialog</source>
         <translation type="unfinished">&amp;Fenster Schließen</translation>
     </message>
     <message>
-        <location filename="../src/layout_edit.cpp" line="79"/>
+        <location filename="../src/layout_edit.cpp" line="124"/>
         <source>&amp;Quit</source>
         <translation type="unfinished">&amp;Beenden</translation>
     </message>
     <message>
-        <location filename="../src/layout_edit.cpp" line="106"/>
+        <location filename="../src/layout_edit.cpp" line="155"/>
         <source>[NO LAYOUT]</source>
         <translation type="unfinished">[KEINE BELEGUNG]</translation>
     </message>
@@ -283,121 +303,223 @@
 <context>
     <name>LayoutManager</name>
     <message>
-        <location filename="../src/layout.cpp" line="14"/>
+        <location filename="../src/layout.cpp" line="17"/>
         <source>Update &amp;Joystick Devices</source>
         <translation type="unfinished">&amp;Joysticks Aktualisieren</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="15"/>
+        <location filename="../src/layout.cpp" line="18"/>
         <source>Update &amp;Layout List</source>
         <translation type="unfinished">Be&amp;legungsliste Aktualisieren</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="16"/>
+        <location filename="../src/layout.cpp" line="19"/>
         <source>&amp;Quit</source>
         <translation type="unfinished">&amp;Beenden</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="25"/>
+        <location filename="../src/layout.cpp" line="28"/>
         <source>UDev Error</source>
         <translation type="unfinished">UDev Fehler</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="25"/>
+        <location filename="../src/layout.cpp" line="28"/>
         <source>Error creating UDev monitor. QJoyPad will still work, but it won&apos;t automatically update the joypad device list.</source>
         <translation type="unfinished">Fehler beim Erzeugen des UDev Monitors. QJoypad wird dennoch funktionieren, aber es wird nicht automatisch die Joypad-Liste aktualisieren.</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="208"/>
-        <location filename="../src/layout.cpp" line="216"/>
-        <location filename="../src/layout.cpp" line="228"/>
-        <location filename="../src/layout.cpp" line="243"/>
+        <location filename="../src/layout.cpp" line="174"/>
+        <location filename="../src/layout.cpp" line="180"/>
+        <location filename="../src/layout.cpp" line="211"/>
+        <location filename="../src/layout.cpp" line="221"/>
+        <location filename="../src/layout.cpp" line="235"/>
+        <location filename="../src/layout.cpp" line="250"/>
         <source>Load error</source>
         <translation type="unfinished">Lade-Fehler</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="208"/>
+        <location filename="../src/layout.cpp" line="174"/>
+        <source>Failed to find a layout named %1.</source>
+        <translation type="unfinished">Belegung mit Namen %1 wurde nicht gefunden.</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="180"/>
+        <source>Error reading from file: %1</source>
+        <translation type="unfinished">Fehler beim lesen der Datei: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="212"/>
         <source>Error reading joystick definition. Unexpected token &quot;%1&quot;. Expected a positive number.</source>
         <translation type="unfinished">Fehler beim Lesen der Joystick-Definition. Unerwartets Token &quot;%1&quot;. Eine positive Zahl wurde erwartet.</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="216"/>
+        <location filename="../src/layout.cpp" line="222"/>
         <source>Error reading joystick definition. Unexpected character &quot;%1&quot;. Expected &apos;{&apos;.</source>
         <translation type="unfinished">Fehler beim Lesen der Joystick-Definition. Unerwartets Zeichen &quot;%1&quot;. &apos;{&apos; wurde erwartet.</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="228"/>
+        <location filename="../src/layout.cpp" line="235"/>
         <source>Error reading definition for joystick %1.</source>
         <translation type="unfinished">Fehler beim Lesen der Definition von Joystick %1.</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="243"/>
+        <location filename="../src/layout.cpp" line="251"/>
         <source>Error reading joystick definition. Unexpected token &quot;%1&quot;. Expected &quot;Joystick&quot;.</source>
         <translation type="unfinished">Fehler beim Lesen der Joystick-Definition. Unerwartetes Token &quot;%1&quot;. &quot;Joystick&quot; wurde erwertet.</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="308"/>
-        <location filename="../src/layout.cpp" line="326"/>
+        <location filename="../src/layout.cpp" line="323"/>
+        <location filename="../src/layout.cpp" line="338"/>
+        <location filename="../src/layout.cpp" line="342"/>
+        <location filename="../src/layout.cpp" line="348"/>
         <source>Save error</source>
         <translation type="unfinished">Fehler beim Speichern</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="308"/>
+        <location filename="../src/layout.cpp" line="323"/>
         <source>Could not open file %1, layout not saved.</source>
         <translation type="unfinished">Konnte Datei %1 nicht öffnen, Belegung wurde nicht gespeichert.</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="317"/>
-        <source>%1 - Name new layout</source>
-        <translation type="unfinished">%1 - Benenne die neue Belegung</translation>
+        <location filename="../src/layout.cpp" line="331"/>
+        <source>Name new layout - %1</source>
+        <translation type="unfinished">Neue Belegung benennen - %1</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="318"/>
+        <location filename="../src/layout.cpp" line="367"/>
+        <source>Import layout - %1</source>
+        <translation type="unfinished">Belegung Importieren - %1</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="371"/>
+        <location filename="../src/layout.cpp" line="417"/>
+        <source>QJoyPad layout files (*.lyt)</source>
+        <translation type="unfinished">QJoyPad Belegung-Dateien (*.lyt)</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="372"/>
+        <location filename="../src/layout.cpp" line="418"/>
+        <source>Any files (*)</source>
+        <translation type="unfinished">Alle Dateien (*)</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="387"/>
+        <source>Import error</source>
+        <translation type="unfinished">Fehler beim Importieren</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="387"/>
+        <source>Cannot import file from QJoyPad settings directory.</source>
+        <translation type="unfinished">Kann Datei aus dem QJoyPad Einstellungsverzeichnis nicht importieren.</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="393"/>
+        <source>Layout exists</source>
+        <translation type="unfinished">Belegung existiert</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="394"/>
+        <source>Layout %1 exists. Do you want to overwrite it?</source>
+        <translation type="unfinished">Belegung %1 existiert. Wollen Sie sie überschreiben?</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="395"/>
+        <source>Over&amp;write</source>
+        <translation type="unfinished">Über&amp;schreiben</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="395"/>
+        <location filename="../src/layout.cpp" line="437"/>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished">&amp;Abbrechen</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="413"/>
+        <source>Export layout - %1</source>
+        <translation type="unfinished">Belegung Exportieren - %1</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="436"/>
+        <source>Delete layout? - %1</source>
+        <translation type="unfinished">Belegung löschen? - %1</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="437"/>
+        <source>&amp;Delete</source>
+        <translation type="unfinished">&amp;Löschen</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="332"/>
         <source>Enter a name for the new layout:</source>
         <translation type="unfinished">Name der neuen Belegung eingeben:</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="326"/>
+        <location filename="../src/layout.cpp" line="338"/>
+        <location filename="../src/layout.cpp" line="463"/>
+        <source>Layout name cannot be empty.</source>
+        <translation type="unfinished">Belegungsname kann nicht leer sein.</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="342"/>
+        <location filename="../src/layout.cpp" line="467"/>
+        <source>Layout name may not contain a &apos;/&apos; (slash).</source>
+        <translation type="unfinished">Belegungsname kann keinen &apos;/&apos; (Schrägstrich) enthalten.</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="348"/>
         <source>That name&apos;s already taken!</source>
         <translation type="unfinished">Dieser Name ist bereits belegt!</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="353"/>
-        <source>%1 - Delete layout?</source>
-        <translation type="unfinished">%1 - Belegung löschen?</translation>
-    </message>
-    <message>
-        <location filename="../src/layout.cpp" line="354"/>
+        <location filename="../src/layout.cpp" line="437"/>
         <source>Remove layout %1 permanently from your hard drive?</source>
         <translation type="unfinished">Belegung %1 permanent von ihrer Festplatte löschen?</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="354"/>
-        <source>Delete</source>
-        <translation type="unfinished">Entfernen</translation>
-    </message>
-    <message>
-        <location filename="../src/layout.cpp" line="354"/>
-        <source>Cancel</source>
-        <translation type="unfinished">Abbrechen</translation>
-    </message>
-    <message>
-        <location filename="../src/layout.cpp" line="358"/>
+        <location filename="../src/layout.cpp" line="442"/>
         <source>Remove error</source>
         <translation type="unfinished">Fehler beim Entfernen</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="358"/>
+        <location filename="../src/layout.cpp" line="442"/>
         <source>Could not remove file %1</source>
         <translation type="unfinished">Konnte Datei %1 nicht entfernen</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="399"/>
+        <location filename="../src/layout.cpp" line="456"/>
+        <source>Rename layout - %1</source>
+        <translation type="unfinished">Belegung umbenennen - %1</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="457"/>
+        <source>Enter a new name for the layout:</source>
+        <translation type="unfinished">Geben Sie einen neuen Belegungsnamen ein:</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="463"/>
+        <location filename="../src/layout.cpp" line="467"/>
+        <location filename="../src/layout.cpp" line="474"/>
+        <location filename="../src/layout.cpp" line="479"/>
+        <source>Rename error</source>
+        <translation type="unfinished">Umbenennungsfehler</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="474"/>
+        <source>Layout with name %1 already exists.</source>
+        <translation type="unfinished">Belegung mit dem Namen %1 existiert bereits.</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="479"/>
+        <source>Error renaming layout.</source>
+        <translation type="unfinished">Fehler beim Umbenennen einer Belegung.</translation>
+    </message>
+    <message>
+        <location filename="../src/layout.cpp" line="522"/>
         <source>No joystick devices available</source>
         <translation type="unfinished">Keine Joysticks verfügbar</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="400"/>
+        <location filename="../src/layout.cpp" line="523"/>
         <source>No joystick devices are currently available to configure.
 Please plug in a gaming device and select
 &quot;Update Joystick Devices&quot; from the popup menu.</source>
@@ -406,17 +528,17 @@ Bitte schließen Sie ein entsprechendes Gerät an und
 wählen Sie &quot;Joysticks Aktualisieren&quot; im Popup-Menü.</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="438"/>
+        <location filename="../src/layout.cpp" line="562"/>
         <source>Joysticks: (none)</source>
         <translation type="unfinished">Joystocks: (keine)</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="445"/>
+        <location filename="../src/layout.cpp" line="569"/>
         <source>Joysticks: %1</source>
         <translation type="unfinished">Joysticks: %1</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="459"/>
+        <location filename="../src/layout.cpp" line="583"/>
         <source>[NO LAYOUT]</source>
         <translation type="unfinished">[KEINE BELEGUNG]</translation>
     </message>
@@ -454,17 +576,17 @@ Sie werden nach einer Taste gefragt werden.</translation>
 <context>
     <name>main</name>
     <message>
-        <location filename="../src/main.cpp" line="65"/>
+        <location filename="../src/main.cpp" line="74"/>
         <source>Couldn&apos;t create the QJoyPad save directory</source>
         <translation type="unfinished">Konnte das QJoyPad Seicher-Verzeichnis nicht anlegen</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="66"/>
+        <location filename="../src/main.cpp" line="75"/>
         <source>Couldn&apos;t create the QJoyPad save directory: %s</source>
         <translation type="unfinished">Konnte das QJoyPad Seicher-Verzeichnis nicht anlegen: %s</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="97"/>
+        <location filename="../src/main.cpp" line="106"/>
         <source>%1
 Usage: %2 [--device=&quot;/device/path&quot;] [--notray|--force-tray] [&quot;layout name&quot;]
 
@@ -502,17 +624,17 @@ Optionen:
 </translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="120"/>
+        <location filename="../src/main.cpp" line="129"/>
         <source>Not a directory</source>
         <translation type="unfinished">Kein Verzeichnis</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="121"/>
+        <location filename="../src/main.cpp" line="130"/>
         <source>Path is not a directory: %1</source>
         <translation type="unfinished">Pfad ist kein Verzeichnis: %1</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="140"/>
+        <location filename="../src/main.cpp" line="149"/>
         <source>Illeagal argument.
 See `%1 --help` for more information
 </source>
@@ -521,7 +643,7 @@ Siehe `%1 --help` für mehr Information
 </translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="151"/>
+        <location filename="../src/main.cpp" line="160"/>
         <source>Too many arguments.
 See `%1 --help` for more information
 </source>
@@ -530,24 +652,24 @@ Siehe `%1 --help` für mehr Information
 </translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="193"/>
+        <location filename="../src/main.cpp" line="202"/>
         <source>Instance Error</source>
         <translation type="unfinished">Instanzierungs-Fehler</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="194"/>
+        <location filename="../src/main.cpp" line="203"/>
         <source>There is already a running instance of QJoyPad; please close
 the old instance before starting a new one.</source>
         <translation type="unfinished">Es löuft bereits eine Instanz von QJoyPad; bitte schließen
 sie die alte Instanz bevor sie eine neue öffnen.</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="222"/>
+        <location filename="../src/main.cpp" line="231"/>
         <source>System tray isn&apos;t loading</source>
         <translation type="unfinished">Systemablage startet nicht</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="223"/>
+        <location filename="../src/main.cpp" line="232"/>
         <source>Waited more than 20 seconds for the system tray to load. Giving up.</source>
         <translation type="unfinished">Es wurde mehr als 20 Sekunden auf die Systemablage gewartet. Gebe auf.</translation>
     </message>
