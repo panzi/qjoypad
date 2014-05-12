@@ -46,8 +46,8 @@ bool GetKey::x11Event( XEvent* e )
         wasMouse = false;
         if (XKeycodeToKeysym(QX11Info::display(),e->xkey.keycode,0) == XK_x) {
             if (e->xkey.state & ControlMask) {
-                value = -1;
-                reject();
+                value = 0;
+                accept();
             }
             else {
                 value = e->xkey.keycode;
