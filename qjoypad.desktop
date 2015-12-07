@@ -2,10 +2,12 @@
 Name=QJoyPad
 GenericName=Joypad to Keyboard/Mouse Mapper
 GenericName[de]=Joypad zu Tastatur/Maus Mapper
+GenericName[fr]=Contrôle du clavier/souris avec un joystick
 Exec=qjoypad
 Icon=qjoypad
 Type=Application
 Terminal=false
-Categories=Qt;Games;
+Categories=Qt;Game;
 Comment=Maps joypad button and stick events to keyboard and mouse events.
 Comment[de]=Bildet Joypad Knopf und Stick Ereignisse auf Tastatur und Maus Ereignisse ab.
+Comment[fr]=Associe les boutons et sticks directionnels d'un joystick à des événements de clavier et de souris.
