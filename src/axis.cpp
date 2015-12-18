@@ -156,7 +156,7 @@ void Axis::timerCalled() {
 }
 
 void Axis::write( QTextStream &stream ) {
-    stream << "\t" << getName() << ": ";
+    stream << "\tAxis " << (index+1) << ": ";
     if (gradient) stream << "gradient, ";
     if (throttle > 0) stream << "throttle+, ";
     else if (throttle < 0) stream << "throttle-, ";
