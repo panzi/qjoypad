@@ -528,16 +528,6 @@ Bitte schließen Sie ein entsprechendes Gerät an und
 wählen Sie &quot;Joysticks Aktualisieren&quot; im Popup-Menü.</translation>
     </message>
     <message>
-        <location filename="../src/layout.cpp" line="562"/>
-        <source>Joysticks: (none)</source>
-        <translation type="unfinished">Joystocks: (keine)</translation>
-    </message>
-    <message>
-        <location filename="../src/layout.cpp" line="569"/>
-        <source>Joysticks: %1</source>
-        <translation type="unfinished">Joysticks: %1</translation>
-    </message>
-    <message>
         <location filename="../src/layout.cpp" line="583"/>
         <source>[NO LAYOUT]</source>
         <translation type="unfinished">[KEINE BELEGUNG]</translation>
