@@ -195,10 +195,14 @@ void JoyPad::write( QTextStream &stream ) {
     if (!axes.empty() || !buttons.empty()) {
         stream << "Joystick " << (index+1) << " {\n";
         foreach (Axis *axis, axes) {
-            axis->write(stream);
+            if (!axis->isDefault()) {
+                axis->write(stream);
+            }
         }
         foreach (Button *button, buttons) {
-            button->write(stream);
+            if (!button->isDefault()) {
+                button->write(stream);
+            }
         }
         stream << "}\n\n";
     }
