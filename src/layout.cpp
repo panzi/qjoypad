@@ -13,7 +13,6 @@
 LayoutManager::LayoutManager( bool useTrayIcon, const QString &devdir, const QString &settingsDir )
     : devdir(devdir), settingsDir(settingsDir),
       layoutGroup(new QActionGroup(this)),
-      titleAction(new QAction(this)),
       updateDevicesAction(new QAction(QIcon::fromTheme("view-refresh"),tr("Update &Joystick Devices"),this)),
       updateLayoutsAction(new QAction(QIcon::fromTheme("view-refresh"),tr("Update &Layout List"),this)),
       quitAction(new QAction(QIcon::fromTheme("application-exit"),tr("&Quit"),this)),
@@ -31,7 +30,6 @@ LayoutManager::LayoutManager( bool useTrayIcon, const QString &devdir, const QSt
 #endif
 
     //prepare the popup first.
-    titleAction->setEnabled(false);
     fillPopup();
 
     //make a tray icon
@@ -555,24 +553,6 @@ void LayoutManager::layoutTriggered() {
 void LayoutManager::fillPopup() {
     //start with an empty slate
     trayMenu.clear();
-
-    //make a list of joystick devices
-    QString title;
-    if (available.isEmpty()) {
-        title = tr("Joysticks: (none)");
-    }
-    else {
-        QStringList pads;
-        foreach (JoyPad *joypad, available) {
-            pads.append(QString::number(joypad->getIndex() + 1));
-        }
-        title = tr("Joysticks: %1").arg(pads.join(" "));
-    }
-
-    trayMenu.setTitle(title);
-    titleAction->setText(title);
-    trayMenu.addAction(titleAction);
-    trayMenu.addSeparator();
 
     //add in the Update options
     trayMenu.addAction(updateLayoutsAction);

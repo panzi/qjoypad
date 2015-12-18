@@ -95,7 +95,6 @@ class LayoutManager : public QObject {
         QMenu trayMenu;
         //known actions for the popup menu
         QActionGroup *layoutGroup;
-        QAction *titleAction;
         QAction *updateDevicesAction;
         QAction *updateLayoutsAction;
         QAction *quitAction;
