@@ -4,7 +4,7 @@ project(qjoypad)
 
 set(QJOYPAD_MAJOR 4)
 set(QJOYPAD_MINOR 2)
-set(QJOYPAD_PATCH 0)
+set(QJOYPAD_PATCH 1)
 
 find_package(Qt4 REQUIRED)
 
