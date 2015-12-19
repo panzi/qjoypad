@@ -548,7 +548,7 @@ and press a few buttons on the controller. If you get a bunch
 of crazy characters, it's working. If not, you'll have to
 fiddle around with kernel drivers, and should probably look
 elsewhere for guidance. Or you can install the jstest command
-line tool and use `jstest /dev/input/js0`, wich will give you
+line tool and use `jstest /dev/input/js0`, which will give you
 a much nicer output.
 
 If for some reason QJoyPad is reporting the wrong number of
