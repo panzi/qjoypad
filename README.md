@@ -97,7 +97,7 @@ purpose.
   [joystick.txt](https://www.kernel.org/doc/Documentation/input/joystick.txt) and
   [joystick-parport.txt](https://www.kernel.org/doc/Documentation/input/joystick-parport.txt))
 - [XWindows](http://x.org/)
-- [Qt 4](http://qt-project.org/)
+- [Qt 5](http://qt-project.org/)
 - [libudev](http://www.freedesktop.org/software/systemd/libudev/) (optional)
 
 
@@ -782,7 +782,7 @@ for the code that started Nathan Gaylinn off.
 The development team for Psi, the Jabber client, also get a
 lot of thanks for writing the tray icon code that I borrowed
 and tweaked. (Note from Mathias Panzenböck: I guess this is
-about the tray icon code before Qt 4. Qt 4 has nice support
+about the tray icon code before Qt 4. Qt 4 and newer has nice support
 for the tray.) Thank you for developing GPL and for helping
 other developers! (Check out the [Psi Website](http://psi.affinix.com/))
 
