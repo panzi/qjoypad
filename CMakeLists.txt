@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.8)
+cmake_minimum_required(VERSION 2.8.11)
 
 project(qjoypad)
 
@@ -6,7 +6,9 @@ set(QJOYPAD_MAJOR 4)
 set(QJOYPAD_MINOR 2)
 set(QJOYPAD_PATCH 1)
 
-find_package(Qt4 REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5LinguistTools REQUIRED)
+find_package(Qt5X11Extras REQUIRED)
 
 option(WITH_LIBUDEV "Use libudev for automatically updating joypad devices." ON)
 
@@ -44,9 +46,6 @@ endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 
-include(${QT_USE_FILE})
-add_definitions(${QT_DEFINITIONS})
-
 # for config.h
 include_directories("${PROJECT_BINARY_DIR}/src")
 
@@ -54,9 +53,9 @@ file(GLOB qjoypad_TRANS_SOURCES translations/qjoypad*.ts)
 
 if(UPDATE_TRANSLATIONS)
 	file(GLOB_RECURSE qjoypad_TRANS_FILES *.cpp *.h)
-	qt4_create_translation(qjoypad_TRANS ${qjoypad_TRANS_SOURCES} ${qjoypad_TRANS_FILES})
+        qt5_create_translation(qjoypad_TRANS ${qjoypad_TRANS_SOURCES} ${qjoypad_TRANS_FILES})
 else()
-	qt4_add_translation(qjoypad_TRANS ${qjoypad_TRANS_SOURCES})
+        qt5_add_translation(qjoypad_TRANS ${qjoypad_TRANS_SOURCES})
 endif()
 
 add_subdirectory(icons)

@@ -7,7 +7,12 @@
 #include <QIcon>
 #include <QCloseEvent>
 #include "constant.h"
+
 #include <X11/Xlib.h>
+// undefined Xlib macros that collide with Qt types
+#undef Bool
+#undef Unsorted
+
 //The KeySym for "x"
 #define XK_x 0x078
 
