@@ -11,7 +11,6 @@ set(qjoypad_SOURCES
 	buttonw.cpp
 	event.cpp
 	flash.cpp
-	getkey.cpp
 	icon.cpp
 	joypad.cpp
 	joypadw.cpp
@@ -31,7 +30,6 @@ set(qjoypad_QOBJECT_HEADERS
 	button.h
 	buttonw.h
 	flash.h
-	getkey.h
 	icon.h
 	joypad.h
 	joypadw.h
