@@ -1,5 +1,5 @@
 #include "quickset.h"
-#include "getkey.h"
+#include "keydialog.hpp"
 
 //build the dialog
 QuickSet::QuickSet( JoyPad* jp, QWidget *parent)
@@ -31,7 +31,7 @@ void QuickSet::jsevent(const js_event &msg ) {
             //go into setting mode and request a key/mousebutton
             setting = true;
             bool isMouse = false;
-            int code = GetKey::getKey(button->getName(), true, &isMouse, this);
+            int code = KeyDialog::getKey(button->getName(), true, &isMouse, this);
             setting = false;
 
             if (code >= 0) {
@@ -49,7 +49,7 @@ void QuickSet::jsevent(const js_event &msg ) {
         //grab a keycode for that axis and that direction
         setting = true;
         bool isMouse = false;
-        int code = GetKey::getKey((msg.value >= 0 ? tr("%1, positive") : tr("%1, negative")).arg(axis->getName()), true, &isMouse, this);
+        int code = KeyDialog::getKey((msg.value >= 0 ? tr("%1, positive") : tr("%1, negative")).arg(axis->getName()), true, &isMouse, this);
         setting = false;
 
         //assign the key to the axis.
