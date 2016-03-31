@@ -17,6 +17,7 @@ set(qjoypad_SOURCES
 	joypadw.cpp
 	joyslider.cpp
 	keycode.cpp
+	keydialog.cpp
 	layout.cpp
 	layout_edit.cpp
 	main.cpp
@@ -36,6 +37,7 @@ set(qjoypad_QOBJECT_HEADERS
 	joypadw.h
 	joyslider.h
 	keycode.h
+	keydialog.hpp
 	layout_edit.h
 	layout.h
 	quickset.h)
