@@ -63,12 +63,20 @@ void KeyDialog::keyPressEvent( QKeyEvent* event ) {
     accept();
 }
 
+static quint32 qtMouseButtonToXButton( Qt::MouseButton button ) {
+    switch ( button ) {
+        case Qt::LeftButton: return 1;
+        case Qt::MiddleButton: return 2;
+        case Qt::RightButton: return 3;
+        default: return 0;
+    }
+}
+
 void KeyDialog::mouseReleaseEvent( QMouseEvent* event ) {
     if ( !m_acceptMouse ) {
         return;
     }
-    // TODO: correct Qt::MouseButton to XTst equivalent
-    m_value = event->button();
+    m_value = qtMouseButtonToXButton( event->button() );
     m_isMouse = true;
     accept();
 }
