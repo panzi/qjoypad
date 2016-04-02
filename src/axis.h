@@ -57,13 +57,14 @@ class Axis : public QObject {
 		//recalculates the gradient curve. This should be run every time
 		//maxSpeed, xZone, or dZone are changed.
 		void adjustGradient();
+        int axisIndex() const { return index; }
 	protected:
         int tick;
         //This axis is logically depressed (positive or negative)
 		//if the axis is gradient, this is true even if it is not
 		//currently generating a keypress at the instant.
 		bool isOn;
-		//which joystick this actually is
+        //the index of this axis on the joystick
 		int index;
 		//actually sends key events. Press is true iff the key
 		//is to be depressed as opposed to released.

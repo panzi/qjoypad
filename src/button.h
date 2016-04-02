@@ -36,6 +36,7 @@ class Button : public QObject {
 		void setKey(bool mouse, int value);
 		//happens every MSEC (constant.h) milliseconds
 		void timerTick( int tick );
+        int buttonIndex() const { return index; }
 	protected:
 		//true iff this button is physically depressed.
 		bool isButtonPressed;

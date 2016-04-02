@@ -86,11 +86,11 @@ void JoyPad::open(int dev) {
     //have a real joystick axis mapped to it, and this function suddenly brings
     //that axis into use, the key assignment will not be lost because the axis
     //will already exist and no new axis will be created.
-    for (int i = 0; i < axisCount; i++) {
-        if (axes[i] == 0) axes.insert(i, new Axis( i, this ));
+    for (int i = axes.size(); i < axisCount; i++) {
+        axes.append(new Axis( i, this ));
     }
-    for (int i = 0; i < buttonCount; i++) {
-        if (buttons[i] == 0) buttons.insert(i, new Button( i, this ));
+    for (int i = buttons.size(); i < buttonCount; i++) {
+        buttons.append(new Button( i, this ));
     }
     debug_mesg("Setting up joyDeviceListeners\n");
     readNotifier = new QSocketNotifier(joydev, QSocketNotifier::Read, this);
@@ -235,14 +235,14 @@ void JoyPad::jsevent(const js_event &msg) {
     if (type == JS_EVENT_AXIS) {
         debug_mesg("DEBUG: passing on an axis event\n");
         debug_mesg("DEBUG: %d %d\n", msg.number, msg.value);
-        Axis *axis = axes[msg.number];
-        if (axis) axis->jsevent(msg.value);
+        if (msg.number < axes.size()) axes[msg.number]->jsevent(msg.value);
+        else debug_mesg("DEBUG: axis index out of range: %d\n", msg.value);
     }
     else if (type == JS_EVENT_BUTTON) {
         debug_mesg("DEBUG: passing on a button event\n");
         debug_mesg("DEBUG: %d %d\n", msg.number, msg.value);
-        Button *button = buttons[msg.number];
-        if (button) button->jsevent(msg.value);
+        if (msg.number < buttons.size()) buttons[msg.number]->jsevent(msg.value);
+        else debug_mesg("DEBUG: button index out of range: %d\n", msg.value);
     }
 }
 

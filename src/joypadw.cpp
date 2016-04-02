@@ -91,10 +91,12 @@ void JoyPadWidget::jsevent( const js_event& msg ) {
     //other than a flash  :)
     unsigned int type = msg.type & ~JS_EVENT_INIT;
     if (type == JS_EVENT_AXIS) {
-        if (msg.number < axes.count()) axes[msg.number]->jsevent(msg.value);
+        if (msg.number < axes.size()) axes[msg.number]->jsevent(msg.value);
+        else debug_mesg("DEBUG: axis index out of range: %d\n", msg.value);
     }
     else if (type == JS_EVENT_BUTTON) {
-        if (msg.number < buttons.count()) buttons[msg.number]->jsevent(msg.value);
+        if (msg.number < buttons.size()) buttons[msg.number]->jsevent(msg.value);
+        else debug_mesg("DEBUG: button index out of range: %d\n", msg.value);
     }
     //if we're doing quickset, it needs to know when we do something.
     if (quickset != NULL) {

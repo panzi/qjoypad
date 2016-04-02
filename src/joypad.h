@@ -12,7 +12,7 @@
 #include "error.h"
 
 #include <QTextStream>
-#include <QHash>
+#include <QList>
 #include <QSocketNotifier>
 
 class JoyPadWidget;
@@ -63,8 +63,8 @@ class JoyPad : public QObject {
 		//layouts with different numbers of axes/buttons than the current
 		//devices. Note that with the current layout settings, the defined
 		//buttons that don't actually exist on the device may not be contiguous.
-        QHash<int, Axis*> axes;
-        QHash<int, Button*> buttons;
+        QList<Axis*> axes;
+        QList<Button*> buttons;
 		//the index of this device (devicenum)
 		int index;
 		

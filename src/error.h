@@ -23,6 +23,6 @@ inline void debug_mesg(const char *fmt, ...) {
 }
 #else
 inline void debug_mesg(...) {}
-#define debug_mesg(...)
+#define debug_mesg(...) {}
 #endif
 #endif
