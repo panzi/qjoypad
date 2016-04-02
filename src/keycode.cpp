@@ -1,6 +1,7 @@
 #include <QX11Info>
 #include "keycode.h"
-#include "getkey.h"
+#include "keydialog.hpp"
+#include <X11/XKBlib.h>
 
 const QString ktos( int keycode )
 {
@@ -8,7 +9,7 @@ const QString ktos( int keycode )
 
     if (keycode == 0) return "[NO KEY]";
 
-    QString xname = XKeysymToString(XKeycodeToKeysym(QX11Info::display(), keycode,0));
+    QString xname = XKeysymToString( XkbKeycodeToKeysym( QX11Info::display(), keycode, 0, 0 ) );
 
 //this section of code converts standard X11 keynames into much nicer names
 //which are prettier, fit the dialogs better, and are more readily understandable.
@@ -90,7 +91,7 @@ KeyButton::KeyButton( QString name, int val, QWidget* parent, bool m, bool nowMo
 
 void KeyButton::onClick() {
     //when clicked, ask for a key!
-    int retValue = GetKey::getKey(buttonname, mouse, &mouseClicked, this->window());
+    int retValue = KeyDialog::getKey(buttonname, mouse, &mouseClicked, this->window());
     // -1 is a special value meaning that the window was simply
     // closed so we can ignore this
     if (retValue < 0) {

@@ -11,12 +11,12 @@ set(qjoypad_SOURCES
 	buttonw.cpp
 	event.cpp
 	flash.cpp
-	getkey.cpp
 	icon.cpp
 	joypad.cpp
 	joypadw.cpp
 	joyslider.cpp
 	keycode.cpp
+	keydialog.cpp
 	layout.cpp
 	layout_edit.cpp
 	main.cpp
@@ -30,12 +30,12 @@ set(qjoypad_QOBJECT_HEADERS
 	button.h
 	buttonw.h
 	flash.h
-	getkey.h
 	icon.h
 	joypad.h
 	joypadw.h
 	joyslider.h
 	keycode.h
+	keydialog.hpp
 	layout_edit.h
 	layout.h
 	quickset.h)
