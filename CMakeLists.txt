@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 2.8.11)
 project(qjoypad)
 
 set(QJOYPAD_MAJOR 4)
-set(QJOYPAD_MINOR 2)
-set(QJOYPAD_PATCH 1)
+set(QJOYPAD_MINOR 3)
+set(QJOYPAD_PATCH 0)
 
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5LinguistTools REQUIRED)
