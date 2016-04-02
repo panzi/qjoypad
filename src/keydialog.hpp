@@ -20,6 +20,7 @@ protected:
     void keyPressEvent( QKeyEvent* );
     void keyReleaseEvent( QKeyEvent* );
     void mouseReleaseEvent( QMouseEvent* );
+    void wheelEvent( QWheelEvent *event );
 
 public:
     static int getKey( const QString& button, bool acceptMouse = false, bool* mousePressed = 0, QWidget* parent = 0 );

@@ -80,3 +80,36 @@ void KeyDialog::mouseReleaseEvent( QMouseEvent* event ) {
     m_isMouse = true;
     accept();
 }
+
+void KeyDialog::wheelEvent( QWheelEvent *event ) {
+    if ( !m_acceptMouse ) {
+        return;
+    }
+
+    const QPoint delta = event->angleDelta();
+    const int x = delta.x();
+    const int y = delta.y();
+
+    if (y != 0) {
+        if (y < 0) {
+            m_value = 4;
+        }
+        else {
+            m_value = 5;
+        }
+    }
+    else if (x != 0) {
+        if (x < 0) {
+            m_value = 6;
+        }
+        else {
+            m_value = 7;
+        }
+    }
+    else {
+        return;
+    }
+
+    m_isMouse = true;
+    accept();
+}
