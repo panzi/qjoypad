@@ -2,8 +2,8 @@ QJoyPad 4
 =========
 
 This is a fork of [QJoyPad](http://qjoypad.sourceforge.net/) with some small additional
-features and some bug/memory leak fixes. QJoyPad was originally developed by Nathan Gaylinn
-<wren42@users.sourceforge.net> and John Toman <virtuoussin13@users.sourceforge.net>.
+features, Qt 5 port and some bug/memory leak fixes. QJoyPad was originally developed by
+Nathan Gaylinn <wren42@users.sourceforge.net> and John Toman <virtuoussin13@users.sourceforge.net>.
 This fork is maintained by Mathias Panzenböck <grosser.meister.morti@gmx.net>.
 
 ![Screenshot](http://i.imgur.com/Cuql4Mr.png)
