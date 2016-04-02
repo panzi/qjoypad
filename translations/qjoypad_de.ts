@@ -650,7 +650,7 @@ Siehe `%1 --help` für mehr Information
         <location filename="../src/main.cpp" line="203"/>
         <source>There is already a running instance of QJoyPad; please close
 the old instance before starting a new one.</source>
-        <translation type="unfinished">Es löuft bereits eine Instanz von QJoyPad; bitte schließen
+        <translation type="unfinished">Es läuft bereits eine Instanz von QJoyPad; bitte schließen
 sie die alte Instanz bevor sie eine neue öffnen.</translation>
     </message>
     <message>
