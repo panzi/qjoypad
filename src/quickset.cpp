@@ -25,9 +25,8 @@ void QuickSet::jsevent(const js_event &msg ) {
     unsigned int type = msg.type & ~JS_EVENT_INIT;
     if (type == JS_EVENT_BUTTON) {
         //capture that button.
-        Button* button = joypad->buttons[msg.number];
-
-        if (button) {
+        if (msg.number < joypad->buttons.size()) {
+            Button* button = joypad->buttons[msg.number];
             //go into setting mode and request a key/mousebutton
             setting = true;
             bool isMouse = false;
@@ -44,17 +43,19 @@ void QuickSet::jsevent(const js_event &msg ) {
         if (abs(msg.value) < 5000) return;
 
         //capture the axis that moved
-        Axis* axis = joypad->axes[msg.number];
+        if (msg.number < joypad->axes.size()) {
+            Axis* axis = joypad->axes[msg.number];
 
-        //grab a keycode for that axis and that direction
-        setting = true;
-        bool isMouse = false;
-        int code = KeyDialog::getKey((msg.value >= 0 ? tr("%1, positive") : tr("%1, negative")).arg(axis->getName()), true, &isMouse, this);
-        setting = false;
+            //grab a keycode for that axis and that direction
+            setting = true;
+            bool isMouse = false;
+            int code = KeyDialog::getKey((msg.value >= 0 ? tr("%1, positive") : tr("%1, negative")).arg(axis->getName()), true, &isMouse, this);
+            setting = false;
 
-        //assign the key to the axis.
-        if (code >= 0) {
-            axis->setKey(isMouse, (msg.value > 0), code);
+            //assign the key to the axis.
+            if (code >= 0) {
+                axis->setKey(isMouse, (msg.value > 0), code);
+            }
         }
     }
 }

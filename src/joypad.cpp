@@ -152,8 +152,8 @@ bool JoyPad::readConfig( QTextStream &stream ) {
                     errorBox(tr("Layout file error"), tr("Expected ':', found '%1'.").arg(ch));
                     return false;
                 }
-                if (buttons[num-1] == 0) {
-                    buttons.insert(num-1,new Button(num-1,this));
+                for (int i = buttons.size(); i < num; ++ i) {
+                    buttons.append(new Button(i, this));
                 }
                 if (!buttons[num-1]->read( stream )) {
                     errorBox(tr("Layout file error"), tr("Error reading Button %1").arg(num));
@@ -172,8 +172,8 @@ bool JoyPad::readConfig( QTextStream &stream ) {
                     errorBox(tr("Layout file error"), tr("Expected ':', found '%1'.").arg(ch));
                     return false;
                 }
-                if (axes[num-1] == 0) {
-                    axes.insert(num-1,new Axis(num-1,this));
+                for (int i = axes.size(); i < num; ++ i) {
+                    axes.append(new Axis(i, this));
                 }
                 if (!axes[num-1]->read(stream)) {
                     errorBox(tr("Layout file error"), tr("Error reading Axis %1").arg(num));
