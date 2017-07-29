@@ -649,7 +649,7 @@ interface or many of the fancier features, but which doesn't
 have that limitation. Another alternative is
 [Jojsticken](http://jojsticken.sourceforge.net/). (See the
 links section there to find even more alternatives.)
-Finally there is [AntiMicro](http://ryochan7.com/projects/antimicro/),
+Finally there is [AntiMicro](https://github.com/AntiMicro/antimicro),
 which seems to have even more features and supported platforms
 than QJoyPad.
 
