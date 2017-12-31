@@ -32,8 +32,6 @@ LayoutEdit::LayoutEdit( LayoutManager* l )
     cmbLayouts = new QComboBox(frame);
     connect(cmbLayouts, SIGNAL(activated(int)), this, SLOT(load(int)));
 
-    QHBoxLayout *layoutLayout = new QHBoxLayout();
-
     //most of these buttons can link directly into slots in the LayoutManager
     btnAdd = new QPushButton(frame);
     btnAdd->setIcon(QIcon::fromTheme("list-add"));
@@ -58,6 +56,7 @@ LayoutEdit::LayoutEdit( LayoutManager* l )
     btnRename->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(btnRename, SIGNAL(clicked()), lm, SLOT(rename()));
 
+    QHBoxLayout *layoutLayout = new QHBoxLayout();
     layoutLayout->addWidget(cmbLayouts);
     layoutLayout->addWidget(btnAdd);
     layoutLayout->addWidget(btnRem);
@@ -118,18 +117,22 @@ LayoutEdit::LayoutEdit( LayoutManager* l )
     updateLayoutList();
 
     //add the buttons at the bottom.
+    QPushButton* close = new QPushButton(QIcon::fromTheme("window-close"), tr("&Close Dialog"), this );
+    connect(close, SIGNAL(clicked()), this, SLOT(close()));
+
+    QPushButton* quit = new QPushButton(QIcon::fromTheme("application-exit"), tr("&Quit"), this );
+    connect( quit, SIGNAL( clicked() ), qApp, SLOT(quit()));
+
     QHBoxLayout* h = new QHBoxLayout();
     h->setMargin(0);
     h->setSpacing(5);
-    QPushButton* close = new QPushButton(QIcon::fromTheme("window-close"), tr("&Close Dialog"), this );
-    connect(close, SIGNAL(clicked()), this, SLOT(close()));
     h->addWidget(close);
-    QPushButton* quit = new QPushButton(QIcon::fromTheme("application-exit"), tr("&Quit"), this );
-    connect( quit, SIGNAL( clicked() ), qApp, SLOT(quit()));
     h->addWidget(quit);
     mainLayout->addLayout(h);
+
     connect(qApp, SIGNAL(focusChanged ( QWidget * , QWidget *  ) ), this, 
         SLOT(appFocusChanged(QWidget *, QWidget *)));
+
     this->show();
 }
 
