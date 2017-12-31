@@ -32,7 +32,7 @@ LayoutEdit::LayoutEdit( LayoutManager* l )
     cmbLayouts = new QComboBox(frame);
     connect(cmbLayouts, SIGNAL(activated(int)), this, SLOT(load(int)));
 
-    QHBoxLayout *layoutLayout = new QHBoxLayout(this);
+    QHBoxLayout *layoutLayout = new QHBoxLayout();
 
     //most of these buttons can link directly into slots in the LayoutManager
     btnAdd = new QPushButton(frame);
@@ -118,7 +118,7 @@ LayoutEdit::LayoutEdit( LayoutManager* l )
     updateLayoutList();
 
     //add the buttons at the bottom.
-    QHBoxLayout* h = new QHBoxLayout(this);
+    QHBoxLayout* h = new QHBoxLayout();
     h->setMargin(0);
     h->setSpacing(5);
     QPushButton* close = new QPushButton(QIcon::fromTheme("window-close"), tr("&Close Dialog"), this );
