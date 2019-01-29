@@ -17,7 +17,7 @@
 #define JOYMIN -32767
 
 //maximum number of defined keys
-#define MAXKEY 123
+#define MAXKEY 255
 
 //fastest the mouse can go. Completely arbitrary.
 #define MAXMOUSESPEED 5000
