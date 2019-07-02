@@ -54,7 +54,7 @@ LayoutManager::LayoutManager( bool useTrayIcon, const QString &devdir, const QSt
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 
     //no layout loaded at start.
-    setLayoutName(QString::null);
+    setLayoutName(QString());
 }
 
 LayoutManager::~LayoutManager() {
@@ -289,7 +289,7 @@ void LayoutManager::clear() {
         joypad->toDefault();
     }
     //and call our layout NL
-    setLayoutName(QString::null);
+    setLayoutName(QString());
 }
 
 void LayoutManager::save() {
@@ -328,7 +328,7 @@ void LayoutManager::saveAs() {
     QString name = QInputDialog::getText(le,
                                          tr("Name new layout - %1").arg(QJOYPAD_NAME),
                                          tr("Enter a name for the new layout:"),
-                                         QLineEdit::Normal, QString::null, &ok);
+                                         QLineEdit::Normal, QString(), &ok);
     if (!ok) {
         return;
     }
@@ -390,7 +390,7 @@ void LayoutManager::importLayout() {
             if (QMessageBox::warning(le,
                                      QString("%1 - %2").arg(tr("Layout exists"), QJOYPAD_NAME),
                                      tr("Layout %1 exists. Do you want to overwrite it?"),
-                                     tr("Over&write"), tr("&Cancel"), QString::null, 0, 1) == 1) {
+                                     tr("Over&write"), tr("&Cancel"), QString(), 0, 1) == 1) {
                 return;
             }
             QFile::remove(filename);
@@ -432,7 +432,7 @@ void LayoutManager::saveDefault() {
 void LayoutManager::remove() {
     if (currentLayout.isNull()) return;
     if (QMessageBox::warning(le, tr("Delete layout? - %1").arg(QJOYPAD_NAME),
-        tr("Remove layout %1 permanently from your hard drive?").arg(currentLayout), tr("&Delete"), tr("&Cancel"), QString::null, 0, 1 ) == 1) {
+        tr("Remove layout %1 permanently from your hard drive?").arg(currentLayout), tr("&Delete"), tr("&Cancel"), QString(), 0, 1 ) == 1) {
         return;
     }
     QString filename = getFileName( currentLayout );

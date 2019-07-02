@@ -51,7 +51,7 @@ FlashRadioArray::FlashRadioArray( const QStringList &names, bool horizontal, QWi
         mainLayout->setSpacing(5);
     }
     foreach (const QString &name, names) {
-        FlashButton *button = new FlashButton( name, QString::null, this );
+        FlashButton *button = new FlashButton( name, QString(), this );
         buttons.append(button);
         //when any of the buttons is clicked, it calls the same function on this.
         connect( button, SIGNAL( clicked() ), this, SLOT( clicked() ));

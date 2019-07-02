@@ -2,7 +2,7 @@
 
 
 AxisWidget::AxisWidget( Axis* a, QWidget* parent )
-        : FlashButton(QString::null, QString::null, parent) {
+        : FlashButton(QString(), QString(), parent) {
     axis = a;
     ae = NULL;
     update();

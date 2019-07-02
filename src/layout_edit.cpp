@@ -158,7 +158,7 @@ void LayoutEdit::setLayout(const QString &layout) {
 void LayoutEdit::updateLayoutList() {
     //blank the list, then load in new names from the LayoutManager.
     cmbLayouts->clear();
-    cmbLayouts->addItem(tr("[NO LAYOUT]"), QVariant(QString::null));
+    cmbLayouts->addItem(tr("[NO LAYOUT]"), QVariant(QString()));
     if (lm->currentLayout.isNull()) {
         cmbLayouts->setCurrentIndex(0);
     }

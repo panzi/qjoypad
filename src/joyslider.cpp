@@ -102,8 +102,8 @@ void JoySlider::drawBox( int x, int width ) {
     //widget but is defined by x-coordinate and width
     QPainter paint( this );
 
-    paint.setPen( (isEnabled())?Qt::white:palette().background().color() );
-    paint.setBrush( (isEnabled())?Qt::white:palette().background() );
+    paint.setPen( (isEnabled())?Qt::white:palette().window().color() );
+    paint.setBrush( (isEnabled())?Qt::white:palette().window() );
     paint.drawRect( x, 1, width, boxheight);
 
     paint.setPen( palette().dark().color() );
