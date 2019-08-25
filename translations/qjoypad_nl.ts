@@ -599,7 +599,7 @@ Gebruik: %2 [--device=&quot;/Apparaat/Pad&quot;] [--notray|--force-tray] [&quot;
 
 Opties:
   -h, --help            Toont deze hulptekst.
-  -d, --device=PAD     Zoek naar joysticks in het opgegeven pad. Dit moet zoiets als
+  -d, --device=PAD      Zoek naar joysticks in het opgegeven pad. Dit moet zoiets als
                         &quot;/dev/input&quot; zijn als je joysticks in
                         /dev/input/js0, /dev/input/js1 staan.
   -t, --force-tray      Systeemvakpictogram afdwingen.
@@ -607,7 +607,7 @@ Opties:
                         als je vensterbeheerder hier geen ondersteuning voor heeft.
   -u, --update          Werk de apparaatlijst -en indeling bij van een actief
                         QJoyPad-proces.
-  indelingsnaam&quot;       Laad de opgegeven indeling in een actief
+  &quot;indelingsnaam&quot;         Laad de opgegeven indeling in een actief
                         QJoyPad-proces of start QJoyPad met de opgegeven
                         indeling.
 </translation>
