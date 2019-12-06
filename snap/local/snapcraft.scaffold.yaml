@@ -1,0 +1,151 @@
+title: @@TITLE@@
+name: @@NAME@@ # you probably want to 'snapcraft register <name>'
+base: core18 # the base snap is the execution environment for this snap
+summary: Joypad to Keyboard/Mouse Mapper # 79 char summary
+description: |
+  QJoyPad is a convenient little program with a Qt interface that converts
+  movement and button presses on a gamepad or joystick into key presses, mouse
+  clicks, and mouse movement in XWindows. It should work on almost every Linux
+  system and with any Linux-supported gaming device.
+
+confinement: strict
+grade: @@GRADE@@ # must be 'stable' to release into candidate/stable channels
+icon: icons/gamepad4-64x64.png
+license: GPL-2.0
+version: @@VERSION@@ # just for humans, typically '1.2+git' or '1.3.2'
+
+architectures:
+- build-on: [amd64]
+  run-on: [amd64]
+
+plugs:
+  # Support for common GTK themes
+  # https://forum.snapcraft.io/t/how-to-use-the-system-gtk-theme-via-the-gtk-common-themes-snap/6235
+  gsettings:
+  gtk-3-themes:
+    interface: content
+    target: $SNAP/data-dir/themes
+    default-provider: gtk-common-themes
+  icon-themes:
+    interface: content
+    target: $SNAP/data-dir/icons
+    default-provider: gtk-common-themes
+  sound-themes:
+    interface: content
+    target: $SNAP/data-dir/sounds
+    default-provider: gtk-common-themes
+
+# HACK: `layout` is needed because QJoyPad uses absolute paths internally that
+# are determined at build/compile time and are tied to installation prefix
+# (`CMAKE_INSTALL_PREFIX`). It would be best if the app no longer uses absolute
+# paths and `layout` is not needed anymore:sweat_smile:.
+layout:
+  /usr/share/icons/hicolor/24x24/apps:
+    bind: $SNAP/usr/share/icons/hicolor/24x24/apps
+  /usr/share/icons/hicolor/64x64/apps:
+    bind: $SNAP/usr/share/icons/hicolor/64x64/apps
+  /usr/share/qjoypad/translations:
+    bind: $SNAP/usr/share/qjoypad/translations
+
+apps:
+  @@NAME@@:
+    adapter: full
+    command: usr/bin/qjoypad
+    command-chain: [bin/desktop-launch]
+    desktop: usr/share/applications/qjoypad.desktop
+    environment:
+      # Use GTK3 cursor theme, icon theme and open/save file dialogs.
+      QT_QPA_PLATFORMTHEME: gtk3
+    plugs:
+    - desktop
+    - joystick
+    - opengl
+    - unity7
+
+parts:
+  qjoypad:
+    after: [desktop-qt5]
+    plugin: nil # See 'snapcraft plugins'
+    source: .
+    build-packages:
+    - cmake
+    - g++
+    - pkg-config
+    - libqt5x11extras5-dev
+    - libudev-dev
+    - libxtst-dev
+    - qttools5-dev
+    build-environment:
+    - ICON_RELATIVE_PATH: share/icons/hicolor/64x64/apps/qjoypad.png
+    - RUNTIME_INSTALL_PREFIX: /usr
+    override-build: |
+      BUILD_INSTALL_PREFIX=$SNAPCRAFT_PART_INSTALL$RUNTIME_INSTALL_PREFIX
+      RUNTIME_ICON_PATH=$RUNTIME_INSTALL_PREFIX/$ICON_RELATIVE_PATH
+
+      sed \
+        --in-place \
+        "s#Name=.*#Name=@@TITLE@@#" \
+        qjoypad.desktop
+
+      sed \
+        --in-place \
+        "s#Exec=.*#Exec=@@NAME@@#" \
+        qjoypad.desktop
+
+      sed \
+        --in-place \
+        "s#Icon=.*#Icon=$RUNTIME_ICON_PATH#" \
+        qjoypad.desktop
+
+      sed \
+        --in-place \
+        "s#@CMAKE_INSTALL_PREFIX@#$RUNTIME_INSTALL_PREFIX#g" \
+        src/config.h.in
+
+      mkdir --parents build
+      rm --recursive --force build/*
+      cd build
+
+      cmake \
+        .. \
+        -DCMAKE_INSTALL_PREFIX=$BUILD_INSTALL_PREFIX \
+        -DCMAKE_BUILD_TYPE=Release
+
+      make --jobs `nproc`
+      make install
+
+      snapcraftctl build
+    stage-packages:
+    - libqt5x11extras5
+    - libxtst6
+  # NOTE: `desktop-qt5` is copied from
+  # https://github.com/ubuntu/snapcraft-desktop-helpers/blob/4c0ff0ae186e3e7791c5878e87b4115b89e9de15/snapcraft.yaml#L242
+  # as instructed by https://forum.snapcraft.io/t/desktop-app-support-qt5/11703
+  desktop-qt5:
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-subdir: qt
+    plugin: make
+    make-parameters: ["FLAVOR=qt5"]
+    build-packages:
+    - build-essential
+    - qtbase5-dev
+    - dpkg-dev
+    stage-packages:
+    - libxkbcommon0
+    - ttf-ubuntu-font-family
+    - dmz-cursor-theme
+    - light-themes
+    - adwaita-icon-theme
+    - gnome-themes-standard
+    - shared-mime-info
+    - libqt5gui5
+    - libgdk-pixbuf2.0-0
+    - libqt5svg5 # for loading icon themes which are svg
+    - try: [appmenu-qt5] # not available on core18
+    - locales-all
+    - xdg-user-dirs
+    - fcitx-frontend-qt5
+  qt5-gtk-platform:
+    after: [desktop-qt5]
+    plugin: nil
+    stage-packages: [qt5-gtk-platformtheme]
