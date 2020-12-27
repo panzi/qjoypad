@@ -414,7 +414,7 @@ void Axis::move( bool press ) {
  		//if not gradient, always go full speed.
  		else dist = maxSpeed;
  
- 		e.type = FakeEvent::MouseMove;
+ 		e.type = absolute ? FakeEvent::MouseMoveAbsolute : FakeEvent::MouseMove;
  		if (mode == MousePosVert) {
  			e.move.x = 0;
  			e.move.y = dist;

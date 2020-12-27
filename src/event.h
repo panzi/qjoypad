@@ -8,7 +8,7 @@
 struct FakeEvent {
     //types of events QJoyPad can create.
     //KeyRelease, KeyPress, ButtonRelease, ButtonPress, and MouseMove
-    enum EventType {KeyUp, KeyDown, MouseUp, MouseDown, MouseMove};
+    enum EventType {KeyUp, KeyDown, MouseUp, MouseDown, MouseMove, MouseMoveAbsolute};
 
     EventType type;
     union {

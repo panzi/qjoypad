@@ -23,9 +23,12 @@ AxisEdit::AxisEdit( Axis* ax )
     QVBoxLayout* v2 = new QVBoxLayout();
     v2->setMargin(5);
     v2->setSpacing(5);
-    chkGradient = new QCheckBox(tr("&Gradient"), this);
-    chkGradient->setChecked(axis->gradient);
-    connect(chkGradient, SIGNAL(toggled(bool)), this, SLOT( gradientChanged( bool )));
+    chkGradient = new QComboBox(this);
+    chkGradient->insertItem((int) Axis::ZeroOne, tr("Use 0 or max always"), Qt::DisplayRole);
+    chkGradient->insertItem((int) Axis::Gradient, tr("Relative movement (previously gradient)"), Qt::DisplayRole);
+    chkGradient->insertItem((int) Axis::Absolute, tr("Absolute movement (direct position)"), Qt::DisplayRole);
+    chkGradient->setCurrentIndex( axis->interpretation );
+    connect(chkGradient, SIGNAL(activated(int)), this, SLOT( gradientChanged( int )));
     v2->addWidget(chkGradient);
 
     cmbMode = new QComboBox(this);
@@ -103,6 +106,7 @@ AxisEdit::AxisEdit( Axis* ax )
     connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
     v->addWidget(buttonBox);
 
+    gradientChanged( axis->interpretation );
     modeChanged( axis->mode );
     transferCurveChanged( axis->transferCurve );
     throttleChanged( axis->throttle + 1 );
@@ -116,9 +120,10 @@ void AxisEdit::show() {
 void AxisEdit::setState( int val ) {
     slider->setValue( val );
 }
-void AxisEdit::gradientChanged( bool on ) {
-    cmbTransferCurve->setEnabled(on);
-	if (on) {
+void AxisEdit::gradientChanged( int index ) {
+    bool gradient = index != Axis::ZeroOne;
+    cmbTransferCurve->setEnabled(gradient);
+	if (gradient) {
         transferCurveChanged( axis->transferCurve );
 	}
 	else {
@@ -135,7 +140,7 @@ void AxisEdit::modeChanged( int index ) {
     else {
         mouseBox->setEnabled(true);
         keyBox->setEnabled(false);
-        if (chkGradient->isChecked()) {
+        if ((Axis::Interpretation)chkGradient->currentIndex() != Axis::ZeroOne) {
             cmbTransferCurve->setEnabled(true);
             transferCurveChanged( axis->transferCurve );
 		}
@@ -172,7 +177,9 @@ void AxisEdit::throttleChanged( int index ) {
 }
 
 void AxisEdit::accept() {
-    axis->gradient = chkGradient->isChecked();
+    axis->interpretation = (Axis::Interpretation)chkGradient->currentIndex(); 
+    axis->gradient = axis->interpretation != Axis::ZeroOne;
+    axis->absolute = axis->interpretation == Axis::Absolute;
     axis->maxSpeed = spinSpeed->value();
     axis->transferCurve = (Axis::TransferCurve)cmbTransferCurve->currentIndex();
     axis->sensitivity = spinSensitivity->value();
