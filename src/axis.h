@@ -22,7 +22,7 @@ class Axis : public QObject {
     Q_OBJECT
 
     //each axis can create a key press or move the mouse in one of four directions.
-    enum Interpretation { ZeroOne, Gradient, Absolute };
+    enum Interpretation { ZeroOne, Gradient, Absolute, Absolute2 = Absolute };
     enum Mode {Keyboard, MousePosVert, MouseNegVert, MousePosHor, MouseNegHor};
     enum TransferCurve {Linear, Quadratic, Cubic, QuadraticExtreme,
                         PowerFunction};

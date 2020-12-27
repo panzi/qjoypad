@@ -13,7 +13,9 @@ Axis::Axis( int i, QObject *parent ) : QObject(parent) {
     isOn = false;
     isDown = false;
     state = 0;
+    interpretation = ZeroOne;
     gradient = false;
+    absolute = false;
     toDefault();
     tick = 0;
 }
@@ -117,8 +119,20 @@ bool Axis::read( QTextStream &stream ) {
             else return false;
         }
         //the rest of the options are keywords without integers
-        else if (*it == "gradient") {
+        else if (*it == "zeroone") {
+	    interpretation = ZeroOne;
+            gradient = false;
+            absolute = false;
+	}
+        else if (*it == "absolute") {
+	    interpretation = Absolute2; // to avoid name collision with a #define Absolute
             gradient = true;
+            absolute = true;
+	}
+        else if (*it == "gradient") {
+            interpretation = Gradient;
+            gradient = true;
+            absolute = false;
         }
         else if (*it == "throttle+") {
             throttle = 1;
@@ -157,7 +171,8 @@ void Axis::timerCalled() {
 
 void Axis::write( QTextStream &stream ) {
     stream << "\tAxis " << (index+1) << ": ";
-    if (gradient) stream << "gradient, ";
+    stream << ((interpretation == ZeroOne)?"ZeroOne":
+               (interpretation == Gradient)?"Gradient":"Absolute") << ", ";
     if (throttle > 0) stream << "throttle+, ";
     else if (throttle < 0) stream << "throttle-, ";
     if (dZone != DZONE) stream << "dZone " << dZone << ", ";
@@ -235,7 +250,9 @@ void Axis::jsevent( int value ) {
 
 void Axis::toDefault() {
     release();
+    interpretation = ZeroOne;
     gradient = false;
+    absolute = false;
     throttle = 0;
     maxSpeed = 100;
     transferCurve = Quadratic;
@@ -254,7 +271,9 @@ void Axis::toDefault() {
 }
 
 bool Axis::isDefault() {
-    return (gradient == false) &&
+    return (interpretation == ZeroOne) &&
+           (gradient == false) &&
+           (absolute == false) &&
            (throttle == 0) &&
            (maxSpeed == 100) &&
            (dZone == DZONE) &&
