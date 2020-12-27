@@ -18,9 +18,9 @@ void sendevent(const FakeEvent &e) {
         if (e.move.x) rememberX = e.move.x;
         if (e.move.y) rememberY = e.move.y;
         const int scaledX100 = rememberX * (XWidthOfScreen(screen)/2) / 100;
-	const int scaledY100 = rememberY * (XHeightOfScreen(screen)/2) / 100;
-	XTestFakeMotionEvent(display, DefaultScreen(display),
-                             XWidthOfScreen(screen)/2 + scaledX100, 
+        const int scaledY100 = rememberY * (XHeightOfScreen(screen)/2) / 100;
+        XTestFakeMotionEvent(display, DefaultScreen(display),
+                             XWidthOfScreen(screen)/2 + scaledX100,
                              XHeightOfScreen(screen)/2 + scaledY100, 0);
         break;
       }

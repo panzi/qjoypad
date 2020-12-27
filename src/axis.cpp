@@ -125,7 +125,7 @@ bool Axis::read( QTextStream &stream ) {
             absolute = false;
 	}
         else if (*it == "absolute") {
-	    interpretation = Absolute2; // to avoid name collision with a #define Absolute
+            interpretation = AbsolutePos;
             gradient = true;
             absolute = true;
 	}

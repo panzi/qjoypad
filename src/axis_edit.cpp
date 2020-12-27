@@ -26,7 +26,7 @@ AxisEdit::AxisEdit( Axis* ax )
     chkGradient = new QComboBox(this);
     chkGradient->insertItem((int) Axis::ZeroOne, tr("Use 0 or max always"), Qt::DisplayRole);
     chkGradient->insertItem((int) Axis::Gradient, tr("Relative movement (previously gradient)"), Qt::DisplayRole);
-    chkGradient->insertItem((int) Axis::Absolute, tr("Absolute movement (direct position)"), Qt::DisplayRole);
+    chkGradient->insertItem((int) Axis::AbsolutePos, tr("Absolute movement (direct position)"), Qt::DisplayRole);
     chkGradient->setCurrentIndex( axis->interpretation );
     connect(chkGradient, SIGNAL(activated(int)), this, SLOT( gradientChanged( int )));
     v2->addWidget(chkGradient);
@@ -179,7 +179,7 @@ void AxisEdit::throttleChanged( int index ) {
 void AxisEdit::accept() {
     axis->interpretation = (Axis::Interpretation)chkGradient->currentIndex(); 
     axis->gradient = axis->interpretation != Axis::ZeroOne;
-    axis->absolute = axis->interpretation == Axis::Absolute;
+    axis->absolute = axis->interpretation == Axis::AbsolutePos;
     axis->maxSpeed = spinSpeed->value();
     axis->transferCurve = (Axis::TransferCurve)cmbTransferCurve->currentIndex();
     axis->sensitivity = spinSensitivity->value();

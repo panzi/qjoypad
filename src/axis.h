@@ -22,7 +22,7 @@ class Axis : public QObject {
     Q_OBJECT
 
     //each axis can create a key press or move the mouse in one of four directions.
-    enum Interpretation { ZeroOne, Gradient, Absolute, Absolute2 = Absolute };
+    enum Interpretation { ZeroOne, Gradient, AbsolutePos };
     enum Mode {Keyboard, MousePosVert, MouseNegVert, MousePosHor, MouseNegHor};
     enum TransferCurve {Linear, Quadratic, Cubic, QuadraticExtreme,
                         PowerFunction};
@@ -77,9 +77,9 @@ class Axis : public QObject {
 		float inverseRange;
  
  		//actual axis settings:
-                Interpretation interpretation;
+ 		Interpretation interpretation;
  		bool gradient;
-                bool absolute;
+ 		bool absolute;
  		int maxSpeed; //0..MAXMOUSESPEED
 		unsigned int transferCurve;
 		float sensitivity;
