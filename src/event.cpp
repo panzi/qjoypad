@@ -11,6 +11,19 @@ void sendevent(const FakeEvent &e) {
         XTestFakeRelativeMotionEvent(display, e.move.x, e.move.y, 0);
         break;
 
+    case FakeEvent::MouseMoveAbsolute:
+      {
+        Screen* screen = XDefaultScreenOfDisplay(display);
+        static int rememberX = 0, rememberY = 0;
+        if (e.move.x) rememberX = e.move.x;
+        if (e.move.y) rememberY = e.move.y;
+        const int scaledX100 = rememberX * (XWidthOfScreen(screen)/2) / 100;
+        const int scaledY100 = rememberY * (XHeightOfScreen(screen)/2) / 100;
+        XTestFakeMotionEvent(display, DefaultScreen(display),
+                             XWidthOfScreen(screen)/2 + scaledX100,
+                             XHeightOfScreen(screen)/2 + scaledY100, 0);
+        break;
+      }
     case FakeEvent::KeyUp:
         if (e.keycode == 0) return;
         XTestFakeKeyEvent(display, e.keycode, false, 0);
