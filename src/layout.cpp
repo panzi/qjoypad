@@ -15,6 +15,7 @@ LayoutManager::LayoutManager( bool useTrayIcon, const QString &devdir, const QSt
       layoutGroup(new QActionGroup(this)),
       updateDevicesAction(new QAction(QIcon::fromTheme("view-refresh"),tr("Update &Joystick Devices"),this)),
       updateLayoutsAction(new QAction(QIcon::fromTheme("view-refresh"),tr("Update &Layout List"),this)),
+      addNewConfiguration(new QAction(QIcon::fromTheme("list-add"),tr("Add new configuration"),this)),
       quitAction(new QAction(QIcon::fromTheme("application-exit"),tr("&Quit"),this)),
       le(0) {
 
@@ -51,6 +52,7 @@ LayoutManager::LayoutManager( bool useTrayIcon, const QString &devdir, const QSt
 
     connect(updateLayoutsAction, SIGNAL(triggered()), this, SLOT(fillPopup()));
     connect(updateDevicesAction, SIGNAL(triggered()), this, SLOT(updateJoyDevs()));
+    connect(addNewConfiguration,  SIGNAL(triggered()), this, SLOT(addNewConfig()));
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 
     //no layout loaded at start.
@@ -520,20 +522,9 @@ void LayoutManager::iconClick() {
         errorBox(tr("No joystick devices available"),
                  tr("No joystick devices are currently available to configure.\nPlease plug in a gaming device and select\n\"Update Joystick Devices\" from the popup menu."),
                  le);
-        return;
+    } else {
+        addNewConfig();
     }
-    if (le) {
-        if (le->isActiveWindow()) {
-            le->close();
-        }
-        else {
-            le->activateWindow();
-        }
-        return;
-    }
-    //otherwise, make a new LayoutEdit dialog and show it.
-    le = new LayoutEdit(this);
-    le->setLayout(currentLayout);
 }
 
 void LayoutManager::trayClick(QSystemTrayIcon::ActivationReason reason) {
@@ -583,6 +574,9 @@ void LayoutManager::fillPopup() {
         }
         connect(action, SIGNAL(triggered()), this, SLOT(layoutTriggered()));
     }
+    trayMenu.addSeparator();
+
+    trayMenu.addAction(addNewConfiguration);
     trayMenu.addSeparator();
 
     //and, at the end, quit!
@@ -678,6 +672,24 @@ void LayoutManager::updateJoyDevs() {
         le->updateJoypadWidgets();
     }
     debug_mesg("done updating joydevs\n");
+}
+
+void LayoutManager::addNewConfig() {
+    if (!le) {
+        // make a new LayoutEdit dialog and show it.
+        le = new LayoutEdit(this);
+        le->setLayout(currentLayout);
+    } 
+    if (le) {
+        if (le->isActiveWindow()) {
+            le->hide();
+        }
+        else {
+            le->show();
+            le->activateWindow();
+            le->raise();
+        }
+    }
 }
 
 void LayoutManager::addJoyPad(int index) {

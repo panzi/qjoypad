@@ -75,6 +75,8 @@ class LayoutManager : public QObject {
 		void fillPopup();
 		//update the list of available joystick devices
 		void updateJoyDevs();
+                // open dialog to be able to add new configurations
+                void addNewConfig();
     private slots:
         //when the user selects an item on the tray's popup menu
         void layoutTriggered();
@@ -97,6 +99,7 @@ class LayoutManager : public QObject {
         QActionGroup *layoutGroup;
         QAction *updateDevicesAction;
         QAction *updateLayoutsAction;
+        QAction *addNewConfiguration;
         QAction *quitAction;
 
 		//if there is a LayoutEdit open, this points to it. Otherwise, NULL.	
