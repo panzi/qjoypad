@@ -11,6 +11,7 @@ This fork is maintained by Mathias Panzenböck <grosser.meister.morti@gmx.net>.
 Quick Installation
 ------------------
 
+	sudo apt install cmake qt5-default qttools5-dev libqt5x11extras5-dev pkg-config libudev-dev libxtst-dev
 	git clone https://github.com/panzi/qjoypad
 	mkdir qjoypad/build
 	cd qjoypad/build
@@ -100,6 +101,9 @@ purpose.
 - [Qt 5](http://qt-project.org/)
 - [libudev](http://www.freedesktop.org/software/systemd/libudev/) (optional)
 
+Dependencies: cmake qt5-default qttools5-dev libqt5x11extras5-dev pkg-config libudev-dev libxtst-dev
+
+Would you find this list of dependencies being incomplete or outdated, please make a pull request to correct it!
 
 #### Installation
 
