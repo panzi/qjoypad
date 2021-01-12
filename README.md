@@ -312,17 +312,17 @@ You probably won't need to adjust the sensitivity unless you
 are having trouble getting QJoyPad to generate key presses
 when you want it to (see [Joystick adjustment](#joystick-adjustment)).
 
-#### Making an axis "Gradient"
+#### Set an axis to 0-max, relative (gradient), or absolute movement
 
-On the upper half of this dialog, you will see a checkbox
-marked Gradient. Checking this box means that instead of just
-generating one key press when the axis is moved, QJoyPad will
-start flickering that key on and off as soon as the axis is
-out of the Dead Zone (when the colored bar turns blue). How
+On the upper half of the dialog, you will see another drop-down
+set to relative movement. In 0-max mode QJoyPad generates just one
+key press when the axis is moved. In case of relative and absolute
+QJoyPad will start flickering that key on and off as soon as the
+axis is out of the Dead Zone (when the colored bar turns blue). How
 far the axis is pushed determines what percent of the time the
 simulated key will be depressed. As soon as the axis enters
 its Extreme Zone (when the colored bar turns red), the key
-will be down 100% of the time. Making an axis Gradient is
+will be down 100% of the time. Setting an axis to relative is
 useful if you want to use it as an accelerator in a game so
 how fast you go is controlled by how far the axis is moved.
 Also, it's nice to use this when the axis is set to move the
@@ -342,8 +342,10 @@ the mouse down or visa versa.
 
 **Tip**
 
-Usually you want an axis to be Gradient if it's going to move
-the mouse.
+Usually you want an axis to be relative or absolute if it's going
+to move the mouse. Relative to pass relative mouse movements, and
+absolute to place the mouse on the screen according to the axis
+position.
 
 #### Adjusting mouse speed
 
