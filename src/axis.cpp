@@ -12,6 +12,7 @@ Axis::Axis( int i, QObject *parent ) : QObject(parent) {
     index = i;
     isOn = false;
     isDown = false;
+    useMouse = false;
     state = 0;
     interpretation = ZeroOne;
     gradient = false;
@@ -378,7 +379,7 @@ void Axis::move( bool press ) {
         //dialog being open and blocking events from happening.
         if (isDown == press) return;
         isDown = press;
-        bool useMouse = (state > 0)?puseMouse:nuseMouse;
+        useMouse = (state == 0 )? useMouse: (state > 0) ?puseMouse:nuseMouse;
         if (press) {
             e.type = useMouse ? FakeEvent::MouseDown : FakeEvent::KeyDown;
             downkey = (state > 0)?pkeycode:nkeycode;
