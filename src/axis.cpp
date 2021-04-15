@@ -379,10 +379,12 @@ void Axis::move( bool press ) {
         //dialog being open and blocking events from happening.
         if (isDown == press) return;
         isDown = press;
-        useMouse = (state == 0 )? useMouse: (state > 0) ?puseMouse:nuseMouse;
+        if (state != 0) {
+            useMouse = (state > 0) ? puseMouse : nuseMouse;
+        }
         if (press) {
             e.type = useMouse ? FakeEvent::MouseDown : FakeEvent::KeyDown;
-            downkey = (state > 0)?pkeycode:nkeycode;
+            downkey = (state > 0) ? pkeycode : nkeycode;
         }
         else {
             e.type = useMouse ? FakeEvent::MouseUp : FakeEvent::KeyUp;
