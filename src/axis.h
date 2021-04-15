@@ -72,6 +72,8 @@ class Axis : public QObject {
 		virtual void move( bool press );
 		//is a key currently depressed?
 		bool isDown;
+		//is a mouse button currently in use?
+		bool useMouse;
 
 		//variables for calculating quadratic used for gradient mouse axes
 		float inverseRange;
