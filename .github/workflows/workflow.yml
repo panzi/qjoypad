@@ -1,0 +1,71 @@
+name: CI Pipeline
+on: [push, pull_request]
+jobs:
+  test:
+    name: ${{ matrix.environments.display }}
+    runs-on: ubuntu-18.04
+    container:
+      image: ${{ matrix.environments.container_image }}
+    strategy:
+      matrix:
+        environments:
+        - display: Debian 9 (Stretch)
+          container_image: debian:9
+          install_dependencies: |
+            apt-get update -qq
+            apt-get install -y -qq \
+              cmake g++ libudev-dev libxtst-dev qttools5-dev \
+              libqt5x11extras5-dev pkg-config \
+              > /dev/null
+        - display: Debian 10 (Buster)
+          container_image: debian:10
+          install_dependencies: |
+            apt-get update -qq
+            apt-get install -y -qq \
+              cmake g++ libudev-dev libxtst-dev qttools5-dev \
+              libqt5x11extras5-dev pkg-config \
+              > /dev/null
+        - display: Fedora 29
+          container_image: fedora:29
+          install_dependencies: |
+            dnf install -y -q cmake make gcc-c++ qt5-devel libudev-devel \
+            libXtst-devel
+        - display: Fedora 30
+          container_image: fedora:30
+          install_dependencies: |
+            dnf install -y -q cmake make gcc-c++ qt5-devel libudev-devel \
+            libXtst-devel
+        - display: Fedora 31
+          container_image: fedora:31
+          install_dependencies: |
+            dnf install -y -q cmake make gcc-c++ qt5-devel libudev-devel \
+            libXtst-devel
+        - display: Ubuntu 18.04 (Bionic)
+          container_image: ubuntu:18.04
+          install_dependencies: |
+            apt-get update -qq
+            apt-get install -y -qq \
+              cmake g++ libudev-dev libxtst-dev qttools5-dev \
+              libqt5x11extras5-dev pkg-config \
+              > /dev/null
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Install Dependencies
+      run: ${{ matrix.environments.install_dependencies }}
+
+    - name: Build
+      run: |
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release
+        make -j `nproc`
+
+    - name: Install
+      run: |
+        cd build
+        make install
+
+    - name: Test
+      run: 'qjoypad --help || echo "FIXME: make help work without X11."'
