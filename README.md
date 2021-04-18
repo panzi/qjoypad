@@ -1,6 +1,8 @@
 QJoyPad 4
 =========
 
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/qjoypad-ahimta)
+
 This is a fork of [QJoyPad](http://qjoypad.sourceforge.net/) with some small additional
 features, Qt 5 port and some bug/memory leak fixes. QJoyPad was originally developed by
 Nathan Gaylinn <wren42@users.sourceforge.net> and John Toman <virtuoussin13@users.sourceforge.net>.
@@ -121,7 +123,7 @@ changed.
    them somewhere else, you'll need to run cmake like this:
 
    `cmake .. -DDEVICE_DIR=/dev`
-   
+
    Do this if your joystick devices are `/dev/js0`, `/dev/js1`
    etc.
 
@@ -442,7 +444,7 @@ using QJoyPad for joystick support, you could create a text
 file called run-xgalaga with the following lines in it:
 
 	#!/bin/sh
-	
+
 	qjoypad "XGalaga" &
 	xgalaga++
 
@@ -538,7 +540,7 @@ compiled with the devdir setting pointing to the wrong place.
 That option had to be set at compile time, and to change it
 you must recompile (see [Installation](#installation)); however,
 if you don't want to bother with that, you can specify the
-location of your devices as an argument. Using the command 
+location of your devices as an argument. Using the command
 `qjoypad --device /dev/input`, for example, will start QJoyPad
 and tell it to look for joysticks in `/dev/input/js0`,
 `/dev/input/js1`, etc.
@@ -693,7 +695,7 @@ is used to automatically update the joypad list. If automatically
 updating of the joypad list still does not work compile with
 `-DCMAKE_BUILD_TYPE=Debug` and post the output on the [GitHub
 bug tracker](https://github.com/panzi/qjoypad/issues).
-	
+
 You can force QJoyPad to rescan your joypads at any time using the
 menu or by running `qjoypad --update`.
 
