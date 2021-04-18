@@ -1,7 +1,6 @@
 #ifndef QJOYPAD_LAYOUT_EDIT_H
 #define QJOYPAD_LAYOUT_EDIT_H
 
-#include <QScrollArea>
 #include <QStackedWidget>
 
 //for the tab list of joypads
@@ -34,7 +33,6 @@ class LayoutEdit : public QWidget {
         LayoutManager* lm;
 		//parts of the dialog:
         QVBoxLayout *mainLayout;
-        QScrollArea *padScroll;
         QStackedWidget *padStack;
         FlashRadioArray *joyButtons;
         QComboBox* cmbLayouts;
