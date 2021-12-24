@@ -59,12 +59,28 @@ int main( int argc, char **argv )
         debug_mesg("no translation for locale: %s\n", qPrintable(QLocale::system().name()));
     }
 
-
     //where QJoyPad saves its settings!
-    const QString settingsDir(QDir::homePath() + "/.qjoypad3/");
+    const QString settingsDir(QDir::homePath() + "/.config/qjoypad4/");
 
     //where to look for settings. If it does not exist, it will be created
     QDir dir(settingsDir);
+
+    //legacy QJoyPad settings location
+    const QString legacySettingsDir(QDir::homePath() + "/.qjoypad3/");
+    //where to look for legacy settings. If it exists, it will be moved
+    QDir legacyDir(legacySettingsDir);
+
+
+    if (legacyDir.exists()) {
+        errorBox(app.translate("main","Legacy settings directory detected"),
+                 app.translate("main","We've detected settings in ~/.qjoypad3/. For standardization purposes, we're moving them to ~/.config/qjoypad4\n\nQJoyPad will continue to work as expected"));
+    
+        if(!dir.rename(legacySettingsDir, settingsDir)) {
+            errorBox(app.translate("main","Could not move settings"),
+                    app.translate("main","We could not move your settings - This likely means \"%1\" already exists on your system.\n\nPlease move files from \"%2\" to \"%1\" manually, then restart the application.").arg(settingsDir).arg(legacySettingsDir));
+            return 1;
+        }
+    }
 
     //the directory in wich the joystick devices are (e.g. "/dev/input")
     QString devdir = QJOYPAD_DEVDIR;
@@ -72,10 +88,9 @@ int main( int argc, char **argv )
     //if there is no new directory and we can't make it, complain
     if (!dir.exists() && !dir.mkdir(settingsDir)) {
         errorBox(app.translate("main","Couldn't create the QJoyPad save directory"),
-                 app.translate("main","Couldn't create the QJoyPad save directory: %s").arg(settingsDir));
+                 app.translate("main","Couldn't create the QJoyPad save directory: %1").arg(settingsDir));
         return 1;
     }
-
 
     //start out with no special layout.
     QString layout;
