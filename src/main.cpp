@@ -25,7 +25,7 @@ QPointer<LayoutManager> layoutManagerPtr;
 
 //signal handler for SIGUSR2
 //SIGUSR2 means that a new layout should be loaded. It is saved in
-// ~/.qjoypad/layout, where the last used layout is put.
+// ~/.config/qjoypad4/layout, where the last used layout is put.
 void catchSIGUSR2( int sig ) {
     if (layoutManagerPtr) layoutManagerPtr->load();
     //remember to catch this signal again next time.
