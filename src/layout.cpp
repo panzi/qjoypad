@@ -391,7 +391,7 @@ void LayoutManager::importLayout() {
         if (QFile::exists(filename)) {
             if (QMessageBox::warning(le,
                                      QString("%1 - %2").arg(tr("Layout exists"), QJOYPAD_NAME),
-                                     tr("Layout %1 exists. Do you want to overwrite it?"),
+                                     tr("Layout \"%1\" exists. Do you want to overwrite it?").arg(layoutName),
                                      tr("Over&write"), tr("&Cancel"), QString(), 0, 1) == 1) {
                 return;
             }
