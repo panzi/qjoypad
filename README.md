@@ -178,7 +178,7 @@ The top of this menu shows you which joystick devices are
 currently available (see [Joystick recognition](#joystick-recognition)
 if not all your devices are listed). Below that are the options
 to update the layout list or the joystick devices; use these if
-you have just put a new layout in ~/.qjoypad3 by hand or if
+you have just put a new layout in ~/.config/qjoypad4 by hand or if
 you've plugged in a new joystick device. Below even farther is
 a list of the available layouts and the option to quit.
 
@@ -467,7 +467,7 @@ named "Layout" will be considered distinct from a layout named
 and there should be no serious limits on name length.
 
 Whenever you create a new layout, QJoyPad makes a new file
-called Name.lyt in `~/.qjoypad3`, where Name is the name that
+called Name.lyt in `~/.config/qjoypad4`, where Name is the name that
 you provided. Whenever you update that layout, it overwrites
 that file to reflect your changes, whenever you revert, it
 rereads that file, and if you ever remove that layout, it will
@@ -478,7 +478,7 @@ you can edit them by hand if you like. The numbers used to
 represent keys are standard X11 keycodes.
 
 It's also easy to share QJoyPad layout files; just copy them
-from one user's `~/.qjoypad3` directory to another and either
+from one user's `~/.config/qjoypad4` directory to another and either
 tell QJoyPad to update the layout list by right clicking on
 the tray icon, or just restart QJoyPad. If you switch layouts
 through the command line, you don't even need to do that.
