@@ -1,4 +1,4 @@
-//for ouput when there is no GUI going
+//for output when there is no GUI going
 #include <stdio.h>
 #include <unistd.h>
 //to create and handle signals for various events
@@ -82,7 +82,7 @@ int main( int argc, char **argv )
         }
     }
 
-    //the directory in wich the joystick devices are (e.g. "/dev/input")
+    //the directory in which the joystick devices are (e.g. "/dev/input")
     QString devdir = QJOYPAD_DEVDIR;
 
     //if there is no new directory and we can't make it, complain
@@ -217,7 +217,7 @@ int main( int argc, char **argv )
                     errorBox(app.translate("main","Instance Error"),
                              app.translate("main","There is already a running instance of QJoyPad; please close\nthe old instance before starting a new one."));
                 else {
-                    //if one of these is the case, send the approrpriate signal!
+                    //if one of these is the case, send the appropriate signal!
                     if (update) {
                         kill(pid,SIGUSR1);
                     }
