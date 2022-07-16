@@ -18,6 +18,7 @@ FlashButton::FlashButton(const QString &text, const QString &name, QWidget* pare
     flashing = false;
 
     setAutoDefault( false );
+    setAutoFillBackground( true );
     setFocusPolicy(Qt::NoFocus);
     
 }
@@ -27,11 +28,13 @@ void FlashButton::flash()
     emit( flashed( !flashing ) );
     if (flashing)
     {
+        setFlat( false );
         setPalette( normalPalette );
         flashing = false;
     }
     else
     {
+        setFlat( true );
         setPalette( flashPalette );
         flashing = true;
     }
