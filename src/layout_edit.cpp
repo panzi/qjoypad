@@ -168,6 +168,11 @@ void LayoutEdit::updateLayoutList() {
             cmbLayouts->setCurrentIndex(cmbLayouts->count() - 1);
         }
     }
+    //Update layout list for all button edit widgets
+    for (int i = 0, n = lm->available.count(); i < n; i++) {
+        const QStringList layoutNames = lm->getLayoutNames();
+        ((JoyPadWidget*)padStack->widget(i))->updateButtonLayoutLists(layoutNames);
+    }
 }
 
 void LayoutEdit::updateJoypadWidgets() {

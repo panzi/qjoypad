@@ -53,6 +53,9 @@ class Button : public QObject {
 		bool useMouse;
         int keycode;
         QTimer timer;
+		//Layout settings
+		bool hasLayout;
+		QString layout;
     public slots:
         void timerCalled();
 };

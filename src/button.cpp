@@ -6,6 +6,7 @@ Button::Button( int i, QObject *parent ) : QObject(parent) {
     isButtonPressed = false;
     isDown = false;
     rapidfire = false;
+    hasLayout = false;
     toDefault();
     tick = 0;
 }
@@ -49,6 +50,12 @@ bool Button::read( QTextStream &stream ) {
             }
             else return false;
         }
+        else if (*it == "layout") {
+            //TODO: handle spaces in filenames
+            ++it;
+            if (it == words.end()) return false;
+            layout = *it;
+        }
         else if (*it == "rapidfire") {
             rapidfire = true;
         }
@@ -63,7 +70,8 @@ void Button::write( QTextStream &stream ) {
     stream << "\tButton " << (index+1) << ": ";
     if (rapidfire) stream << "rapidfire, ";
     if (sticky) stream << "sticky, ";
-    stream << (useMouse ? "mouse " : "key ") << keycode << "\n";
+    stream << (useMouse ? "mouse " : "key ") << keycode;
+    if (hasLayout) stream << "layout \"" << layout + "\"\n";
 }
 
 void Button::release() {
@@ -74,6 +82,15 @@ void Button::release() {
 }
 
 void Button::jsevent( int value ) {
+    if (hasLayout) {
+        if (value == 1 && !isButtonPressed) {
+            isButtonPressed = 1;
+            //Change layout
+            //TODO
+        }
+        return;
+    }
+
     bool newval = (value == 1);
     if (sticky) {
         //the state of a sticky key only changes on button press, not button release.
@@ -113,6 +130,7 @@ void Button::toDefault() {
     sticky = false;
     useMouse = false;
     keycode = 0;
+    hasLayout = false;
     timer.stop();
 }
 
@@ -120,7 +138,8 @@ bool Button::isDefault() {
     return	(rapidfire == false) &&
            (sticky == false) &&
            (useMouse == false) &&
-           (keycode == 0);
+           (keycode == 0) &&
+           (hasLayout == false);
 }
 
 QString Button::getName() {
@@ -128,7 +147,10 @@ QString Button::getName() {
 }
 
 QString Button::status() {
-    if (useMouse) {
+    if (hasLayout) {
+        return tr("%1 : %2").arg(getName(), layout);
+    }
+    else if (useMouse) {
         return tr("%1 : Mouse %2").arg(getName()).arg(keycode);
     }
     else {

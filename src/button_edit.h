@@ -4,6 +4,7 @@
 #include <QPushButton>
 #include <QCheckBox>
 #include <QDialogButtonBox>
+#include <QComboBox>
 
 //we need to edit a Button
 #include "button.h"
@@ -15,7 +16,7 @@
 class ButtonEdit : public QDialog {
 	Q_OBJECT
 	public:
-		ButtonEdit(Button* butt);
+		ButtonEdit(Button* butt, const QStringList *layoutNames);
 		void show();
 	protected slots:
 		void accept();
@@ -23,6 +24,7 @@ class ButtonEdit : public QDialog {
 		Button *button;
 		KeyButton *btnKey;
 		QCheckBox *chkSticky, *chkRapid;
+    	QComboBox *cmbLayout;
 };
 
 

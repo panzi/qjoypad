@@ -26,6 +26,8 @@ class JoyPadWidget : public QWidget {
 		~JoyPadWidget();
 		//takes in an event and decides whether or not to flash anything
         void jsevent(const js_event &msg );
+		//Propagate changes in layout list
+		void updateButtonLayoutLists(const QStringList layoutNames);
 	public slots:
 		//called whenever one of the subwidgets flashes... used to determine
 		//when to emit the flashed() signal.
