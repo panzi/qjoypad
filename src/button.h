@@ -58,6 +58,8 @@ class Button : public QObject {
 		QString layout;
     public slots:
         void timerCalled();
+	signals:
+		void loadLayout(QString name);
 };
 
 #endif

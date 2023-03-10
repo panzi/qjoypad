@@ -43,6 +43,8 @@ class LayoutManager : public QObject {
 		//produces a list of the names of all the available layout.
         QStringList getLayoutNames() const;
 	public slots:
+		//This is necessary to prevent issues with the overloaded load() function
+		void loadLayoutFromButton(QString name);
 		//load a layout with a given name
 		bool load(const QString& name);
 		//look for the last loaded layout and try to load that.

@@ -19,7 +19,7 @@ bool Button::read( QTextStream &stream ) {
 //	at this point, toDefault() has just been called.
 
     //read in a line of text and break it into words
-    QString input = stream.readLine().toLower();
+    QString input = stream.readLine();
     QRegExp regex("[\\s,]+");
     QStringList words = input.split(regex);
 
@@ -30,7 +30,7 @@ bool Button::read( QTextStream &stream ) {
 
     //go through every word on the line describing this button.
     for ( QStringList::Iterator it = words.begin(); it != words.end(); ++it ) {
-        if (*it == "mouse") {
+        if ((*it).toLower() == "mouse") {
             ++it;
             if (it == words.end()) return false;
             val = (*it).toInt(&ok);
@@ -40,7 +40,7 @@ bool Button::read( QTextStream &stream ) {
             }
             else return false;
         }
-        else if (*it == "key") {
+        else if ((*it).toLower() == "key") {
             ++it;
             if (it == words.end()) return false;
             val = (*it).toInt(&ok);
@@ -51,15 +51,15 @@ bool Button::read( QTextStream &stream ) {
             else return false;
         }
         else if (*it == "layout") {
-            //TODO: handle spaces in filenames
             ++it;
             if (it == words.end()) return false;
-            layout = *it;
+            layout = (*it).replace("\\s", " ");
+            hasLayout = true;
         }
-        else if (*it == "rapidfire") {
+        else if ((*it).toLower() == "rapidfire") {
             rapidfire = true;
         }
-        else if (*it == "sticky") {
+        else if ((*it).toLower() == "sticky") {
             sticky = true;
         }
     }
@@ -71,7 +71,8 @@ void Button::write( QTextStream &stream ) {
     if (rapidfire) stream << "rapidfire, ";
     if (sticky) stream << "sticky, ";
     stream << (useMouse ? "mouse " : "key ") << keycode;
-    if (hasLayout) stream << "layout \"" << layout + "\"\n";
+    if (hasLayout) stream << " layout " << layout.replace(" ", "\\s");
+    stream << "\n";
 }
 
 void Button::release() {
@@ -86,7 +87,10 @@ void Button::jsevent( int value ) {
         if (value == 1 && !isButtonPressed) {
             isButtonPressed = 1;
             //Change layout
-            //TODO
+            emit loadLayout(layout);
+        }
+        else if (value == 0) {
+            isButtonPressed = 0;
         }
         return;
     }

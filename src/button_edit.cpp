@@ -30,13 +30,12 @@ ButtonEdit::ButtonEdit(Button* butt, const QStringList *layoutNames)
 
     cmbLayout = new QComboBox(this);
     cmbLayout->addItem(tr("[UNSET]"), QVariant(QString()));
-    cmbLayout->addItem(tr("[NO LAYOUT]"), QVariant(QString()));
     foreach (const QString& layout, *layoutNames) {
         cmbLayout->addItem(layout, layout);
     }
     //Keep selected layout (if any)
     if (button->hasLayout) {
-        cmbLayout->setCurrentIndex(layoutNames->indexOf(button->layout) + 2);
+        cmbLayout->setCurrentIndex(layoutNames->indexOf(button->layout) + 1);
     }
     else {
         cmbLayout->setCurrentIndex(0);
