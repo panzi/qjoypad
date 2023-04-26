@@ -30,7 +30,7 @@ bool Button::read( QTextStream &stream ) {
 
     //go through every word on the line describing this button.
     for ( QStringList::Iterator it = words.begin(); it != words.end(); ++it ) {
-        if ((*it).toLower() == "mouse") {
+        if (QString::compare(*it, "mouse", Qt::CaseInsensitive) == 0) {
             ++it;
             if (it == words.end()) return false;
             val = (*it).toInt(&ok);
@@ -40,7 +40,7 @@ bool Button::read( QTextStream &stream ) {
             }
             else return false;
         }
-        else if ((*it).toLower() == "key") {
+        else if (QString::compare(*it, "key", Qt::CaseInsensitive) == 0) {
             ++it;
             if (it == words.end()) return false;
             val = (*it).toInt(&ok);
@@ -50,16 +50,16 @@ bool Button::read( QTextStream &stream ) {
             }
             else return false;
         }
-        else if (*it == "layout") {
+        else if (QString::compare(*it, "layout", Qt::CaseInsensitive) == 0) {
             ++it;
             if (it == words.end()) return false;
             layout = (*it).replace("\\s", " ");
             hasLayout = true;
         }
-        else if ((*it).toLower() == "rapidfire") {
+        else if (QString::compare(*it, "rapidfire", Qt::CaseInsensitive) == 0) {
             rapidfire = true;
         }
-        else if ((*it).toLower() == "sticky") {
+        else if (QString::compare(*it, "sticky", Qt::CaseInsensitive) == 0) {
             sticky = true;
         }
     }
