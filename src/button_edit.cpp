@@ -4,7 +4,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-ButtonEdit::ButtonEdit(Button* butt)
+ButtonEdit::ButtonEdit(Button* butt, const QStringList *layoutNames)
         : QDialog(0) {
     setModal(true);
     //build the dialog!
@@ -27,6 +27,20 @@ ButtonEdit::ButtonEdit(Button* butt)
     chkRapid->setChecked(button->rapidfire);
     h->addWidget(chkRapid);
     v->addLayout(h);
+
+    cmbLayout = new QComboBox(this);
+    cmbLayout->addItem(tr("[UNSET]"), QVariant(QString()));
+    foreach (const QString& layout, *layoutNames) {
+        cmbLayout->addItem(layout, layout);
+    }
+    //Keep selected layout (if any)
+    if (button->hasLayout) {
+        cmbLayout->setCurrentIndex(layoutNames->indexOf(button->layout) + 1);
+    }
+    else {
+        cmbLayout->setCurrentIndex(0);
+    }
+    v->addWidget(cmbLayout);
 
     QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this);
     connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
@@ -52,6 +66,13 @@ void ButtonEdit::accept() {
     //if the user chose a mouse button...
     button->useMouse = btnKey->choseMouse();
     button->keycode = btnKey->getValue();
+    if (cmbLayout->currentIndex() != 0) {
+        button->hasLayout = true;
+        button->layout = cmbLayout->currentText();
+    }
+    else {
+        button->hasLayout = false;
+    }
 
     QDialog::accept();
 }

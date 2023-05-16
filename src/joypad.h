@@ -58,13 +58,14 @@ class JoyPad : public QObject {
 		JoyPadWidget* widget(QWidget* parent, int i);
 		//called when the joypad is no longer being edited.
         void releaseWidget();
-	protected:
+        
 		//lookup axes and buttons. These are dictionaries to support
 		//layouts with different numbers of axes/buttons than the current
 		//devices. Note that with the current layout settings, the defined
 		//buttons that don't actually exist on the device may not be contiguous.
-        QList<Axis*> axes;
         QList<Button*> buttons;
+	protected:
+        QList<Axis*> axes;
 		//the index of this device (devicenum)
 		int index;
 		

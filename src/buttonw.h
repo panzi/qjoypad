@@ -17,10 +17,11 @@ class ButtonWidget : public FlashButton {
     Q_OBJECT
 
 	public:
-		ButtonWidget( Button* b, QWidget* parent);
+		ButtonWidget( Button* b, QWidget* parent );
 		void jsevent( int val );
 		//reset the label to match the respective Button's current state.
 		void update();
+		QStringList layoutNames;
 	private:
 		void mouseReleaseEvent( QMouseEvent* e );
 		bool on;

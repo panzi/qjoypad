@@ -6,6 +6,7 @@ Button::Button( int i, QObject *parent ) : QObject(parent) {
     isButtonPressed = false;
     isDown = false;
     rapidfire = false;
+    hasLayout = false;
     toDefault();
     tick = 0;
 }
@@ -18,7 +19,7 @@ bool Button::read( QTextStream &stream ) {
 //	at this point, toDefault() has just been called.
 
     //read in a line of text and break it into words
-    QString input = stream.readLine().toLower();
+    QString input = stream.readLine();
     QRegExp regex("[\\s,]+");
     QStringList words = input.split(regex);
 
@@ -29,7 +30,7 @@ bool Button::read( QTextStream &stream ) {
 
     //go through every word on the line describing this button.
     for ( QStringList::Iterator it = words.begin(); it != words.end(); ++it ) {
-        if (*it == "mouse") {
+        if (QString::compare(*it, "mouse", Qt::CaseInsensitive) == 0) {
             ++it;
             if (it == words.end()) return false;
             val = (*it).toInt(&ok);
@@ -39,7 +40,7 @@ bool Button::read( QTextStream &stream ) {
             }
             else return false;
         }
-        else if (*it == "key") {
+        else if (QString::compare(*it, "key", Qt::CaseInsensitive) == 0) {
             ++it;
             if (it == words.end()) return false;
             val = (*it).toInt(&ok);
@@ -49,10 +50,16 @@ bool Button::read( QTextStream &stream ) {
             }
             else return false;
         }
-        else if (*it == "rapidfire") {
+        else if (QString::compare(*it, "layout", Qt::CaseInsensitive) == 0) {
+            ++it;
+            if (it == words.end()) return false;
+            layout = (*it).replace("\\s", " ");
+            hasLayout = true;
+        }
+        else if (QString::compare(*it, "rapidfire", Qt::CaseInsensitive) == 0) {
             rapidfire = true;
         }
-        else if (*it == "sticky") {
+        else if (QString::compare(*it, "sticky", Qt::CaseInsensitive) == 0) {
             sticky = true;
         }
     }
@@ -63,7 +70,9 @@ void Button::write( QTextStream &stream ) {
     stream << "\tButton " << (index+1) << ": ";
     if (rapidfire) stream << "rapidfire, ";
     if (sticky) stream << "sticky, ";
-    stream << (useMouse ? "mouse " : "key ") << keycode << "\n";
+    stream << (useMouse ? "mouse " : "key ") << keycode;
+    if (hasLayout) stream << " layout " << layout.replace(" ", "\\s");
+    stream << "\n";
 }
 
 void Button::release() {
@@ -74,6 +83,18 @@ void Button::release() {
 }
 
 void Button::jsevent( int value ) {
+    if (hasLayout) {
+        if (value == 1 && !isButtonPressed) {
+            isButtonPressed = 1;
+            //Change layout
+            emit loadLayout(layout);
+        }
+        else if (value == 0) {
+            isButtonPressed = 0;
+        }
+        return;
+    }
+
     bool newval = (value == 1);
     if (sticky) {
         //the state of a sticky key only changes on button press, not button release.
@@ -113,6 +134,7 @@ void Button::toDefault() {
     sticky = false;
     useMouse = false;
     keycode = 0;
+    hasLayout = false;
     timer.stop();
 }
 
@@ -120,7 +142,8 @@ bool Button::isDefault() {
     return	(rapidfire == false) &&
            (sticky == false) &&
            (useMouse == false) &&
-           (keycode == 0);
+           (keycode == 0) &&
+           (hasLayout == false);
 }
 
 QString Button::getName() {
@@ -128,7 +151,10 @@ QString Button::getName() {
 }
 
 QString Button::status() {
-    if (useMouse) {
+    if (hasLayout) {
+        return tr("%1 : %2").arg(getName(), layout);
+    }
+    else if (useMouse) {
         return tr("%1 : Mouse %2").arg(getName()).arg(keycode);
     }
     else {

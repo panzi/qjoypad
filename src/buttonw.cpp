@@ -19,7 +19,7 @@ void ButtonWidget::update() {
 }
 
 void ButtonWidget::mouseReleaseEvent( QMouseEvent* e ) {
-    ButtonEdit* be = new ButtonEdit(button);
+    ButtonEdit* be = new ButtonEdit(button, &layoutNames);
     be->exec();
     delete be;
 

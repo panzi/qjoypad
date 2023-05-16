@@ -161,6 +161,10 @@ QString LayoutManager::getFileName(const QString& layoutname ) {
     return QString("%1%2.lyt").arg(settingsDir, layoutname);
 }
 
+void LayoutManager::loadLayoutFromButton(QString name) {
+    load(name);
+}
+
 bool LayoutManager::load(const QString& name) {
     //it's VERY easy to load NL  :)
     if (name.isNull()) {
@@ -707,6 +711,9 @@ void LayoutManager::addJoyPad(int index, const QString& devpath) {
         //if we've never seen this device before, make a new one!
         if (joypad == 0) {
             joypad = new JoyPad( index, joydev, this );
+            foreach (Button *button, joypad->buttons) {
+                connect(button, &Button::loadLayout, this, &LayoutManager::loadLayoutFromButton);
+            }
             joypads.insert(index,joypad);
         }
         else {

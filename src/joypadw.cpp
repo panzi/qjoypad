@@ -103,3 +103,9 @@ void JoyPadWidget::jsevent( const js_event& msg ) {
         quickset->jsevent(msg);
     }
 }
+
+void JoyPadWidget::updateButtonLayoutLists(const QStringList layoutNames) {
+    foreach (ButtonWidget *bw, buttons) {
+        bw->layoutNames = layoutNames;
+    }
+}
