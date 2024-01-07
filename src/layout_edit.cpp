@@ -94,12 +94,9 @@ LayoutEdit::LayoutEdit( LayoutManager* l )
     mainLayout->addWidget( joyButtons );
     
     //we have a WidgetStack to represent the multiple joypads
-    padScroll = new QScrollArea(this);
-    padScroll->setWidgetResizable(true);
-    mainLayout->addWidget(padScroll);
     padStack = new QStackedWidget( this );
     padStack->setFrameStyle(QFrame::Box | QFrame::Sunken );
-    padScroll->setWidget(padStack);
+    mainLayout->addWidget(padStack);
 
     //go through each of the available joysticks
     // i is the current index into PadStack
